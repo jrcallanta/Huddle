@@ -29,7 +29,8 @@
         "**/*.tsx",
         ".next/types/**/*.ts",
         "app/api/**/*.ts",
-        "app/api/_store/seedMongoose.ts"
+        "app/api/_store/seedMongoose.ts",
+        "app/initmap.js"
     ],
     "exclude": ["node_modules"]
 }

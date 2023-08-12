@@ -5,7 +5,12 @@ const huddleSchema = new mongoose.Schema(
         author_id: { type: mongoose.Schema.Types.ObjectId, ref: "user" },
         title: { type: String, required: true },
         description: { type: String },
-        location: { type: String },
+        location: {
+            type: {
+                display: { type: String, required: true },
+                coordinates: { type: [Number, Number] },
+            },
+        },
         start_time: { type: mongoose.Schema.Types.Date, required: true },
         end_time: { type: mongoose.Schema.Types.Date },
     },

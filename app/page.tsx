@@ -8,6 +8,7 @@ import { huddleSorter } from "@/tools/huddleSorter";
 import { useHuddles } from "@/hooks/useHuddles";
 import { useUser } from "@/hooks/useUser";
 import { twMerge } from "tailwind-merge";
+import Map from "@/components/Map";
 
 export default function Home() {
     const { currentUser } = useUser();
@@ -59,23 +60,7 @@ export default function Home() {
             </div>
 
             <div className={twMerge(`w-full h-full`, `p-8 pl-4`)}>
-                <div
-                    className={twMerge(
-                        `h-full w-full bg-neutral-100 border-black p-8`,
-                        // `absolute -z-20`,
-                        `static rounded-[3rem] border-4 `
-                    )}
-                >
-                    {selectedHuddle && (
-                        <>
-                            <p>@{selectedHuddle.author?.username}</p>
-                            <p>{selectedHuddle.title}</p>
-                            <p>{selectedHuddle.location}</p>
-                            <p>{selectedHuddle.start_time.toString()}</p>
-                            <p>{selectedHuddle.end_time?.toString()}</p>
-                        </>
-                    )}
-                </div>
+                <Map />
             </div>
         </main>
     );

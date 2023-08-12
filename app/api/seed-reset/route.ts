@@ -88,10 +88,12 @@ const _generateHuddle = () => {
         start_time: start_time,
         end_time: _flipCoin() ? _generateTime(start_time, 3, 15) : undefined,
         location: _flipCoin()
-            ? `${Math.floor(
-                  Math.random() *
-                      Math.pow(10, Math.floor(Math.random() * 6) + 1)
-              )} Street, Cityville`
+            ? {
+                  display: `${Math.floor(
+                      Math.random() *
+                          Math.pow(10, Math.floor(Math.random() * 6) + 1)
+                  )} Street, Cityville`,
+              }
             : undefined,
     };
 };

@@ -5,9 +5,14 @@ export interface HuddleType {
     author?: UserType;
     title: string;
     description?: string;
-    location?: string;
+    location?: LocationType;
     start_time: Date;
     end_time?: Date;
+}
+
+export interface LocationType {
+    display?: String;
+    coordinates: [Number, Number];
 }
 
 export interface HuddleTypeForTile extends HuddleType {
