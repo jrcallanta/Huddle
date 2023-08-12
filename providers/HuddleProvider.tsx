@@ -15,18 +15,14 @@ type HuddleContextType = {
     selectedHuddle: HuddleType | null;
     huddleList: HuddleType[] | null;
     setSelectedHuddle: Dispatch<SetStateAction<HuddleType | null>>;
-    refreshHuddles: () => Promise<Response>;
+    refreshHuddles: () => Promise<Response> | Promise<void>;
 };
 
 export const HuddleContext = createContext<HuddleContextType | undefined>(
     undefined
 );
 
-export interface Props {
-    [propName: string]: any;
-}
-
-export const HuddleContextProvider = (props: Props) => {
+export const HuddleProvider = (props: { [propName: string]: any }) => {
     const { currentUser } = useUser();
     const [huddleList, setHuddleList] = useState<HuddleType[] | null>(null);
     const [selectedHuddle, setSelectedHuddle] = useState<HuddleType | null>(
