@@ -6,6 +6,7 @@ import { HuddleProvider } from "@/providers/HuddleProvider";
 import { UserContextProvider } from "@/providers/UserProvider";
 import SessionProvider from "@/providers/SessionProvider";
 import NavBar from "@/components/NavBar";
+import CurrentPositionProvider from "@/providers/CurrentPositionProvider";
 
 const poppins = Poppins({
     weight: ["300", "400", "500", "600", "700"],
@@ -32,10 +33,12 @@ export default function RootLayout({
             >
                 <SessionProvider>
                     <UserContextProvider>
-                        <div className='h-screen w-full flex flex-col [&:has([data-vertical=true])]:flex-row justify-center items-center'>
-                            <NavBar vertical={false} />
-                            <HuddleProvider>{children}</HuddleProvider>
-                        </div>
+                        <CurrentPositionProvider>
+                            <div className='h-screen w-full flex flex-col [&:has([data-vertical=true])]:flex-row justify-center items-center'>
+                                <NavBar vertical={false} />
+                                <HuddleProvider>{children}</HuddleProvider>
+                            </div>
+                        </CurrentPositionProvider>
                     </UserContextProvider>
                 </SessionProvider>
             </body>

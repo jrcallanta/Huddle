@@ -2,6 +2,7 @@ import mongoose from "mongoose";
 import User from "@/app/api/_store/models/user";
 import Invite, { INVITE_STATUS } from "@/app/api/_store/models/invite";
 import Huddle from "@/app/api/_store/models/huddle";
+import { Coords } from "google-map-react";
 import { NextApiRequest } from "next";
 import { NextResponse } from "next/server";
 
@@ -47,6 +48,27 @@ const HUDDLE_NAMES: string[] = [
     "exam prep",
 ];
 
+const HUDDLE_LOCATIONS: [Number, Number, String][] = [
+    [33.77214650876379, -118.20248388295758, "Long Beach"],
+    [33.82701765276833, -118.1893717253211, "Steelcraft @ Long Beach"],
+    [33.77467363025807, -118.18028338105408, "MOLAA"],
+    [33.76232700027981, -118.19709714751423, "Aquarium of the Pacific"],
+    [33.76746930177294, -118.18456409453917, "The Breakfast Bar"],
+    [33.83586122861145, -118.33729352873509, "Torrance"],
+    [33.82352565655463, -118.33632473896469, "Kings Hawaiian"],
+    [33.83306805915092, -118.35025409204677, "Mitsuwa @ Torrence"],
+    [33.818480019017024, -118.34975056749369, "Raising Cane's"],
+    [33.8224017797407, -118.32602197276154, "CoCo Ichibanya"],
+    [33.683762591408474, -117.82129319136999, "Irvine"],
+    [33.744678645649486, -117.86535891569346, "Santa Ana"],
+    [33.83509964749566, -117.91202147447613, "Anaheim"],
+    [34.07404761448137, -118.3975614342641, "Beverly Hills"],
+    [34.088501435141474, -118.36709582927672, "West Hollywood"],
+    [34.07698757475187, -118.47121130299499, "The Getty"],
+    [34.006645576605116, -118.43453426398108, "Mitsuwa @ Culver"],
+    [33.98024597253167, -118.45019519648329, "Marina Del Rey"],
+];
+
 export const _flipCoin = () => {
     return Math.floor(Math.random() * 10) % 2 == 0;
 };
@@ -68,6 +90,14 @@ export const _generateTime = (
     );
 };
 
+export const _randomCoordinateInCA = () => {
+    let [lat, lng, display] = _chooseRandom(HUDDLE_LOCATIONS);
+    return {
+        display,
+        coordinates: { lat, lng },
+    };
+};
+
 const _generateUsers = () => {
     return USER_NAMES.map((name) => ({
         name,
@@ -87,14 +117,7 @@ const _generateHuddle = () => {
         title: _chooseRandom(HUDDLE_NAMES),
         start_time: start_time,
         end_time: _flipCoin() ? _generateTime(start_time, 3, 15) : undefined,
-        location: _flipCoin()
-            ? {
-                  display: `${Math.floor(
-                      Math.random() *
-                          Math.pow(10, Math.floor(Math.random() * 6) + 1)
-                  )} Street, Cityville`,
-              }
-            : undefined,
+        location: _randomCoordinateInCA(),
     };
 };
 
@@ -129,7 +152,7 @@ export async function GET(req: NextApiRequest) {
                 end_time: huddle.end_time,
             }))
         );
-        console.log(`Saved ${savedHuddles.length} users...`);
+        console.log(`Saved ${savedHuddles.length} huddles...`);
 
         // SEED RANDOM INVITES
         console.log(`Seeding invites...`);
@@ -187,51 +210,3 @@ export async function GET(req: NextApiRequest) {
         await mongoose.disconnect();
     }
 }
-
-/*  MONGOSH COMMANDS FOR HUDDLE INVITE VISUALIZATION
-
-db.createView("invite_list", "huddles", [
-    {
-        $lookup: {
-            from: "users",
-            localField: "author_id",
-            foreignField: "_id",
-            as: "host",
-        },
-    },
-    {
-        $lookup: {
-            from: "invites",
-            localField: "_id",
-            foreignField: "huddle_id",
-            as: "invitedDocs",
-        },
-    },
-    {
-        $project: {
-            _id: 1,
-            host: "$host.username",
-            title: 1,
-            invited: "$invitedDocs.user_id",
-        },
-    },
-    { $unwind: { path: "$host" } },
-    {
-        $lookup: {
-            from: "users",
-            localField: "invited",
-            foreignField: "_id",
-            as: "invitedUser",
-        },
-    },
-    {
-        $project: {
-            _id: 1,
-            host: 1,
-            title: 1,
-            invitedUser: { name: 1, email: 1 },
-        },
-    },
-]);
-
-*/

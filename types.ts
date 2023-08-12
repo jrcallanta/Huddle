@@ -12,7 +12,10 @@ export interface HuddleType {
 
 export interface LocationType {
     display?: String;
-    coordinates: [Number, Number];
+    coordinates: {
+        lat: number;
+        lng: number;
+    };
 }
 
 export interface HuddleTypeForTile extends HuddleType {

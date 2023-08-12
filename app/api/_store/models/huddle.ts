@@ -8,7 +8,13 @@ const huddleSchema = new mongoose.Schema(
         location: {
             type: {
                 display: { type: String, required: true },
-                coordinates: { type: [Number, Number] },
+                coordinates: {
+                    type: {
+                        lat: { type: Number, required: true },
+                        lng: { type: Number, required: true },
+                    },
+                    required: true,
+                },
             },
         },
         start_time: { type: mongoose.Schema.Types.Date, required: true },
