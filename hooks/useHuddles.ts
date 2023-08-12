@@ -6,7 +6,7 @@ export const useHuddles = () => {
 
     if (context === undefined) {
         throw new Error(
-            "useSelectedHuddle must be called within HuddleContextProvider"
+            "useSelectedHuddle must be called within HuddleProvider"
         );
     }
 
