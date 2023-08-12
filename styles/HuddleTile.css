@@ -1,0 +1,37 @@
+.huddleTile[data-variant="LOADER"] {
+    --500: #1c1c1c;
+    --400: #494949;
+    --300: #4f4f4f;
+}
+.huddleTile[data-variant="GOING"] {
+    /* --500: hsl(0, 0%, 38%);
+    --400: hsl(0, 0%, 47.6%);
+    --300: hsl(0, 0%, 54%); */
+}
+.huddleTile[data-variant="NOT_GOING"] {
+    --500: hsl(0, 0%, 60%);
+    --400: hsl(0, 0%, 72%);
+    --300: hsl(0, 0%, 76.52%);
+}
+.huddleTile[data-variant="PENDING"] {
+    --500: hsl(0, 0%, 51%);
+    --400: hsl(0, 0%, 61%);
+    --300: hsl(0, 0%, 69%);
+}
+.huddleTile {
+    --500: hsl(0, 0%, 38%);
+    --400: hsl(0, 0%, 47.6%);
+    --300: hsl(0, 0%, 55%);
+
+    @apply bg-[var(--500)] [&_>_*]:bg-[var(--300)] [&_>_*]:border-[var(--500)];
+    @apply h-44 md:h-28;
+    /* @apply [&_>_*]:hover:bg-[var(--400)]; */
+}
+
+.huddleTile[data-expanded="true"] {
+    @apply h-72 md:h-60;
+}
+
+.huddleTile[data-selected="true"] {
+    @apply bg-black [&_>_*]:border-black;
+}
