@@ -9,6 +9,7 @@ import { useHuddles } from "@/hooks/useHuddles";
 import { useUser } from "@/hooks/useUser";
 import { twMerge } from "tailwind-merge";
 import Map from "@/components/Map";
+import Marker from "@/components/Marker";
 
 export default function Home() {
     const { currentUser } = useUser();
@@ -39,7 +40,7 @@ export default function Home() {
     return (
         <main
             className={twMerge(
-                `h-full overflow-hidden w-full m-auto max-w-screen-xl flex justify-center align-stretch`,
+                `h-full overflow-hidden w-full max-w-screen-2xl flex justify-center align-stretch`,
                 // `flex-col-reverse`,
                 `flex-row`
             )}
@@ -48,7 +49,7 @@ export default function Home() {
                 className={twMerge(
                     `h-full w-full mx-auto overflow-hidden flex flex-col justify-center align-stretch`,
                     // `shadow-xl shadow-black rounded-t-[3rem] p-4 pb-0 gap-4 bg-white`,
-                    `p-8 max-w-[36rem] shadow-none`
+                    `p-8 pb-0 max-w-[36rem] shadow-none`
                 )}
             >
                 <FeedTabs
@@ -60,7 +61,34 @@ export default function Home() {
             </div>
 
             <div className={twMerge(`w-full h-full`, `p-8 pl-4`)}>
-                <Map />
+                <Map>
+                    {huddleSections &&
+                        huddleSections
+                            .map((section: HuddleSection) => section.huddles)
+                            .reduce((acc, curr) => [...acc, ...curr], [])
+                            .filter((huddle) => huddle.location)
+                            .map((huddle, i) => (
+                                <Marker
+                                    lat={huddle.location?.coordinates.lat}
+                                    lng={huddle.location?.coordinates.lng}
+                                    selected={
+                                        selectedHuddle?._id === huddle._id
+                                    }
+                                    authorImgUrl={huddle.author.imgUrl}
+                                    authorInitials={huddle.author.username.slice(
+                                        0,
+                                        2
+                                    )}
+                                    onClick={() => {
+                                        setSelectedHuddle((prev) =>
+                                            prev && prev._id === huddle._id
+                                                ? null
+                                                : huddle
+                                        );
+                                    }}
+                                />
+                            ))}
+                </Map>
             </div>
         </main>
     );

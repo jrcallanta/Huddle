@@ -2,6 +2,7 @@ import { useHuddles } from "@/hooks/useHuddles";
 import { twMerge } from "tailwind-merge";
 import GoogleMapReact, { Coords } from "google-map-react";
 import { useCurrentPosition } from "@/hooks/useCurrentPosition";
+import dateFormat from "dateformat";
 
 const DEFAULT = {
     center: {
@@ -20,6 +21,19 @@ const Map: React.FC<MapProps> = ({ markers = [], children, ...props }) => {
     const currentPosition = useCurrentPosition();
     const { selectedHuddle } = useHuddles();
 
+    const createMapOptions = (maps: {
+        ControlPosition: { RIGHT_CENTER: any; TOP_RIGHT: any };
+        ZoomControlStyle: { SMALL: any };
+    }) => {
+        return {
+            fullscreenControl: false,
+            zoomControlOptions: {
+                position: maps.ControlPosition.RIGHT_CENTER,
+                style: maps.ZoomControlStyle.SMALL,
+            },
+        };
+    };
+
     return (
         <div
             className={twMerge(
@@ -29,14 +43,24 @@ const Map: React.FC<MapProps> = ({ markers = [], children, ...props }) => {
             )}
         >
             {selectedHuddle && (
-                <div className='absolute top-0 bottom-0 left-0 right-0 w-1/2 h-fit m-auto p-2 z-10 bg-black/50 rounded-lg text-white/90'>
+                <div className='absolute bottom-4 left-4 right-4  h-fit p-4 z-10 bg-black/60 rounded-3xl text-white/90'>
                     <p>@{selectedHuddle.author?.username}</p>
                     <p>{selectedHuddle.title}</p>
                     <p>{selectedHuddle.location?.display}</p>
-                    <p>{selectedHuddle.location?.coordinates.lat}</p>
-                    <p>{selectedHuddle.location?.coordinates.lng}</p>
-                    <p>{selectedHuddle.start_time.toString()}</p>
-                    <p>{selectedHuddle.end_time?.toString()}</p>
+                    {selectedHuddle.end_time ? (
+                        <p>{`${dateFormat(
+                            selectedHuddle.start_time,
+                            "h:MMtt"
+                        )} - ${dateFormat(
+                            selectedHuddle.end_time,
+                            "h:MMtt"
+                        )}`}</p>
+                    ) : (
+                        <p>{`${dateFormat(
+                            selectedHuddle.start_time,
+                            "h:MMtt"
+                        )}`}</p>
+                    )}
                 </div>
             )}
 
@@ -58,6 +82,7 @@ const Map: React.FC<MapProps> = ({ markers = [], children, ...props }) => {
                 }
                 zoom={selectedHuddle?.location?.coordinates ? 12 : DEFAULT.zoom}
                 yesIWantToUseGoogleMapApiInternals
+                options={createMapOptions}
                 {...props}
             >
                 {children}

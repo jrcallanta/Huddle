@@ -2,7 +2,7 @@ export interface HuddleType {
     _id: string;
     created_at: Date;
     author_id: string;
-    author?: UserType;
+    author: UserType;
     title: string;
     description?: string;
     location?: LocationType;
