@@ -42,25 +42,37 @@ const Map: React.FC<MapProps> = ({ markers = [], children, ...props }) => {
                 `relative rounded-3xl border-4 `
             )}
         >
-            {selectedHuddle && (
-                <div className='absolute bottom-0 animate-fade-in left-0 right-0  h-fit py-4 px-8 z-10 bg-black/60 border-t-[4px] border-black text-white/90'>
-                    <p>@{selectedHuddle.author?.username}</p>
-                    <p>{selectedHuddle.title}</p>
-                    <p>{selectedHuddle.location?.display}</p>
-                    {selectedHuddle.end_time ? (
-                        <p>{`${dateFormat(
-                            selectedHuddle.start_time,
-                            "h:MMtt"
-                        )} - ${dateFormat(
-                            selectedHuddle.end_time,
-                            "h:MMtt"
-                        )}`}</p>
-                    ) : (
-                        <p>{`${dateFormat(
-                            selectedHuddle.start_time,
-                            "h:MMtt"
-                        )}`}</p>
-                    )}
+            {selectedHuddle && selectedHuddle.location && (
+                <div className='absolute bottom-0 animate-fade-in left-0 right-0 h-fit  py-6 px-8 z-10 bg-black/60 border-t-[4px] border-black text-white/90'>
+                    <p className='text text-sm mb-2'>
+                        @{selectedHuddle.author?.username}
+                    </p>
+                    <p className='text text-2xl font-semibold -mb-2'>
+                        {selectedHuddle.end_time
+                            ? `${dateFormat(
+                                  selectedHuddle.start_time,
+                                  "h:MMtt"
+                              )} - ${dateFormat(
+                                  selectedHuddle.end_time,
+                                  "h:MMtt"
+                              )}`
+                            : `${dateFormat(
+                                  selectedHuddle.start_time,
+                                  "h:MMtt"
+                              )}`}
+                    </p>
+                    <p className='text text-lg font-semibold'>
+                        {selectedHuddle.title}
+                    </p>
+
+                    {/* <a
+                        href=''
+                        target={"_blank"}
+                        onClick={(e) => e.stopPropagation()}
+                        className='mt-2 w-fit text text-sm flex gap-1 items-center text-white/80 font-medium hover:text-white hover:underline'
+                    >
+                        {selectedHuddle.location.display}
+                    </a> */}
                 </div>
             )}
 
