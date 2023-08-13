@@ -117,7 +117,7 @@ const _generateHuddle = () => {
         title: _chooseRandom(HUDDLE_NAMES),
         start_time: start_time,
         end_time: _flipCoin() ? _generateTime(start_time, 3, 15) : undefined,
-        location: _randomCoordinateInCA(),
+        location: _flipCoin() ? _randomCoordinateInCA() : undefined,
     };
 };
 
