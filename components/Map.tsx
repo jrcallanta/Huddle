@@ -39,11 +39,11 @@ const Map: React.FC<MapProps> = ({ markers = [], children, ...props }) => {
             className={twMerge(
                 `h-full w-full bg-neutral-100 border-black overflow-clip`,
                 // `absolute -z-20`,
-                `relative rounded-[3rem] border-4 `
+                `relative rounded-3xl border-4 `
             )}
         >
             {selectedHuddle && (
-                <div className='absolute bottom-4 left-4 right-4  h-fit p-4 z-10 bg-black/60 rounded-3xl text-white/90'>
+                <div className='absolute bottom-0 animate-fade-in left-0 right-0  h-fit py-4 px-8 z-10 bg-black/60 border-t-[4px] border-black text-white/90'>
                     <p>@{selectedHuddle.author?.username}</p>
                     <p>{selectedHuddle.title}</p>
                     <p>{selectedHuddle.location?.display}</p>
