@@ -36,10 +36,14 @@ const HuddleSection: React.FC<HuddleSectionProps> = ({
             )}
         >
             <div className='flex items-center'>
-                <p className='text text-sm uppercase font-extrabold whitespace-nowrap py-1 px-4 border-[3px] border-black rounded-full'>
-                    {title}
+                <p className='flex gap-2 text text-sm uppercase font-extrabold whitespace-nowrap py-1 px-4 border-[3px] border-black rounded-full'>
+                    <span>{title}</span>/<span>{huddles.length}</span>
                 </p>
                 <hr className='flex-grow h-[4px] bg-black' />
+                {/* <p className='text text-sm uppercase font-extrabold whitespace-nowrap h-8 w-8 border-[3px] border-black rounded-full flex justify-center items-center'>
+                    {huddles.length}
+                </p>
+                <hr className='w-2 h-[4px] bg-black' /> */}
                 <button
                     className={twMerge(
                         "h-8 w-8 border-[3px] border-black rounded-full flex justify-center items-center",
