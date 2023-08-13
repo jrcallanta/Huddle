@@ -2,7 +2,7 @@ import { twMerge } from "tailwind-merge";
 import "./globals.css";
 import { Poppins } from "next/font/google";
 
-import { HuddleContextProvider } from "@/providers/HuddleProvider";
+import { HuddleProvider } from "@/providers/HuddleProvider";
 import { UserContextProvider } from "@/providers/UserProvider";
 import SessionProvider from "@/providers/SessionProvider";
 import NavBar from "@/components/NavBar";
@@ -34,9 +34,7 @@ export default function RootLayout({
                     <UserContextProvider>
                         <div className='h-screen w-full flex flex-col [&:has([data-vertical=true])]:flex-row justify-center items-center'>
                             <NavBar vertical={false} />
-                            <HuddleContextProvider>
-                                {children}
-                            </HuddleContextProvider>
+                            <HuddleProvider>{children}</HuddleProvider>
                         </div>
                     </UserContextProvider>
                 </SessionProvider>
