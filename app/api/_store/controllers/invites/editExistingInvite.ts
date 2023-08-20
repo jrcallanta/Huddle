@@ -1,4 +1,4 @@
-import { _flipCoin } from "@/app/api/seed-reset/route";
+import { _flipCoin } from "../seed/resetDB";
 import { connectMongoose } from "../../connectMongoose";
 import { PatchInviteResponse } from "../../controllerResponseTypes";
 import Invite from "../../models/invite";
