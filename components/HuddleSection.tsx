@@ -29,12 +29,8 @@ const HuddleSection: React.FC<HuddleSectionProps> = ({
     };
 
     return (
-        <div
-            className={twMerge(
-                "relative flex flex-col [&:last-of-type_.divider]:hidden",
-                String(className)
-            )}
-        >
+        // <div className={twMerge("relative flex flex-col", String(className))}>
+        <>
             <div className='flex items-center'>
                 <p className='flex gap-2 text text-sm uppercase font-extrabold whitespace-nowrap py-1 px-4 border-[3px] border-black rounded-full'>
                     <span>{title}</span>/<span>{huddles.length}</span>
@@ -56,7 +52,7 @@ const HuddleSection: React.FC<HuddleSectionProps> = ({
             </div>
 
             {isExpanded && (
-                <div className={twMerge("flex flex-col gap-8 py-3 pr-2 pt-8")}>
+                <div className={twMerge("flex flex-col gap-8 pr-2 pt-6 pb-5")}>
                     {!huddles.length && (
                         <div className='w-full'>
                             <p className='text text-sm text-center font-medium'>
@@ -76,7 +72,8 @@ const HuddleSection: React.FC<HuddleSectionProps> = ({
                     ))}
                 </div>
             )}
-        </div>
+            {/* </div> */}
+        </>
     );
 };
 
