@@ -34,7 +34,7 @@ const ActionButton = forwardRef<HTMLButtonElement, ActionButtonProps>(
                     px-2
                     rounded-full
                     hover:bg-black
-                    hover:bg-opacity-[.08]
+                    hover:bg-opacity-[.1]
                     transition`,
                     className
                 )}
@@ -47,7 +47,7 @@ const ActionButton = forwardRef<HTMLButtonElement, ActionButtonProps>(
                 {text && (
                     <p
                         className='text-[var(--500)]
-                text-sm
+                text-xs
                 font-semibold
                 group-hover/button:text-white
                 cursor-pointer
@@ -60,5 +60,7 @@ const ActionButton = forwardRef<HTMLButtonElement, ActionButtonProps>(
         );
     }
 );
+
+ActionButton.displayName = "ActionButton";
 
 export default ActionButton;
