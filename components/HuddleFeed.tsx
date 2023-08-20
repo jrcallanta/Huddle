@@ -43,9 +43,8 @@ const HuddleFeed: React.FC<HuddleFeedProps> = ({ huddleSections }) => {
                 flex-col
                 justify-start
                 align-stretch
-                gap-8
+                gap-4
                 cursor-auto
-                pb-24
                 '
             >
                 {huddleSections &&
