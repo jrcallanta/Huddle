@@ -8,7 +8,8 @@ import { GrLocation } from "react-icons/gr";
 import { useHuddles } from "@/hooks/useHuddles";
 import AvatarList from "./AvatarList";
 import { useUser } from "@/hooks/useUser";
-import { BsCheckCircle, BsXCircle, BsPencilFill } from "react-icons/bs";
+import { BsCheck, BsX, BsPencilFill } from "react-icons/bs";
+import { CgNotes } from "react-icons/cg";
 import ActionButton from "./ActionButton";
 
 interface HuddleTileProps {
@@ -29,7 +30,11 @@ const HuddleTile: React.FC<HuddleTileProps> = ({
     style,
 }) => {
     const { currentUser } = useUser();
-    const { selectedHuddle, setSelectedHuddle, refreshHuddles } = useHuddles();
+    const {
+        states: { selectedHuddle },
+        funcs: { setSelectedHuddle, refreshHuddles },
+    } = useHuddles();
+
     const [huddleVariant, setHuddleVariant] = useState(huddle.invite_status);
     const [isShowingOptions, setIsShowingOptions] = useState(false);
     const [isUpdating, setIsUpdating] = useState(false);
@@ -74,9 +79,8 @@ const HuddleTile: React.FC<HuddleTileProps> = ({
             });
     };
 
-    const handleCancelPlans = (event: any) => {
+    const handleViewDetails = async (event: any) => {
         event.stopPropagation();
-        console.log("cancel plans");
     };
 
     return (
@@ -93,6 +97,7 @@ const HuddleTile: React.FC<HuddleTileProps> = ({
                 rounded-xl
                 transition-all
                 duration-250
+                group/huddle
                 `,
                 String(className)
             )}
@@ -101,31 +106,32 @@ const HuddleTile: React.FC<HuddleTileProps> = ({
             // onMouseLeave={() => setSelectedHuddle(null)}
         >
             <div
-                className='
-                content
-                absolute
-                peer
-                group
-                h-full 
-                w-full
-                flex
-                flex-col
-                gap-4
-                border-4
-                p-4
-                rounded-xl
-                -top-2
-                left-2
-                transition-all
-                duration-250
-                overflow-hidden
-                hover:-top-3
-                hover:left-3
-                [&:active:not(:has(.options_button:active))]:top-0
-                [&:active:not(:has(.options_button:active))]:left-0
-                '
+                className={twMerge(
+                    `
+                    content
+                    absolute
+                    peer
+                    group
+                    h-full 
+                    w-full
+                    flex
+                    flex-col
+                    gap-4
+                    border-4
+                    rounded-xl
+                    -top-2
+                    left-2
+                    transition-all
+                    duration-250
+                    overflow-hidden
+                    hover:-top-3
+                    hover:left-3
+                    [&:active:not(:has(.options_button:active))]:top-0
+                    [&:active:not(:has(.options_button:active))]:left-0
+                    `
+                )}
             >
-                <div className='w-full flex flex-col gap-2 md:flex-row md:gap-4'>
+                <div className='pt-4 px-4 w-full flex flex-col gap-2 md:flex-row md:gap-4 '>
                     <div className='w-full overflow-hidden text-white font-semibold'>
                         <p className='text-md truncate'>{huddle.title}</p>
                     </div>
@@ -155,17 +161,18 @@ const HuddleTile: React.FC<HuddleTileProps> = ({
                             },
                             ...huddle.invite_list,
                         ]}
+                        className={"px-4"}
                     />
                 )}
 
                 {huddle._id === selectedHuddle?._id && (
-                    <div className='w-full h-full flex flex-col gap-4 relative'>
+                    <div className='w-full h-full flex flex-col gap-2 relative'>
                         {huddle.location && (
                             <a
                                 href=''
                                 target={"_blank"}
                                 onClick={(e) => e.stopPropagation()}
-                                className='w-fit flex gap-1 items-center  [&_>_svg_path]:stroke-white/80 [&:hover_>_svg_path]:stroke-white [&:hover_>_p]:text-white'
+                                className='location px-4 w-fit flex gap-1 items-center  [&_>_svg_path]:stroke-white/80 [&:hover_>_svg_path]:stroke-white [&:hover_>_p]:text-white'
                             >
                                 <GrLocation size={24} />
                                 <p className='text-white/80 text-sm font-medium'>
@@ -174,44 +181,81 @@ const HuddleTile: React.FC<HuddleTileProps> = ({
                             </a>
                         )}
 
-                        <div className='h-full'></div>
+                        {/* DESCRIPTION BOX */}
+                        {/* <div
+                            className={twMerge(
+                                "description h-full rounded-lg",
+                                "p-2 hover:bg-black hover:bg-opacity-[.1] transition-all"
+                            )}
+                        ></div> */}
 
-                        <div className='options w-full right-0 bottom-0 flex gap-2'>
+                        <div className='empty:hidden border-t-2 border-t-[var(--500)] last:mt-auto options w-full flex justify-around md:justify-between '>
+                            <ActionButton
+                                className={twMerge(
+                                    "w-full rounded-none border-r-2 border-solid border-r-[var(--500)] last:border-r-0 group/button"
+                                )}
+                                icon={
+                                    <div className='w-7 h-7 md:w-6 md:h-6 flex justify-center items-center'>
+                                        <CgNotes
+                                            size={18}
+                                            strokeWidth={".5px"}
+                                            className='stroke-[var(--500)] [&_path]:fill-[var(--500)] group-hover/button:[&_path]:fill-white group-hover/button:stroke-white'
+                                        />
+                                    </div>
+                                }
+                                text='Details'
+                                onClick={handleViewDetails}
+                            />
+
                             {/* Displayed if creater is the author */}
                             {!huddleVariant && (
-                                <>
-                                    <ActionButton
-                                        className={twMerge(
-                                            "px-3 ml-auto [&_svg_path]:transition [&_svg_path]:fill-[var(--500)] [&:hover_svg_path]:fill-white group/button"
-                                        )}
-                                        icon={
-                                            <div className='w-7 h-7 transition rounded-full border-[2px] border-[var(--500)] group-hover/button:border-white flex justify-center items-center'>
-                                                <BsPencilFill
-                                                    size={15}
-                                                    className='fill-[var(--500)] group-hover/button:fill-white'
-                                                />
-                                            </div>
-                                        }
-                                        text='Edit'
-                                        onClick={() => {}}
-                                    />
-                                </>
+                                <ActionButton
+                                    className={twMerge(
+                                        "w-full rounded-none border-r-2 border-solid border-r-[var(--500)] last:border-r-0 group/button"
+                                    )}
+                                    icon={
+                                        <div className='w-7 h-7 md:w-6 md:h-6 flex justify-center items-center'>
+                                            <BsPencilFill
+                                                size={16}
+                                                className='fill-[var(--500)] group-hover/button:fill-white'
+                                            />
+                                        </div>
+                                    }
+                                    text='Edit'
+                                    onClick={() => {}}
+                                />
                             )}
 
-                            {/* Displayed if creater is not the author */}
                             {huddleVariant && (
                                 <>
                                     <ActionButton
                                         className={twMerge(
-                                            "ml-auto [&_*]:transition [&_>_svg_path]:fill-[var(--500)] [&_>_svg_path]:stroke-[var(--500)] [&:hover_>_svg_path]:fill-white [&:hover_>_svg_path]:stroke-white",
+                                            "w-full rounded-none border-r-2 border-solid border-r-[var(--500)] last:border-r-0 group/button",
                                             huddleVariant === "GOING" &&
-                                                "[&_>_*]:text-white [&_>_svg_path]:fill-white [&_>_svg_path]:stroke-white"
+                                                "[&_>_*]:text-white"
                                         )}
                                         icon={
-                                            <BsCheckCircle
-                                                size={28}
-                                                strokeWidth={".2px"}
-                                            />
+                                            <div
+                                                className={twMerge(
+                                                    "w-7 h-7 md:w-6 md:h-6 rounded-full flex justify-center items-center border-[var(--500)] group-hover/button:border-white ",
+                                                    huddleVariant === "GOING" &&
+                                                        "bg-white border-white"
+                                                )}
+                                            >
+                                                <BsCheck
+                                                    size={26}
+                                                    strokeWidth={"0px"}
+                                                    className={twMerge(
+                                                        "fill-[var(--500)]",
+                                                        huddleVariant !==
+                                                            "GOING" &&
+                                                            "group-hover/button:fill-white",
+                                                        huddleVariant ===
+                                                            "GOING" &&
+                                                            "fill-[var(--300)]"
+                                                    )}
+                                                />
+                                            </div>
                                         }
                                         text='Accept'
                                         onClick={(e) =>
@@ -223,24 +267,42 @@ const HuddleTile: React.FC<HuddleTileProps> = ({
                                             )
                                         }
                                     />
+
                                     <ActionButton
                                         className={twMerge(
-                                            "[&_*]:transition [&_>_svg_path]:fill-[var(--500)] [&_>_svg_path]:stroke-[var(--500)] [&:hover_>_svg_path]:fill-white [&:hover_>_svg_path]:stroke-white",
+                                            "w-full border-r-2 border-solid border-r-[var(--500)] last:border-r-0 rounded-none group/button",
                                             huddleVariant === "NOT_GOING" &&
-                                                "[&_>_*]:text-white [&_>_svg_path]:fill-white [&_>_svg_path]:stroke-white"
+                                                "[&_>_*]:text-white"
                                         )}
                                         icon={
-                                            <BsXCircle
-                                                size={28}
-                                                strokeWidth={".2px"}
-                                            />
+                                            <div
+                                                className={twMerge(
+                                                    "w-7 h-7 md:w-6 md:h-6 rounded-full flex justify-center items-center border-[var(--500)] group-hover/button:border-white ",
+                                                    huddleVariant ===
+                                                        "NOT_GOING" &&
+                                                        "bg-white border-white"
+                                                )}
+                                            >
+                                                <BsX
+                                                    size={26}
+                                                    strokeWidth={".2px"}
+                                                    className={twMerge(
+                                                        "fill-[var(--500)] stroke-[var(--500)]",
+                                                        huddleVariant !==
+                                                            "NOT_GOING" &&
+                                                            "group-hover/button:fill-white group-hover/button:stroke-white ",
+                                                        huddleVariant ===
+                                                            "NOT_GOING" &&
+                                                            "fill-[var(--300)]"
+                                                    )}
+                                                />
+                                            </div>
                                         }
                                         text='Decline'
                                         onClick={(e) =>
                                             handleRespondInvite(
                                                 e,
-                                                huddle.invite_status !==
-                                                    "NOT_GOING"
+                                                huddleVariant !== "NOT_GOING"
                                                     ? "NOT_GOING"
                                                     : "PENDING"
                                             )
@@ -256,6 +318,7 @@ const HuddleTile: React.FC<HuddleTileProps> = ({
             {huddle.invite_status === "PENDING" && (
                 <p
                     className='
+                    status
                     absolute
                     py-1
                     px-2
