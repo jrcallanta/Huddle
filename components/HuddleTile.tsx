@@ -32,7 +32,7 @@ const HuddleTile: React.FC<HuddleTileProps> = ({
     const { currentUser } = useUser();
     const {
         states: { selectedHuddle },
-        funcs: { setSelectedHuddle, refreshHuddles },
+        funcs: { setSelectedHuddle, setFocusedHuddle, refreshHuddles },
     } = useHuddles();
 
     const [huddleVariant, setHuddleVariant] = useState(huddle.invite_status);
@@ -81,6 +81,7 @@ const HuddleTile: React.FC<HuddleTileProps> = ({
 
     const handleViewDetails = async (event: any) => {
         event.stopPropagation();
+        if (selectedHuddle) setFocusedHuddle(selectedHuddle);
     };
 
     return (
