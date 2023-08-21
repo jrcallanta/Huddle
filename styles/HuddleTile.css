@@ -29,7 +29,7 @@
 }
 
 .huddleTile[data-expanded="true"] {
-    @apply h-72 md:h-60;
+    @apply h-60 md:h-52;
 }
 
 .huddleTile[data-selected="true"] {
