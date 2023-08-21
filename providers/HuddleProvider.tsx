@@ -35,7 +35,9 @@ export const HuddleProvider = (props: { [propName: string]: any }) => {
 
     const refreshHuddles = useCallback(async () => {
         if (currentUser) {
-            let res = await fetch(`api/huddle/relevant/${currentUser._id}`)
+            let res = await fetch(
+                `api/huddle/search/relevant/${currentUser._id}`
+            )
                 .then((res) => res.json())
                 .then((data) => {
                     setHuddleList(data.huddles ?? []);
