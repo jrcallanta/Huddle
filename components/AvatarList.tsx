@@ -9,6 +9,7 @@ interface AvatarListProps {
     userIDList?: string[];
     displayLimit?: number;
     tight?: boolean;
+    className?: String;
 }
 
 const AvatarList: React.FC<AvatarListProps> = ({
@@ -17,6 +18,7 @@ const AvatarList: React.FC<AvatarListProps> = ({
     userIDList,
     displayLimit,
     tight = false,
+    className,
 }) => {
     const going = useMemo(
         () => inviteList?.filter((invite) => invite.status !== "NOT_GOING"),
@@ -24,7 +26,7 @@ const AvatarList: React.FC<AvatarListProps> = ({
     );
 
     return !tight ? (
-        <div className={"flex gap-2"}>
+        <div className={twMerge("flex gap-2", String(className))}>
             {going && (
                 <>
                     {going
@@ -68,7 +70,7 @@ const AvatarList: React.FC<AvatarListProps> = ({
             )}
         </div>
     ) : (
-        <div className='flex gap-2'>
+        <div className={twMerge("flex gap-2", String(className))}>
             {going && (
                 <div className='h-7 relative'>
                     {going
