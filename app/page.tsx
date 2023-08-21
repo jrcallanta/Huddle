@@ -13,7 +13,10 @@ import Marker from "@/components/Marker";
 
 export default function Home() {
     const { currentUser } = useUser();
-    const { setSelectedHuddle, huddleList, selectedHuddle } = useHuddles();
+    const {
+        states: { huddleList, selectedHuddle, focusedHuddle },
+        funcs: { setSelectedHuddle },
+    } = useHuddles();
 
     const [activeTab, setActiveTab] = useState<number>(0);
     const [huddleSections, setHuddleSections] = useState<
@@ -21,8 +24,8 @@ export default function Home() {
     >(null);
 
     useEffect(() => {
-        console.log(huddleSections);
-    }, [huddleList]);
+        console.log(focusedHuddle);
+    }, [focusedHuddle]);
 
     useEffect(() => {
         if (huddleList) {
@@ -47,7 +50,7 @@ export default function Home() {
         >
             <div
                 className={twMerge(
-                    `h-full w-full mx-auto overflow-hidden flex flex-col justify-center align-stretch`,
+                    `h-full w-full mx-auto overflow-hidden flex flex-col justify-center align-stretch relative`,
                     // `shadow-xl shadow-black rounded-t-[3rem] p-4 pb-0 gap-4 bg-white`,
                     `p-8 pb-0 max-w-[36rem] shadow-none`
                 )}
@@ -69,6 +72,7 @@ export default function Home() {
                             .filter((huddle) => huddle.location)
                             .map((huddle, i) => (
                                 <Marker
+                                    key={huddle._id}
                                     lat={huddle.location?.coordinates.lat}
                                     lng={huddle.location?.coordinates.lng}
                                     selected={

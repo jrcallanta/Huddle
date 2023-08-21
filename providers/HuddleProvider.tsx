@@ -12,10 +12,16 @@ import {
 } from "react";
 
 type HuddleContextType = {
-    selectedHuddle: HuddleType | null;
-    huddleList: HuddleType[] | null;
-    setSelectedHuddle: Dispatch<SetStateAction<HuddleType | null>>;
-    refreshHuddles: () => Promise<Response> | Promise<void>;
+    states: {
+        selectedHuddle: HuddleType | null;
+        focusedHuddle: HuddleType | null;
+        huddleList: HuddleType[] | null;
+    };
+    funcs: {
+        setSelectedHuddle: Dispatch<SetStateAction<HuddleType | null>>;
+        setFocusedHuddle: Dispatch<SetStateAction<HuddleType | null>>;
+        refreshHuddles: () => Promise<Response> | Promise<void>;
+    };
 };
 
 export const HuddleContext = createContext<HuddleContextType | undefined>(
@@ -28,6 +34,7 @@ export const HuddleProvider = (props: { [propName: string]: any }) => {
     const [selectedHuddle, setSelectedHuddle] = useState<HuddleType | null>(
         null
     );
+    const [focusedHuddle, setFocusedHuddle] = useState<HuddleType | null>(null);
 
     useEffect(() => {
         console.log(huddleList);
@@ -66,10 +73,16 @@ export const HuddleProvider = (props: { [propName: string]: any }) => {
     };
 
     const value = {
-        selectedHuddle,
-        huddleList,
-        setSelectedHuddle,
-        refreshHuddles,
+        states: {
+            selectedHuddle,
+            focusedHuddle,
+            huddleList,
+        },
+        funcs: {
+            setSelectedHuddle,
+            setFocusedHuddle,
+            refreshHuddles,
+        },
     };
 
     return <HuddleContext.Provider value={value} {...props} />;
