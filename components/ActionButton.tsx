@@ -35,7 +35,8 @@ const ActionButton = forwardRef<HTMLButtonElement, ActionButtonProps>(
                     rounded-full
                     hover:bg-black
                     hover:bg-opacity-[.1]
-                    transition`,
+                    `,
+                    // "transition",
                     className
                 )}
                 type={type}
@@ -46,12 +47,16 @@ const ActionButton = forwardRef<HTMLButtonElement, ActionButtonProps>(
                 {icon}
                 {text && (
                     <p
-                        className='text-[var(--500)]
-                text-xs
-                font-semibold
-                group-hover/button:text-white
-                cursor-pointer
-                transition'
+                        className={twMerge(
+                            `text-[var(--500)]
+                            text-xs
+                            font-semibold
+                            group-hover/button:text-white
+                            cursor-pointer
+                            pr-1
+                            hidden md:block`
+                            // `transition`
+                        )}
                     >
                         {text}
                     </p>
