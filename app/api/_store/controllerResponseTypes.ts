@@ -1,4 +1,4 @@
-import { InviteType, UserType } from "@/types";
+import { HuddleTypeForTile, InviteType, UserType } from "@/types";
 
 interface Response {
     message: string;
@@ -31,4 +31,9 @@ export interface PostNewInviteResponse extends Response {
 
 export interface PatchInviteResponse extends Response {
     updatedInvite?: InviteType;
+}
+
+// HUDDLES
+export interface PatchHuddleResponse extends Response {
+    updatedHuddle?: HuddleTypeForTile;
 }
