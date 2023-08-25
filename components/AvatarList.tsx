@@ -25,8 +25,8 @@ const AvatarList: React.FC<AvatarListProps> = ({
         [inviteList]
     );
 
-    return !tight ? (
-        <div className={twMerge("flex gap-2", String(className))}>
+    return (
+        <div className={twMerge("flex gap-1", String(className))}>
             {going && (
                 <>
                     {going
@@ -36,18 +36,13 @@ const AvatarList: React.FC<AvatarListProps> = ({
                                 key={i}
                                 className={twMerge(
                                     `
-                                    bg-blend-color-dodge bg-[var(--500)]
-                                    outline
-                                    outline-[2px]
-                                    outline-[var(--300)]
                                     user-avatar
-                                    w-7
-                                    h-7
+                                    bg-blend-color-dodge bg-[var(--500)]
+                                    w-7 h-7
                                     rounded-full
-                                    flex
-                                    justify-center
-                                    items-center
+                                    flex justify-center items-center
                                 `,
+                                    `border-[2px] border-[var(--300)]`,
                                     invite.status === "PENDING" && "opacity-50"
                                 )}
                             >
@@ -60,68 +55,13 @@ const AvatarList: React.FC<AvatarListProps> = ({
                                         height={40}
                                     />
                                 ) : (
-                                    <p className='text-xs'>
+                                    <p className='text-xs text-white/75'>
                                         {invite.user?.name?.slice(0, 2)}
                                     </p>
                                 )}
                             </div>
                         ))}
                 </>
-            )}
-        </div>
-    ) : (
-        <div className={twMerge("flex gap-2", String(className))}>
-            {going && (
-                <div className='h-7 relative'>
-                    {going
-                        .slice(0, displayLimit ?? going.length)
-                        .map((invite, i) => (
-                            <div
-                                key={i}
-                                className={twMerge(
-                                    `       
-                                    absolute
-                                    bg-blend-color-dodge bg-[var(--500)]
-                                    outline
-                                    outline-[2px]
-                                    outline-[var(--300)]
-                                    user-avatar
-                                    w-7
-                                    h-7
-                                    rounded-full
-                                    flex
-                                    justify-center
-                                    items-center
-                                `,
-                                    invite.status === "PENDING" &&
-                                        "outline-[var(--300)] [&_img]:opacity-30 bg-[var(--400)]"
-                                )}
-                                style={{
-                                    left: `${i * 1.5}rem`,
-                                    zIndex: `${
-                                        going.slice(
-                                            0,
-                                            displayLimit ?? going.length
-                                        ).length - i
-                                    }`,
-                                }}
-                            >
-                                {invite.user?.imgUrl ? (
-                                    <Image
-                                        className='rounded-full'
-                                        src={invite.user.imgUrl}
-                                        alt={invite.user.username}
-                                        width={40}
-                                        height={40}
-                                    />
-                                ) : (
-                                    <p className='text-xs'>
-                                        {invite.user?.name?.slice(0, 2)}
-                                    </p>
-                                )}
-                            </div>
-                        ))}
-                </div>
             )}
         </div>
     );
