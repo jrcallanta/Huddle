@@ -48,6 +48,7 @@ const HuddleTile: React.FC<HuddleTileProps> = ({
             // setIsExpanded(true);
             setSelectedHuddle(huddle);
         }
+        setFocusedHuddle(null);
     };
 
     const handleRespondInvite = async (event: any, respond: string) => {
@@ -79,7 +80,7 @@ const HuddleTile: React.FC<HuddleTileProps> = ({
             });
     };
 
-    const handleViewDetails = async (event: any) => {
+    const handleViewDetails = (event: any) => {
         event.stopPropagation();
         if (selectedHuddle) setFocusedHuddle(selectedHuddle);
     };

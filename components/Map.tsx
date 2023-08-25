@@ -19,7 +19,9 @@ interface MapProps {
 
 const Map: React.FC<MapProps> = ({ markers = [], children, ...props }) => {
     const currentPosition = useCurrentPosition();
-    const { selectedHuddle } = useHuddles();
+    const {
+        states: { selectedHuddle, focusedHuddle },
+    } = useHuddles();
 
     const createMapOptions = (maps: {
         ControlPosition: { RIGHT_CENTER: any; TOP_RIGHT: any };
@@ -37,13 +39,19 @@ const Map: React.FC<MapProps> = ({ markers = [], children, ...props }) => {
     return (
         <div
             className={twMerge(
-                `h-full w-full bg-neutral-100 border-black overflow-clip`,
+                `h-full w-full bg-slate-100 border-black overflow-clip`,
                 // `absolute -z-20`,
                 `relative rounded-3xl border-4 `
             )}
         >
             {selectedHuddle && selectedHuddle.location && (
-                <div className='absolute bottom-0 animate-fade-in left-0 right-0 h-fit  py-6 px-8 z-10 bg-black/60 border-t-[4px] border-black text-white/90'>
+                <div
+                    className={twMerge(
+                        "absolute bottom-0 left-0 right-0 h-fit py-6 px-8 z-10 bg-black/60 border-t-[4px] border-black text-white/90",
+                        "translate-y-0 transition-transform duration-300 ease-in-out",
+                        focusedHuddle && "translate-y-[100%]"
+                    )}
+                >
                     <p className='text text-sm mb-2'>
                         @{selectedHuddle.author?.username}
                     </p>
@@ -64,24 +72,8 @@ const Map: React.FC<MapProps> = ({ markers = [], children, ...props }) => {
                     <p className='text text-lg font-semibold'>
                         {selectedHuddle.title}
                     </p>
-
-                    {/* <a
-                        href=''
-                        target={"_blank"}
-                        onClick={(e) => e.stopPropagation()}
-                        className='mt-2 w-fit text text-sm flex gap-1 items-center text-white/80 font-medium hover:text-white hover:underline'
-                    >
-                        {selectedHuddle.location.display}
-                    </a> */}
                 </div>
             )}
-
-            {/* {currentPosition && (
-                <div className='absolute top-0 bottom-0 left-0 right-0 w-fit h-fit m-auto p-2 z-10 bg-black/50 rounded-lg text-white/90'>
-                    <p>{currentPosition.lat}</p>
-                    <p>{currentPosition.lng}</p>
-                </div>
-            )} */}
 
             <GoogleMapReact
                 bootstrapURLKeys={{

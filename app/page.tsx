@@ -10,12 +10,13 @@ import { useUser } from "@/hooks/useUser";
 import { twMerge } from "tailwind-merge";
 import Map from "@/components/Map";
 import Marker from "@/components/Marker";
+import DetailsModal from "@/components/DetailsModal";
 
 export default function Home() {
     const { currentUser } = useUser();
     const {
         states: { huddleList, selectedHuddle, focusedHuddle },
-        funcs: { setSelectedHuddle },
+        funcs: { setSelectedHuddle, setFocusedHuddle },
     } = useHuddles();
 
     const [activeTab, setActiveTab] = useState<number>(0);
@@ -55,12 +56,24 @@ export default function Home() {
                     `p-8 pb-0 max-w-[36rem] shadow-none`
                 )}
             >
-                <FeedTabs
-                    tabs={["By Plan", "By Timeline"]}
-                    activeTabIndex={activeTab}
-                    onTabChange={handleTabChange}
+                <div
+                    className={twMerge(
+                        "h-full flex flex-col transition-all",
+                        focusedHuddle && "opacity-60"
+                    )}
+                >
+                    <FeedTabs
+                        tabs={["By Plan", "By Timeline"]}
+                        activeTabIndex={activeTab}
+                        onTabChange={handleTabChange}
+                    />
+                    <HuddleFeed huddleSections={huddleSections} />
+                </div>
+
+                <DetailsModal
+                    huddle={focusedHuddle}
+                    onClose={() => setFocusedHuddle(null)}
                 />
-                <HuddleFeed huddleSections={huddleSections} />
             </div>
 
             <div className={twMerge(`w-full h-full`, `p-8 pl-4`)}>

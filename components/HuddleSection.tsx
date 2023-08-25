@@ -20,7 +20,9 @@ const HuddleSection: React.FC<HuddleSectionProps> = ({
     emptyNote,
     className,
 }) => {
-    const { setSelectedHuddle } = useHuddles();
+    const {
+        funcs: { setSelectedHuddle },
+    } = useHuddles();
     const [isExpanded, setIsExpanded] = useState(true);
 
     const toggleExpanded: React.MouseEventHandler = () => {

@@ -33,6 +33,8 @@ module.exports = {
             animation: {
                 "spin-ease": "spin 1s ease-in-out infinite",
                 "fade-in": "fade 350ms ease-in-out 1 backwards",
+                "slide-down": "slide-down 150ms ease-out 1 backwards",
+                "slide-up": "slide-up 150ms ease-out 1 backwards",
             },
         },
     },
