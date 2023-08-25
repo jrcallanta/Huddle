@@ -5,7 +5,8 @@
 :root {
     /* --background-color: #f8be89; */
     /* --background-color: #faebdd; */
-    --background-color: rgb(254, 248, 241);
+    /* --background-color: #fef8f1; */
+    --background-color: theme(colors.slate.300);
 }
 
 @media (prefers-color-scheme: dark) {
@@ -18,19 +19,27 @@ body {
     .no-scrollbar::-webkit-scrollbar {
         display: none;
     }
-
     .no-scrollbar {
         scrollbar-width: none;
     }
+
+    .animate-100 {
+        animation-duration: 100ms;
+    }
+    .animate-150 {
+        animation-duration: 150ms;
+    }
+    .animate-200 {
+        animation-duration: 200ms;
+    }
+    .animate-250 {
+        animation-duration: 250ms;
+    }
+    .animate-reverse {
+        animation-direction: reverse;
+        animation-fill-mode: forwards;
+    }
 }
 
-@keyframes fade {
-    0% {
-        opacity: 0;
-    }
-    100% {
-        opacity: 1;
-    }
-}
-
+@import "../styles/animations.css";
 @import "../styles/HuddleTile.css";
