@@ -33,7 +33,7 @@ const ActionButton = forwardRef<HTMLButtonElement, ActionButtonProps>(
                     py-2
                     px-2
                     rounded-full
-                    hover:bg-black
+                    hover:bg-white
                     hover:bg-opacity-[.1]
                     `,
                     // "transition",

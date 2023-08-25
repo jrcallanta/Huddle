@@ -39,7 +39,7 @@ const Map: React.FC<MapProps> = ({ markers = [], children, ...props }) => {
     return (
         <div
             className={twMerge(
-                `h-full w-full bg-slate-100 border-black overflow-clip`,
+                `themed h-full w-full bg-[var(--100)] border-black overflow-clip`,
                 // `absolute -z-20`,
                 `relative rounded-3xl border-4 `
             )}

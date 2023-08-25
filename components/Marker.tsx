@@ -25,7 +25,7 @@ const Marker: React.FC<MarkerProps> = ({
         <div
             className={twMerge(
                 "flex justify-center items-center w-fit h-fit p-[6px] cursor-pointer bg-black/40 rounded-full z-10",
-                selected && "animate-bounce z-30"
+                selected && "animate-bounce z-20"
             )}
             onClick={onClick}
         >

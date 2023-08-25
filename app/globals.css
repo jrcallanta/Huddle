@@ -39,6 +39,19 @@ body {
         animation-direction: reverse;
         animation-fill-mode: forwards;
     }
+
+    .themed {
+        --50: theme(colors.slate.50);
+        --100: theme(colors.slate.100);
+        --200: theme(colors.slate.200);
+        --300: theme(colors.slate.300);
+        --400: theme(colors.slate.400);
+        --500: theme(colors.slate.500);
+        --600: theme(colors.slate.600);
+        --700: theme(colors.slate.700);
+        --800: theme(colors.slate.800);
+        --900: theme(colors.slate.900);
+    }
 }
 
 @import "../styles/animations.css";

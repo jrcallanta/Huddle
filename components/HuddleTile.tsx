@@ -91,16 +91,7 @@ const HuddleTile: React.FC<HuddleTileProps> = ({
             data-expanded={huddle._id === selectedHuddle?._id}
             // data-selected={huddle._id === selectedHuddle?._id}
             className={twMerge(
-                `
-                huddleTile
-                relative
-                bg-[var(--500)]
-                w-full
-                rounded-xl
-                transition-all
-                duration-250
-                group/huddle
-                `,
+                "themed huddleTile relative w-full rounded-xl transition-all duration-250 group/huddle",
                 String(className)
             )}
             style={style}
@@ -110,26 +101,10 @@ const HuddleTile: React.FC<HuddleTileProps> = ({
             <div
                 className={twMerge(
                     `
-                    content
-                    absolute
-                    peer
-                    group
-                    h-full 
-                    w-full
-                    flex
-                    flex-col
-                    gap-4
-                    border-4
-                    rounded-xl
-                    -top-2
-                    left-2
-                    transition-all
-                    duration-250
-                    overflow-hidden
-                    hover:-top-3
-                    hover:left-3
-                    [&:active:not(:has(.options_button:active))]:top-0
-                    [&:active:not(:has(.options_button:active))]:left-0
+                    content absolute peer group h-full  w-full flex flex-col gap-4 -top-2 left-2
+                    transition-all duration-250
+                    overflow-hidden border-4 rounded-xl
+                    hover:-top-3 hover:left-3 [&:active:not(:has(.options_button:active))]:top-0 [&:active:not(:has(.options_button:active))]:left-0
                     `
                 )}
             >
