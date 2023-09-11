@@ -53,7 +53,8 @@ export default function Home() {
                 className={twMerge(
                     `h-full w-full mx-auto overflow-hidden flex flex-col justify-center align-stretch relative`,
                     // `shadow-xl shadow-black rounded-t-[3rem] p-4 pb-0 gap-4 bg-white`,
-                    `p-8 pb-0 max-w-[36rem] shadow-none`
+                    `p-8 pb-0 pr-4 md:pr-8 max-w-[36rem] shadow-none`,
+                    ``
                 )}
             >
                 <div

@@ -14,7 +14,7 @@ const DetailsModal: React.FC<DetailsModalProps> = ({ huddle, onClose }) => {
         <div
             className={twMerge(
                 "themed",
-                "absolute top-0 min-h-[calc(100%-4rem)] left-0 right-0 m-8 rounded-3xl flex flex-col justify-center p-4",
+                "absolute top-0 min-h-[calc(100%-4rem)] left-0 right-0 m-8 mr-4 md:mr-8 rounded-3xl flex flex-col justify-center p-4",
                 "bg-[var(--400)] border-4 border-[var(--500)] shadow-xl",
                 (!huddle?.invite_status || huddle?.invite_status === "GOING") &&
                     "bg-[var(--500)] border-4 border-[var(--700)]",
