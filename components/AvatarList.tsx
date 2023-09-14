@@ -42,7 +42,7 @@ const AvatarList: React.FC<AvatarListProps> = ({
                                     rounded-full
                                     flex justify-center items-center
                                 `,
-                                    `border-[2px] border-[var(--300)]`,
+                                    `border-[2px] border-[var(--200)]`,
                                     invite.status === "PENDING" && "opacity-50"
                                 )}
                             >
