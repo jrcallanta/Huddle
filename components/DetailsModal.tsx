@@ -7,6 +7,7 @@ import AvatarList from "./AvatarList";
 import { createPortal } from "react-dom";
 import { useUser } from "@/hooks/useUser";
 import ActionsBar from "./ActionsBar";
+import { BsX } from "react-icons/bs";
 
 /* NOTE:    When on 'By Timeline' tab,
             updating invite response through
