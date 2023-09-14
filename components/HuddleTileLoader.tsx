@@ -10,13 +10,15 @@ const HuddleTileLoader: React.FC<HuddleTileLoaderProps> = ({ index = 0 }) => {
             data-variant={"LOADER"}
             className={twMerge(
                 `
+                themed-darker
                 huddleTile
                 relative
                 w-full
                 rounded-xl
                 transition-all
                 duration-250
-                `
+                `,
+                "bg-[var(--500)] [&_>_*]:border-[var(--500)] [&_>_:first-child]:bg-[var(--400)]"
             )}
             style={{ opacity: 0.75 }}
         >
