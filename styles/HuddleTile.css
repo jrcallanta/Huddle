@@ -1,9 +1,9 @@
 .huddleTile[data-variant="LOADER"],
 .huddleTile[data-variant="GOING"],
 .huddleTile:not([data-variant]) {
-    --500: theme(colors.slate.700);
+    /* --500: theme(colors.slate.700);
     --400: theme(colors.slate.500);
-    --300: theme(colors.slate.400);
+    --300: theme(colors.slate.400); */
 }
 .huddleTile[data-variant="NOT_GOING"] {
     /* --500: theme(colors.slate.500); */
@@ -16,7 +16,7 @@
     /* --300: theme(colors.slate.300); */
 }
 .huddleTile {
-    @apply bg-[var(--500)] [&_>_*]:bg-[var(--400)] [&_>_*]:border-[var(--500)];
+    /* @apply bg-[var(--500)] [&_>_*]:border-[var(--500)] [&_>_*]:bg-[var(--400)]; */
     @apply h-44 md:h-28;
 }
 
