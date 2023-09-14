@@ -16,7 +16,7 @@ export default function Home() {
     const { currentUser } = useUser();
     const {
         states: { huddleList, selectedHuddle, focusedHuddle },
-        funcs: { setSelectedHuddle, setFocusedHuddle },
+        funcs: { setSelectedHuddle, setFocusedHuddle, refreshHuddles },
     } = useHuddles();
 
     const [activeTab, setActiveTab] = useState<number>(0);
@@ -71,10 +71,20 @@ export default function Home() {
                     <HuddleFeed huddleSections={huddleSections} />
                 </div>
 
-                <DetailsModal
+                <div
+                    id='details-modal-root'
+                    className={twMerge(
+                        "translate-y-0 transition-all duration-300 ease-in-out empty:translate-y-[calc(100%_+_2rem)]",
+                        "absolute top-0 min-h-[calc(100%-4rem)] left-0 right-0 m-8 mr-2 md:mr-4 rounded-3xl flex flex-col",
+                        !focusedHuddle && "translate-y-[calc(100%_+_2rem)]"
+                    )}
+                ></div>
+
+                {/* <DetailsModal
                     huddle={focusedHuddle}
                     onClose={() => setFocusedHuddle(null)}
-                />
+                    onRefresh={refreshHuddles}
+                /> */}
             </div>
 
             <div className={twMerge(`w-full h-full`, `p-8 pl-4`)}>
