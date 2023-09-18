@@ -133,20 +133,22 @@ const DetailsModal: React.FC<DetailsModalProps> = ({
                           <div className='section mt-auto'>
                               {(huddle?.invite_status === "PENDING" ||
                                   isUpdating) && (
-                                  <p
-                                      className={twMerge(
-                                          "section mt-auto p-2 text-white/75 text-xs text-center font-semibold z-10 -top-4 transition-all",
-                                          !isUpdating && "animate-pulse"
-                                      )}
-                                  >
-                                      {isUpdating
-                                          ? "UPDATING..."
-                                          : "AWAITING YOUR RESPONSE..."}
-                                  </p>
+                                  <div className='mt-auto p-2 bg-white/50 shadow-md'>
+                                      <p
+                                          className={twMerge(
+                                              "text-[var(--600)] text-xs text-center font-semibold transition-all",
+                                              !isUpdating && "animate-pulse"
+                                          )}
+                                      >
+                                          {isUpdating
+                                              ? "UPDATING..."
+                                              : "AWAITING YOUR RESPONSE..."}
+                                      </p>
+                                  </div>
                               )}
 
                               <ActionsBar
-                                  className={"border-none"}
+                                  //   className={"border-none"}
                                   huddleVariant={huddleVariant}
                                   onToggleAccept={
                                       huddleVariant ? onToggleAccept : undefined
