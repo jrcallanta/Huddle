@@ -36,6 +36,8 @@ const HuddleTile: React.FC<HuddleTileProps> = ({
 
     const [huddleVariant, setHuddleVariant] = useState(huddle.invite_status);
     const [isUpdating, setIsUpdating] = useState(false);
+    const [isDetailsModalDisplayed, setIsDetailsModalDisplayed] =
+        useState(false);
 
     const handleClick: MouseEventHandler = (event) => {
         if (selectedHuddle?._id === huddle._id) {
@@ -87,9 +89,16 @@ const HuddleTile: React.FC<HuddleTileProps> = ({
             huddleVariant !== "NOT_GOING" ? "NOT_GOING" : "PENDING"
         );
 
-    const handleViewDetails = (event: any) => {
+    const handleViewDetailsModal = (event: any) => {
         event.stopPropagation();
+        // setIsDetailsModalDisplayed(true);
         if (selectedHuddle) setFocusedHuddle(selectedHuddle);
+    };
+
+    const handleCloseDetailsModal = (event: any) => {
+        event.stopPropagation();
+        // setIsDetailsModalDisplayed(false);
+        setFocusedHuddle(null);
     };
 
     return (
@@ -179,7 +188,7 @@ const HuddleTile: React.FC<HuddleTileProps> = ({
 
                         <ActionsBar
                             huddleVariant={huddleVariant}
-                            onViewDetails={handleViewDetails}
+                            onViewDetails={handleViewDetailsModal}
                             onToggleAccept={
                                 huddleVariant
                                     ? handleToggleAcceptInvite
@@ -224,7 +233,9 @@ const HuddleTile: React.FC<HuddleTileProps> = ({
             {focusedHuddle?._id === huddle._id && (
                 <DetailsModal
                     huddle={huddle}
-                    onClose={() => setFocusedHuddle(null)}
+                    huddleVariant={huddleVariant}
+                    isUpdating={isUpdating}
+                    onClose={handleCloseDetailsModal}
                     onToggleAccept={
                         huddleVariant ? handleToggleAcceptInvite : undefined
                     }

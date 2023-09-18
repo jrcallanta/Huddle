@@ -75,7 +75,7 @@ export default function Home() {
                     id='details-modal-root'
                     className={twMerge(
                         "translate-y-0 transition-all duration-300 ease-in-out empty:translate-y-[calc(100%_+_2rem)]",
-                        "absolute top-0 min-h-[calc(100%-4rem)] left-0 right-0 m-8 mr-2 md:mr-4 rounded-3xl flex flex-col",
+                        "absolute z-20 top-0 min-h-[calc(100%-4rem)] left-0 right-0 m-8 mr-2 md:mr-4 rounded-3xl flex flex-col",
                         !focusedHuddle && "translate-y-[calc(100%_+_2rem)]"
                     )}
                 ></div>

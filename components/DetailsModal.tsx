@@ -16,6 +16,8 @@ import { BsX } from "react-icons/bs";
 */
 interface DetailsModalProps {
     huddle: HuddleTypeForTile | null;
+    huddleVariant: string | undefined;
+    isUpdating: boolean;
     onClose?: any;
     onRefresh?: any;
     onEditDetails?: (e: any) => Promise<void>;
@@ -25,13 +27,14 @@ interface DetailsModalProps {
 
 const DetailsModal: React.FC<DetailsModalProps> = ({
     huddle,
+    huddleVariant,
+    isUpdating,
     onClose,
     onToggleAccept,
     onToggleDecline,
     onEditDetails,
 }) => {
     const { currentUser } = useUser();
-    const [huddleVariant, setHuddleVariant] = useState(huddle?.invite_status);
     const container = document.getElementById("details-modal-root");
 
     return container
@@ -128,7 +131,22 @@ const DetailsModal: React.FC<DetailsModalProps> = ({
                           )}
 
                           <div className='section mt-auto'>
+                              {(huddle?.invite_status === "PENDING" ||
+                                  isUpdating) && (
+                                  <p
+                                      className={twMerge(
+                                          "section mt-auto p-2 text-white/75 text-xs text-center font-semibold z-10 -top-4 transition-all",
+                                          !isUpdating && "animate-pulse"
+                                      )}
+                                  >
+                                      {isUpdating
+                                          ? "UPDATING..."
+                                          : "AWAITING YOUR RESPONSE..."}
+                                  </p>
+                              )}
+
                               <ActionsBar
+                                  className={"border-none"}
                                   huddleVariant={huddleVariant}
                                   onToggleAccept={
                                       huddleVariant ? onToggleAccept : undefined
