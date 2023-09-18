@@ -36,18 +36,13 @@ const HuddleTile: React.FC<HuddleTileProps> = ({
 
     const [huddleVariant, setHuddleVariant] = useState(huddle.invite_status);
     const [isUpdating, setIsUpdating] = useState(false);
-    const [isDetailsModalDisplayed, setIsDetailsModalDisplayed] =
-        useState(false);
 
     const handleClick: MouseEventHandler = (event) => {
         if (selectedHuddle?._id === huddle._id) {
-            // setIsExpanded(false);
             setSelectedHuddle(null);
         } else {
-            // setIsExpanded(true);
             setSelectedHuddle(huddle);
         }
-        setFocusedHuddle(null);
     };
 
     const handleRespondInvite = async (event: any, respond: string) => {
