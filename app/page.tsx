@@ -79,12 +79,6 @@ export default function Home() {
                         !focusedHuddle && "translate-y-[calc(100%_+_2rem)]"
                     )}
                 ></div>
-
-                {/* <DetailsModal
-                    huddle={focusedHuddle}
-                    onClose={() => setFocusedHuddle(null)}
-                    onRefresh={refreshHuddles}
-                /> */}
             </div>
 
             <div className={twMerge(`w-full h-full`, `p-8 pl-4`)}>
