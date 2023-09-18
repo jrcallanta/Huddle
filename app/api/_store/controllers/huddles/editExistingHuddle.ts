@@ -11,11 +11,15 @@ interface Args {
 
 export const editExistingHuddle: ({}: Args) => Promise<PatchHuddleResponse> =
     async ({ userId, huddleId, changes }) => {
-        console.log(userId, huddleId);
-        console.log(changes);
-
         try {
             await connectMongoose();
+
+            const foundHuddle = await Huddle.findById(huddleId);
+            if (String(foundHuddle.author_id) !== userId)
+                return {
+                    message: "User not authorized",
+                    errorStatus: 401,
+                };
 
             const updatedHuddle = await Huddle.findByIdAndUpdate(
                 huddleId,
