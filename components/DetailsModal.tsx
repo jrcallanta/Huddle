@@ -40,6 +40,9 @@ const DetailsModal: React.FC<DetailsModalProps> = ({
     return container
         ? createPortal(
               <div
+                  onClick={(event) => {
+                      event.stopPropagation();
+                  }}
                   data-variant={huddleVariant}
                   className={twMerge(
                       !huddleVariant || huddleVariant === "GOING"
@@ -69,12 +72,12 @@ const DetailsModal: React.FC<DetailsModalProps> = ({
                                   id='header-time'
                                   className='w-full flex justify-stretch'
                               >
-                                  <div className='w-full flex'>
+                                  <div className='w-full flex flex-col md:flex-row '>
                                       <div className='w-full flex items-baseline gap-4'>
-                                          <p className='text text-sm font-bold text-white/50'>
+                                          <p className='text w-12 md:w-fit text-sm font-bold text-white/50'>
                                               from
                                           </p>
-                                          <p className='text text-xl font-bold text-white w-full'>
+                                          <p className='w-full text text-xl font-bold text-white'>
                                               {dateFormat(
                                                   huddle.start_time,
                                                   "h:MMtt"
@@ -82,10 +85,10 @@ const DetailsModal: React.FC<DetailsModalProps> = ({
                                           </p>
                                       </div>
                                       <div className='w-full flex items-baseline gap-4'>
-                                          <p className='text text-sm font-bold text-white/50'>
+                                          <p className='text w-12 md:w-fit text-sm font-bold text-white/50'>
                                               to
                                           </p>
-                                          <p className='text text-xl font-bold text-white w-full'>
+                                          <p className='w-full text text-xl font-bold text-white'>
                                               {huddle.end_time
                                                   ? dateFormat(
                                                         huddle.end_time,
