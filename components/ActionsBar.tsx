@@ -4,21 +4,30 @@ import { CgNotes } from "react-icons/cg";
 import { twMerge } from "tailwind-merge";
 import ActionButton from "./ActionButton";
 
+export interface HuddleInviteResponseActions {
+    onToggleAccept: (e: any) => Promise<void>;
+    onToggleDecline: (e: any) => Promise<void>;
+}
+
+export interface HuddleEditActions {
+    onEditDetails?: (e: any) => void;
+    onSaveChanges?: (e: any) => void;
+    onDiscardChanges?: (e: any) => void;
+}
+
 interface ActionsBarProps {
-    huddleVariant: string | undefined;
+    inviteStatus: string | undefined;
     onViewDetails?: (e: any) => void;
-    onEditDetails?: (e: any) => Promise<void>;
-    onToggleAccept?: (e: any) => Promise<void>;
-    onToggleDecline?: (e: any) => Promise<void>;
+    huddleInviteResponseActions?: HuddleInviteResponseActions;
+    huddleEditActions?: HuddleEditActions;
     className?: string;
 }
 
 const ActionsBar: React.FC<ActionsBarProps> = ({
-    huddleVariant,
+    inviteStatus: huddleVariant,
     onViewDetails,
-    onEditDetails,
-    onToggleAccept,
-    onToggleDecline,
+    huddleInviteResponseActions,
+    huddleEditActions,
     className,
 }) => {
     return (
@@ -47,25 +56,49 @@ const ActionsBar: React.FC<ActionsBarProps> = ({
                 />
             )}
 
-            {onEditDetails && (
-                <ActionButton
-                    className={twMerge(
-                        "w-full rounded-none border-r-2 border-solid border-r-[var(--500)] last:border-r-0 group/button"
-                    )}
-                    icon={
-                        <div className='w-7 h-7 md:w-6 md:h-6 flex justify-center items-center'>
-                            <BsPencilFill
-                                size={16}
-                                className='fill-[var(--500)] group-hover/button:fill-white'
+            {huddleEditActions && (
+                <>
+                    {huddleEditActions.onEditDetails ? (
+                        <>
+                            <ActionButton
+                                className={twMerge(
+                                    "w-full rounded-none border-r-2 border-solid border-r-[var(--500)] last:border-r-0 group/button"
+                                )}
+                                icon={
+                                    <div className='w-7 h-7 md:w-6 md:h-6 flex justify-center items-center'>
+                                        <BsPencilFill
+                                            size={16}
+                                            className='fill-[var(--500)] group-hover/button:fill-white'
+                                        />
+                                    </div>
+                                }
+                                text='Edit'
+                                onClick={huddleEditActions.onEditDetails}
                             />
-                        </div>
-                    }
-                    text='Edit'
-                    onClick={() => {}}
-                />
+                        </>
+                    ) : (
+                        <>
+                            <ActionButton
+                                className={twMerge(
+                                    " w-full h-10 rounded-none border-r-2 border-solid border-r-[var(--500)] last:border-r-0 group/button"
+                                )}
+                                text='Save Changes'
+                                type='submit'
+                            />
+
+                            <ActionButton
+                                className={twMerge(
+                                    "bg-red-300 hover:!bg-red-400 w-full h-10 rounded-none border-r-2 border-solid border-r-[var(--500)] last:border-r-0 group/button"
+                                )}
+                                text='Cancel'
+                                onClick={huddleEditActions.onDiscardChanges}
+                            />
+                        </>
+                    )}
+                </>
             )}
 
-            {onToggleAccept && onToggleDecline && (
+            {huddleInviteResponseActions && (
                 <>
                     <ActionButton
                         className={twMerge(
@@ -94,7 +127,7 @@ const ActionsBar: React.FC<ActionsBarProps> = ({
                             </div>
                         }
                         text='Accept'
-                        onClick={onToggleAccept}
+                        onClick={huddleInviteResponseActions.onToggleAccept}
                     />
 
                     <ActionButton
@@ -125,7 +158,7 @@ const ActionsBar: React.FC<ActionsBarProps> = ({
                             </div>
                         }
                         text='Decline'
-                        onClick={onToggleDecline}
+                        onClick={huddleInviteResponseActions.onToggleDecline}
                     />
                 </>
             )}

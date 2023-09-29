@@ -17,12 +17,6 @@ interface HuddleTileProps {
     style?: CSSProperties;
 }
 
-let StatusIndicator: { [key: string]: string } = {
-    GOING: "ACCEPTED",
-    NOT_GOING: "DECLINED",
-    PENDING: "PENDING",
-};
-
 const HuddleTile: React.FC<HuddleTileProps> = ({
     huddle,
     className,
@@ -34,8 +28,11 @@ const HuddleTile: React.FC<HuddleTileProps> = ({
         funcs: { setSelectedHuddle, setFocusedHuddle, refreshHuddles },
     } = useHuddles();
 
-    const [huddleVariant, setHuddleVariant] = useState(huddle.invite_status);
-    const [isUpdating, setIsUpdating] = useState(false);
+    const [huddleInviteStatusState, setHuddleInviteStatusState] = useState(
+        huddle.invite_status
+    );
+    const [isUpdatingInviteStatus, setIsUpdatingInviteStatus] = useState(false);
+    const [isInEditingMode, setIsInEditingMode] = useState(false);
 
     const handleClick: MouseEventHandler = (event) => {
         if (selectedHuddle?._id === huddle._id) {
@@ -47,8 +44,8 @@ const HuddleTile: React.FC<HuddleTileProps> = ({
 
     const handleRespondInvite = async (event: any, respond: string) => {
         event.stopPropagation();
-        setHuddleVariant(respond);
-        setIsUpdating(true);
+        setHuddleInviteStatusState(respond);
+        setIsUpdatingInviteStatus(true);
 
         await fetch("/api/invite", {
             method: "PATCH",
@@ -62,11 +59,11 @@ const HuddleTile: React.FC<HuddleTileProps> = ({
             .then(async (data) => {
                 if (data.updatedInvite) {
                     await refreshHuddles();
-                    setIsUpdating(false);
+                    setIsUpdatingInviteStatus(false);
                 } else {
                     setTimeout(() => {
-                        setHuddleVariant(huddle.invite_status);
-                        setIsUpdating(false);
+                        setHuddleInviteStatusState(huddle.invite_status);
+                        setIsUpdatingInviteStatus(false);
                     }, 500);
                 }
             });
@@ -75,34 +72,48 @@ const HuddleTile: React.FC<HuddleTileProps> = ({
     const handleToggleAcceptInvite = (event: any) =>
         handleRespondInvite(
             event,
-            huddleVariant !== "GOING" ? "GOING" : "PENDING"
+            huddleInviteStatusState !== "GOING" ? "GOING" : "PENDING"
         );
 
     const handleToggleDeclineInvite = (event: any) =>
         handleRespondInvite(
             event,
-            huddleVariant !== "NOT_GOING" ? "NOT_GOING" : "PENDING"
+            huddleInviteStatusState !== "NOT_GOING" ? "NOT_GOING" : "PENDING"
         );
 
     const handleViewDetailsModal = (event: any) => {
         event.stopPropagation();
-        // setIsDetailsModalDisplayed(true);
         if (selectedHuddle) setFocusedHuddle(selectedHuddle);
+    };
+
+    const handleEditDetails = (event: any) => {
+        event.stopPropagation();
+        console.log("editing");
+        if (selectedHuddle) {
+            setIsInEditingMode(true);
+            setFocusedHuddle(selectedHuddle);
+        }
+    };
+
+    const handleSaveDetails = (event: any) => {
+        event.preventDefault();
+        console.log("saving");
+
+        console.log(new FormData(event.target).get("title"));
     };
 
     const handleCloseDetailsModal = (event: any) => {
         event.stopPropagation();
-        // setIsDetailsModalDisplayed(false);
+        setIsInEditingMode(false);
         setFocusedHuddle(null);
     };
 
     return (
         <div
-            data-variant={huddleVariant}
+            data-variant={huddleInviteStatusState}
             data-expanded={huddle._id === selectedHuddle?._id}
-            // data-selected={huddle._id === selectedHuddle?._id}
             className={twMerge(
-                !huddleVariant || huddleVariant === "GOING"
+                !huddleInviteStatusState || huddleInviteStatusState === "GOING"
                     ? "themed-darker"
                     : "themed",
                 "huddleTile relative w-full rounded-xl transition-all duration-250 group/huddle",
@@ -182,16 +193,21 @@ const HuddleTile: React.FC<HuddleTileProps> = ({
                         ></div> */}
 
                         <ActionsBar
-                            huddleVariant={huddleVariant}
+                            inviteStatus={huddleInviteStatusState}
                             onViewDetails={handleViewDetailsModal}
-                            onToggleAccept={
-                                huddleVariant
-                                    ? handleToggleAcceptInvite
+                            huddleInviteResponseActions={
+                                huddleInviteStatusState
+                                    ? {
+                                          onToggleAccept:
+                                              handleToggleAcceptInvite,
+                                          onToggleDecline:
+                                              handleToggleDeclineInvite,
+                                      }
                                     : undefined
                             }
-                            onToggleDecline={
-                                huddleVariant
-                                    ? handleToggleDeclineInvite
+                            huddleEditActions={
+                                !huddleInviteStatusState
+                                    ? { onEditDetails: handleEditDetails }
                                     : undefined
                             }
                         />
@@ -199,7 +215,7 @@ const HuddleTile: React.FC<HuddleTileProps> = ({
                 )}
             </div>
 
-            {(huddle.invite_status === "PENDING" || isUpdating) && (
+            {(huddle.invite_status === "PENDING" || isUpdatingInviteStatus) && (
                 <p
                     className='
                     status
@@ -221,22 +237,28 @@ const HuddleTile: React.FC<HuddleTileProps> = ({
                     transition-all
                     '
                 >
-                    {isUpdating ? "UPDATING..." : "PENDING"}
+                    {isUpdatingInviteStatus ? "UPDATING..." : "PENDING"}
                 </p>
             )}
 
             {focusedHuddle?._id === huddle._id && (
                 <DetailsModal
                     huddle={huddle}
-                    huddleVariant={huddleVariant}
-                    isUpdating={isUpdating}
+                    isUpdatingInviteStatus={isUpdatingInviteStatus}
+                    isInEditingMode={isInEditingMode}
                     onClose={handleCloseDetailsModal}
-                    onToggleAccept={
-                        huddleVariant ? handleToggleAcceptInvite : undefined
-                    }
-                    onToggleDecline={
-                        huddleVariant ? handleToggleDeclineInvite : undefined
-                    }
+                    onRefresh={refreshHuddles}
+                    actionsBarActions={{
+                        huddleInviteResponseActions: huddleInviteStatusState
+                            ? {
+                                  onToggleAccept: handleToggleAcceptInvite,
+                                  onToggleDecline: handleToggleDeclineInvite,
+                              }
+                            : undefined,
+                        huddleEditActions: !huddleInviteStatusState
+                            ? { onEditDetails: handleEditDetails }
+                            : undefined,
+                    }}
                 />
             )}
         </div>
