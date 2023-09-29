@@ -4,12 +4,14 @@ interface EditableTitleProps
     extends React.InputHTMLAttributes<HTMLInputElement> {
     text: string;
     inputId: string;
+    name: string;
     isEditing: boolean;
 }
 
 const EditableTitle: React.FC<EditableTitleProps> = ({
     text,
     inputId,
+    name,
     isEditing,
     className,
 }) => {
@@ -18,6 +20,7 @@ const EditableTitle: React.FC<EditableTitleProps> = ({
     ) : (
         <input
             id={inputId}
+            name={name}
             className={className}
             type='text'
             placeholder={text}
