@@ -13,6 +13,7 @@ import { BsX } from "react-icons/bs";
 import FormDiv from "./switch-components/FormDiv";
 import EditableTitle from "./switch-components/EditableTitle";
 import { useUser } from "@/hooks/useUser";
+import TimePicker from "./switch-components/TimePicker";
 
 /* NOTE:    When on 'By Timeline' tab,
             updating invite response through
@@ -52,13 +53,54 @@ const DetailsModal: React.FC<DetailsModalProps> = ({
         setisInEditingMode((prev) => !prev);
     };
 
+    const _validateInputs: (props: {
+        title: string;
+        startTime: string;
+        endTime: string;
+    }) => boolean = ({ title, startTime, endTime }) => {
+        if (!title || title === "") {
+            setSaveFeedback("Title cannot be blank");
+            return false;
+        }
+
+        if (!startTime) {
+            setSaveFeedback("Huddle needs a start time");
+            return false;
+        }
+
+        if (startTime && endTime && startTime > endTime) {
+            setSaveFeedback("End time cannot be before start time");
+            return false;
+        }
+
+        return true;
+    };
+
     const handleSaveDetails = (event: any) => {
         event.preventDefault();
         console.log("saving");
 
-        const newTitle = new FormData(event.target).get("title");
+        const formData = new FormData(event.target);
+        const newTitle = formData.get("title");
+        const startTime = formData.get("start-time-hidden");
+        const endTime = formData.get("end-time-hidden");
+
+        const valid = _validateInputs({
+            title: newTitle as string,
+            startTime: startTime as string,
+            endTime: endTime as string,
+        });
+
+        if (!valid) return;
+
         setHuddleState((prev) => {
-            return { ...prev, title: newTitle } as HuddleTypeForTile;
+            return {
+                ...prev,
+                title: newTitle,
+                start_time: new Date(Number(startTime)),
+                end_time:
+                    endTime !== "?" ? new Date(Number(endTime)) : undefined,
+            } as HuddleTypeForTile;
         });
         setSaveFeedback(null);
 
@@ -70,6 +112,8 @@ const DetailsModal: React.FC<DetailsModalProps> = ({
                     huddleId: huddleState?._id,
                     changes: {
                         title: newTitle,
+                        start_time: new Date(Number(startTime)),
+                        end_time: new Date(Number(endTime)),
                     },
                 }),
             })
@@ -111,56 +155,49 @@ const DetailsModal: React.FC<DetailsModalProps> = ({
                       <p className='text text-sm text-center text-white/75 hover:text-white font-medium cursor-pointer'>{`@${huddleState.author.username}`}</p>
                   </div>
 
-                  <div id='header' className='section flex flex-col gap-4 p-4'>
-                      <div
-                          id='header-title'
+                  <div id='header' className='section flex flex-col gap-5 p-4'>
+                      <EditableTitle
+                          text={huddleState.title}
+                          inputId={"title-input"}
+                          name={"title"}
+                          isEditing={isInEditingMode}
                           className={twMerge(
-                              "w-full flex",
-                              isInEditingMode && "before-bg"
+                              "w-full bg-inherit text text-2xl font-bold outline-none placeholder:text-white/50 focus:text-white truncate",
+                              !isInEditingMode ? "text-white" : "text-white/50"
                           )}
-                      >
-                          <EditableTitle
-                              text={huddleState.title}
-                              inputId={"title-input"}
-                              name={"title"}
-                              isEditing={isInEditingMode}
-                              className={twMerge(
-                                  "w-full bg-inherit text text-2xl font-bold outline-none placeholder:text-white/50 focus:text-white",
-                                  !isInEditingMode
-                                      ? "text-white"
-                                      : "text-white/50"
-                              )}
-                          />
-                      </div>
+                      />
                       <div
                           id='header-time'
                           className='w-full flex justify-stretch'
                       >
-                          <div className='w-full flex flex-col md:flex-row '>
-                              <div className='w-full flex items-baseline gap-4'>
-                                  <p className='text w-12 md:w-fit text-sm font-bold text-white/50'>
-                                      from
-                                  </p>
-                                  <p className='w-full text text-xl font-bold text-white'>
-                                      {dateFormat(
-                                          huddleState.start_time,
-                                          "h:MMtt"
-                                      )}
-                                  </p>
-                              </div>
-                              <div className='w-full flex items-baseline gap-4'>
-                                  <p className='text w-12 md:w-fit text-sm font-bold text-white/50'>
-                                      to
-                                  </p>
-                                  <p className='w-full text text-xl font-bold text-white'>
-                                      {huddleState.end_time
-                                          ? dateFormat(
-                                                huddleState.end_time,
-                                                "h:MMtt"
-                                            )
-                                          : "?"}
-                                  </p>
-                              </div>
+                          <div className='w-full flex flex-col md:flex-row gap-5 md:gap-6'>
+                              <TimePicker
+                                  label='from'
+                                  initialTime={huddleState.start_time}
+                                  isEditing={isInEditingMode}
+                                  inputId={"start-time-input"}
+                                  name={"start-time"}
+                                  className={twMerge(
+                                      "w-full bg-inherit text text-xl text-white font-bold outline-none placeholder:text-white/50 focus:text-white",
+                                      !isInEditingMode
+                                          ? "text-white"
+                                          : "text-white/50"
+                                  )}
+                              />
+                              <TimePicker
+                                  optional
+                                  label='to'
+                                  initialTime={huddleState.end_time}
+                                  isEditing={isInEditingMode}
+                                  inputId={"end-time-input"}
+                                  name={"end-time"}
+                                  className={twMerge(
+                                      "w-full bg-inherit text text-xl text-white font-bold outline-none placeholder:text-white/50 focus:text-white",
+                                      !isInEditingMode
+                                          ? "text-white"
+                                          : "text-white/50"
+                                  )}
+                              />
                           </div>
                       </div>
                   </div>

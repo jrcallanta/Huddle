@@ -72,6 +72,7 @@ body {
         @apply before:absolute before:top-[50%] before:left-[50%] before:translate-x-[-50%] before:translate-y-[-50%]  before:h-[calc(100%+.75rem)] before:w-[calc(100%+1rem)];
         @apply before:bg-[var(--500)] before:opacity-50 before:rounded-md;
         @apply before:pointer-events-none;
+        @apply before:border-2 before:border-transparent [&:has(:focus)]:before:border-white;
         @apply [&_>_*]:z-10;
     }
 }

@@ -1,4 +1,5 @@
 import React from "react";
+import { twMerge } from "tailwind-merge";
 
 interface EditableTitleProps
     extends React.InputHTMLAttributes<HTMLInputElement> {
@@ -15,17 +16,21 @@ const EditableTitle: React.FC<EditableTitleProps> = ({
     isEditing,
     className,
 }) => {
-    return !isEditing ? (
-        <p className={className}>{text}</p>
-    ) : (
-        <input
-            id={inputId}
-            name={name}
-            className={className}
-            type='text'
-            placeholder={text}
-            defaultValue={text}
-        />
+    return (
+        <div className={twMerge("w-full flex", isEditing && "before-bg")}>
+            {!isEditing ? (
+                <p className={className}>{text}</p>
+            ) : (
+                <input
+                    id={inputId}
+                    name={name}
+                    className={className}
+                    type='text'
+                    placeholder={text}
+                    defaultValue={text}
+                />
+            )}
+        </div>
     );
 };
 
