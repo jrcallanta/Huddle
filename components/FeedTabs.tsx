@@ -43,7 +43,7 @@ const FeedTabs: React.FC<FeedTabsProps> = ({
                     flex
                     justify-center
                     pb-2
-                    mb-4
+                    mb-2 md:mb-4
                     `,
                 String(className)
             )}
@@ -89,7 +89,7 @@ const FeedTabs: React.FC<FeedTabsProps> = ({
                 >
                     <h1
                         className={twMerge(
-                            `text-lg font-semibold transition duration-150 whitespace-nowrap`,
+                            `text-sm md:text-lg font-semibold transition duration-150 whitespace-nowrap`,
                             i === activeTab ? "text-black" : "text-black/50"
                         )}
                     >
