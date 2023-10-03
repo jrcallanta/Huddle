@@ -27,6 +27,7 @@ const Map: React.FC<MapProps> = ({
     const currentPosition = useCurrentPosition();
     const {
         states: { selectedHuddle, focusedHuddle },
+        funcs: { setFocusedHuddle },
     } = useHuddles();
 
     const createMapOptions = (maps: {
@@ -77,7 +78,10 @@ const Map: React.FC<MapProps> = ({
                                   "h:MMtt"
                               )}`}
                     </p>
-                    <p className='text text-lg font-semibold'>
+                    <p
+                        className='text text-lg inline font-semibold cursor-pointer hover:underline'
+                        onClick={() => setFocusedHuddle(selectedHuddle)}
+                    >
                         {selectedHuddle.title}
                     </p>
                 </div>
