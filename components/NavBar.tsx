@@ -17,7 +17,7 @@ const NavBar: React.FC<NavBarProps> = ({ vertical = false }) => {
         <div
             data-vertical={vertical}
             className={twMerge(
-                `hidden sticky z-10 top-0 w-full h-20 bg-black md:flex justify-between px-8`,
+                `flex sticky z-10 top-0 w-full h-20 bg-black justify-between px-8`,
                 vertical && "w-[8%] left-0 min-w-[8rem] h-screen px-2 py-8"
             )}
         >

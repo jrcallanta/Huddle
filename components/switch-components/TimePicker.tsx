@@ -40,7 +40,7 @@ const TimePicker: React.FC<TimePickerProps> = ({
             )}
         >
             {label && (
-                <p className='text w-12 md:w-fit text-sm font-bold text-white/50'>
+                <p className='text z-[1] w-12 md:w-fit text-sm font-bold text-white/50'>
                     {label}
                 </p>
             )}
@@ -75,7 +75,7 @@ const TimePicker: React.FC<TimePickerProps> = ({
 
             <div
                 className={twMerge(
-                    "hidden flex-col absolute -right-2 top-[calc(100%_+_.5rem)] overflow-clip h-64 w-[calc(100%_+_1rem)]",
+                    "hidden z-[2] flex-col absolute -right-2 top-[calc(100%_+_.5rem)] overflow-clip h-64 w-[calc(100%_+_1rem)]",
                     "bg-[var(--400)] rounded-b-md ",
                     isEditing &&
                         "dropdown group-[:has(:focus,:active)]/tpicker:flex"

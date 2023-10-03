@@ -89,11 +89,11 @@ export default function Home() {
 
             <div
                 className={twMerge(
-                    "w-full h-full relative overflow-scroll pointer-events-none",
+                    "w-full h-full relative overflow-y-auto pointer-events-none z-20",
                     "pb-0 md:pt-4 md:pb-0"
                 )}
             >
-                <div className='md:hidden w-full h-[calc(100%_-_16rem)] pointer-events-none bg-transparent'></div>
+                <div className='md:hidden w-full h-[calc(100%_-_3.5rem)] pointer-events-none bg-transparent'></div>
                 <div
                     className={twMerge(
                         "p-4 pb-0 md:pr-0 w-full md:max-w-[36rem] mx-auto overflow-hidden top-0 flex flex-col justify-center align-stretch gap-4",

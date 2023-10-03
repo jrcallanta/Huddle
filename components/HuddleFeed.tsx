@@ -1,5 +1,3 @@
-import HuddleTile from "./HuddleTile";
-
 import { HuddleTypeForTile } from "@/types";
 import HuddleTileLoader from "./HuddleTileLoader";
 import { twMerge } from "tailwind-merge";
