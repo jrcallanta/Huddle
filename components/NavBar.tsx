@@ -38,7 +38,7 @@ const NavBar: React.FC<NavBarProps> = ({ vertical = false }) => {
             >
                 {sessionStatus !== "loading" && !session && (
                     <OptionButton
-                        className='w-fit text-black text-sm font-semibold bg-white rounded-full py-2 px-4'
+                        className='order-2 w-fit text-black text-sm font-semibold bg-white rounded-full py-2 px-4'
                         onClick={() => signIn()}
                     >
                         login
@@ -60,35 +60,8 @@ const NavBar: React.FC<NavBarProps> = ({ vertical = false }) => {
                                 height={40}
                             />
                         </div>
-                        {/* <div
-                            className={twMerge(
-                                `flex justify-center items-center gap-4`,
-                                vertical && "flex-col"
-                            )}
-                        >
-                            <div className='flex justify-center items-center h-fit'>
-                                <div className='ml-auto rounded-full p-1 flex justify-center items-center border-white border-[.15rem]'>
-                                    <Image
-                                        className='rounded-full'
-                                        src={session.user?.image ?? ""}
-                                        alt={"user_avatar"}
-                                        width={36}
-                                        height={36}
-                                    />
-                                </div>
-                            </div>
-                            <p
-                                className={twMerge(
-                                    `text text-lg text-center text-white truncate whitespace-nowrap font-semibold`,
-                                    vertical && "opacity-0 select-none"
-                                )}
-                            >
-                                {session.user?.name}
-                            </p>
-                        </div> */}
-
                         {/* <OptionButton
-                            className='w-fit text-black text-sm font-semibold bg-white rounded-full py-2 px-4'
+                            className='order-2 w-fit text-black text-sm font-semibold bg-white rounded-full py-2 px-4'
                             onClick={() => signOut()}
                         >
                             logout
