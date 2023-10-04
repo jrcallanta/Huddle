@@ -37,6 +37,7 @@ const FeedTabs: React.FC<FeedTabsProps> = ({
     return (
         <div
             className={twMerge(
+<<<<<<< Updated upstream
                 `
                     relative
                     w-full
@@ -45,46 +46,32 @@ const FeedTabs: React.FC<FeedTabsProps> = ({
                     pb-2
                     mb-2 md:mb-4
                     `,
+=======
+                "themed relative w-full flex justify-center pb-2 mb-2 md:mb-4",
+>>>>>>> Stashed changes
                 String(className)
             )}
         >
+            <div className='absolute md:hidden -top-2 left-0 right-0 mx-auto rounded bg-[var(--200)] min-w-[2rem] w-1/6 h-1'></div>
             <div
                 id='active-indicator'
                 style={activeIndicatorStyles()}
                 className={twMerge(
-                    `
-                absolute
-                bottom-0
-                transition-all
-                flex
-                justify-center
-                `
+                    "absolute bottom-0 transition-all flex justify-center"
                 )}
             >
                 <div
                     id='active-indicator__bar'
                     style={{ width: `${tabs[activeTab].length - 1}ch` }}
                     className={twMerge(
-                        `
-                    h-1
-                    bg-black/75            
-                    rounded-t-lg
-                    transition-all
-                    `
+                        "h-1 bg-black/75 rounded-t-lg transition-all"
                     )}
                 ></div>
             </div>
             {tabs.map((tab, i) => (
                 <div
                     key={i}
-                    className='
-                    flex-1
-                    flex
-                    justify-center
-                    align-center
-                    p-1
-                    cursor-pointer
-                '
+                    className="flex-1 flex justify-center align-center p-1 cursor-pointer"
                     onClick={() => onTabChange(i)}
                 >
                     <h1
