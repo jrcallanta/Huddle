@@ -5,6 +5,7 @@ import OptionButton from "./OptionButton";
 import { signIn, signOut, useSession } from "next-auth/react";
 import Image from "next/image";
 import { twMerge } from "tailwind-merge";
+import SearchBar from "./SearchBar";
 
 interface NavBarProps {
     vertical?: boolean;
@@ -23,7 +24,7 @@ const NavBar: React.FC<NavBarProps> = ({ vertical = false }) => {
         >
             <div
                 className={twMerge(
-                    `w-full flex justify-between items-center gap-12`,
+                    `w-full flex justify-between items-center gap-4`,
                     vertical && "flex-col"
                 )}
             >
@@ -64,12 +65,15 @@ const NavBar: React.FC<NavBarProps> = ({ vertical = false }) => {
                                 {session.user?.name}
                             </p>
                         </div>
-                        <OptionButton
+
+                        <SearchBar className={"ml-auto"} />
+
+                        {/* <OptionButton
                             className='w-fit text-black text-sm font-semibold bg-white rounded-full py-2 px-4'
                             onClick={() => signOut()}
                         >
                             logout
-                        </OptionButton>
+                        </OptionButton> */}
                     </>
                 )}
             </div>
