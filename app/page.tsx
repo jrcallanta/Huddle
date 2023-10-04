@@ -6,14 +6,11 @@ import { useState, useEffect } from "react";
 import { HuddleSection } from "@/components/HuddleFeed";
 import { huddleSorter } from "@/tools/huddleSorter";
 import { useHuddles } from "@/hooks/useHuddles";
-import { useUser } from "@/hooks/useUser";
 import { twMerge } from "tailwind-merge";
 import Map from "@/components/Map";
 import Marker from "@/components/Marker";
-import DetailsModal from "@/components/DetailsModal";
 
 export default function Home() {
-    const { currentUser } = useUser();
     const {
         states: { huddleList, selectedHuddle, focusedHuddle },
         funcs: { setSelectedHuddle, setFocusedHuddle, refreshHuddles },
