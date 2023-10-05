@@ -33,7 +33,7 @@ export interface InviteType {
 
 export interface UserType {
     _id: string;
-    email: string;
+    email?: string;
     name: string;
     username: string;
     imgUrl?: string;
