@@ -1,6 +1,7 @@
-import React, { useEffect, useState } from "react";
+"use client";
+
+import React, { useState } from "react";
 import { FiSearch } from "react-icons/fi";
-import { RxCaretLeft } from "react-icons/rx";
 import { twMerge } from "tailwind-merge";
 
 interface SearchBarProps {
