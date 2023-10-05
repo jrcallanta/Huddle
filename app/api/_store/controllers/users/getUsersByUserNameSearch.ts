@@ -2,28 +2,30 @@ import { connectMongoose } from "@/app/api/_store/connectMongoose";
 import User from "@/app/api/_store/models/user";
 import { GetUserResponse } from "@/app/api/_store/controllerResponseTypes";
 
-export const getUserByUserName: (
-    username: string
-) => Promise<GetUserResponse> = async (username) => {
+export const getUsersByUserNameSearch: (
+    username: string,
+    currentUserId?: string
+) => Promise<GetUserResponse> = async (username, currentUserId) => {
     try {
         await connectMongoose();
 
-        let userDoc = (await User.find({ username: username }).exec())[0];
-        return userDoc
+        console.log(username, currentUserId);
+
+        // if (!currentUserId) {
+        let userDocs = await User.find({ username: username }).exec();
+        return userDocs
             ? {
-                  message: "Successfully retrieved user.",
-                  user: {
-                      _id: userDoc._id.toString(),
-                      name: userDoc.name ?? "",
-                      username: userDoc.username ?? "",
-                      imgUrl: userDoc.imgUrl ?? "",
-                  },
+                  message: "Successfully queried users.",
+                  users: userDocs,
               }
             : {
                   message: "Could not find user.",
                   error: Error("UserNotFoundError"),
                   errorStatus: 404,
               };
+        // } else {
+        //     // Search username and sort results base on currentUserId
+        // }
     } catch (error) {
         return {
             message: "Could not find user.",
