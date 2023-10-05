@@ -82,7 +82,9 @@ const SearchPage = ({ params: { query } }: { params: { query: string } }) => {
                         <UserBanner
                             user={user}
                             className={twMerge(
-                                "animate-fade-in shadow bg-white hover:bg-neutral-200 hover:-translate-y-2 hover:translate-x-2 [&_.text]:text-black [&_>_*]:border-black [&_.bannerIcon]:bg-black/25 border-black"
+                                "animate-fade-in hover:-translate-y-2 hover:translate-x-2"
+                                // "animate-fade-in shadow bg-neutral-800 hover:bg-neutral-600 hover:-translate-y-2 hover:translate-x-2 [&_.text]:text-white [&_>_*]:border-white [&_.bannerIcon]:bg-white/25 border-black",
+                                // "bg-white shadow hover:shadow-lg hover:bg-neutral-200  [&_.text]:text-black [&_>_*]:border-black [&_.bannerIcon]:bg-black/25 border-black"
                             )}
                             style={{
                                 animationDelay: `${i * 25}ms`,

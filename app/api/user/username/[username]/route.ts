@@ -23,7 +23,7 @@ export async function POST(
     const { username } = params;
     const { currentUser } = await req.json();
 
-    let result = await getUsersByStringSearch({ query: username, page: 2 });
+    let result = await getUsersByStringSearch({ query: username });
 
     console.log(result);
 
