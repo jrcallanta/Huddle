@@ -6,7 +6,7 @@
     /* --background-color: #f8be89; */
     /* --background-color: #faebdd; */
     /* --background-color: #fef8f1; */
-    --background-color: theme(colors.slate.300);
+    --background-color: theme(colors.white);
 }
 
 @media (prefers-color-scheme: dark) {
@@ -73,7 +73,7 @@ body {
         @apply before:bg-[var(--500)] before:opacity-50 before:rounded-md;
         @apply before:pointer-events-none;
         @apply before:border-2 before:border-transparent [&:has(:focus)]:before:border-white;
-        @apply [&_>_*]:z-10;
+        @apply [&_>_input]:z-[1];
     }
 }
 

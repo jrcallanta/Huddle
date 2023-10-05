@@ -15,12 +15,19 @@ const DEFAULT = {
 interface MapProps {
     markers?: Coords[];
     children: any;
+    className?: string;
 }
 
-const Map: React.FC<MapProps> = ({ markers = [], children, ...props }) => {
+const Map: React.FC<MapProps> = ({
+    markers = [],
+    children,
+    className,
+    ...props
+}) => {
     const currentPosition = useCurrentPosition();
     const {
         states: { selectedHuddle, focusedHuddle },
+        funcs: { setFocusedHuddle },
     } = useHuddles();
 
     const createMapOptions = (maps: {
@@ -41,15 +48,17 @@ const Map: React.FC<MapProps> = ({ markers = [], children, ...props }) => {
             className={twMerge(
                 `themed h-full w-full bg-[var(--100)] border-black overflow-clip`,
                 // `absolute -z-20`,
-                `relative rounded-3xl border-4 `
+                `relative rounded-none md:rounded-3xl md:border-4`,
+                String(className)
             )}
         >
             {selectedHuddle && selectedHuddle.location && (
                 <div
                     className={twMerge(
-                        "absolute bottom-0 left-0 right-0 h-fit py-6 px-8 z-10 bg-black/60 border-t-[4px] border-black text-white/90",
+                        "absolute top-0 md:top-auto md:bottom-0 left-0 right-0 h-fit py-6 px-8 z-10 bg-black/60 border-b-[4px] md:border-b-0 md:border-t-[4px] border-black text-white/90",
                         "translate-y-0 transition-transform duration-300 ease-in-out",
-                        focusedHuddle && "translate-y-[100%]"
+                        focusedHuddle &&
+                            "-translate-y-[100%] md:translate-y-[100%]"
                     )}
                 >
                     <p className='text text-sm mb-2'>
@@ -69,7 +78,10 @@ const Map: React.FC<MapProps> = ({ markers = [], children, ...props }) => {
                                   "h:MMtt"
                               )}`}
                     </p>
-                    <p className='text text-lg font-semibold'>
+                    <p
+                        className='text text-lg inline font-semibold cursor-pointer hover:underline'
+                        onClick={() => setFocusedHuddle(selectedHuddle)}
+                    >
                         {selectedHuddle.title}
                     </p>
                 </div>

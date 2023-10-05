@@ -34,7 +34,7 @@ export default function RootLayout({
                 <SessionProvider>
                     <UserContextProvider>
                         <CurrentPositionProvider>
-                            <div className='h-screen w-full flex flex-col [&:has([data-vertical=true])]:flex-row justify-center items-center'>
+                            <div className='h-screen w-full flex flex-col justify-center items-center'>
                                 <NavBar vertical={false} />
                                 <HuddleProvider>{children}</HuddleProvider>
                             </div>

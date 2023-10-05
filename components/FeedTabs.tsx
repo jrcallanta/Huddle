@@ -65,7 +65,7 @@ const FeedTabs: React.FC<FeedTabsProps> = ({
                 >
                     <h1
                         className={twMerge(
-                            `text-lg font-semibold transition duration-150 whitespace-nowrap`,
+                            `text-sm md:text-lg font-semibold transition duration-150 whitespace-nowrap`,
                             i === activeTab ? "text-black" : "text-black/50"
                         )}
                     >

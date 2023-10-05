@@ -145,7 +145,7 @@ const DetailsModal: React.FC<DetailsModalProps> = ({
                           huddleState.invite_status === "GOING"
                           ? "themed-darker"
                           : "themed",
-                      "absolute overflow-clip top-0 h-full left-0 right-0 rounded-3xl flex flex-col",
+                      "absolute overflow-clip top-0 h-full left-0 right-0 rounded-t-3xl md:rounded-3xl flex flex-col",
                       "bg-[var(--500)] border-4 border-[var(--600)] [&_.section]:bg-[var(--400)]",
                       "[&_>_.section:not(:last-of-type)]:border-b-2 [&_>_.section]:border-inherit [&_>_.section]:transition-colors"
                   )}
