@@ -26,7 +26,7 @@ export const getUsersByStringSearch: (
         let userDocs = await User.find({
             $or: [{ username: { $regex: regex } }, { name: { $regex: regex } }],
         })
-            .limit(5 * page)
+            .limit(10 * page)
             .exec();
         return userDocs
             ? {
