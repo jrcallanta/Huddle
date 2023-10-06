@@ -1,6 +1,12 @@
+export interface LocationType {
+    display?: String;
+    coordinates: {
+        lat: number;
+        lng: number;
+    };
+}
 export interface HuddleType {
     _id: string;
-    created_at: Date;
     author_id: string;
     author: UserType;
     title: string;
@@ -8,14 +14,8 @@ export interface HuddleType {
     location?: LocationType;
     start_time: Date;
     end_time?: Date;
-}
-
-export interface LocationType {
-    display?: String;
-    coordinates: {
-        lat: number;
-        lng: number;
-    };
+    created_at?: Date;
+    updated_at?: Date;
 }
 
 export interface HuddleTypeForTile extends HuddleType {
@@ -28,7 +28,8 @@ export interface InviteType {
     user_id?: string;
     user?: UserType;
     status: string;
-    created_at: Date;
+    created_at?: Date;
+    updated_at?: Date;
 }
 
 export interface UserType {
@@ -37,4 +38,17 @@ export interface UserType {
     name: string;
     username: string;
     imgUrl?: string;
+    created_at?: Date;
+    updated_at?: Date;
+}
+
+export interface FriendshipType {
+    _id?: string;
+    status: string;
+    fromUserId?: string;
+    toUserId?: string;
+    fromUser?: UserType;
+    toUser?: UserType;
+    created_at?: Date;
+    updated_at?: Date;
 }
