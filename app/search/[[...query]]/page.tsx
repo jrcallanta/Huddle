@@ -21,10 +21,10 @@ const SearchPage = ({ params: { query } }: { params: { query: string } }) => {
     useEffect(() => {
         const fetchQuery = async (query: string) => {
             setFetchStatus(FETCH_STATUS.loading);
-            const data = await fetch(`/api/user/username/${query}`, {
+            const data = await fetch(`/api/user/search/${query}`, {
                 method: "POST",
                 body: JSON.stringify({
-                    currentUser: currentUser,
+                    currentUserId: currentUser?._id,
                 }),
             })
                 .then((res) => res.json())
@@ -42,7 +42,8 @@ const SearchPage = ({ params: { query } }: { params: { query: string } }) => {
     return (
         <main
             className={twMerge(
-                "themed h-screen w-full overflow-hidden overflow-y-auto p-4 pr-6 bg-white flex flex-col gap-4 mr-auto relative"
+                "themed h-screen w-full overflow-hidden overflow-y-auto p-4 pr-6 bg-white flex flex-col gap-4 mr-auto relative",
+                "[&_>_*]:animate-fade-in"
             )}
         >
             {!query && (

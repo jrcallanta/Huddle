@@ -3,18 +3,22 @@ import Image from "next/image";
 import React from "react";
 import { twMerge } from "tailwind-merge";
 
+interface UserTypeForTile extends UserType {
+    friendStatus: string;
+}
+
 interface UserListTileProps {
-    users: UserType[];
+    users: UserTypeForTile[];
     className?: string;
 }
 
 const UserListTile: React.FC<UserListTileProps> = ({ users, className }) => {
     return (
-        <div className='themed w-full h-fit rounded overflow-clip flex flex-col'>
+        <div className='themed w-full h-fit rounded-lg overflow-clip flex flex-col'>
             {users.map((user, i) => (
                 <div
                     className={twMerge(
-                        "relative h-fit w-full flex gap-4 hover:bg-black/10 p-2 border-b-2 border-white/10 last:border-none"
+                        "animate-fade-in relative h-fit w-full flex items-center gap-4 hover:bg-black/10 p-2 border-b-2 border-white/10 last:border-none transition-colors"
                     )}
                 >
                     <div
@@ -44,6 +48,13 @@ const UserListTile: React.FC<UserListTileProps> = ({ users, className }) => {
                             {user.name}
                         </p>
                     </div>
+                    {user.friendStatus && (
+                        <button className='ml-auto h-fit border-2 border-black flex justify-center items-center px-2 rounded-full'>
+                            <p className='text text-sm text-black'>
+                                {user.friendStatus}
+                            </p>
+                        </button>
+                    )}
                 </div>
             ))}
         </div>
