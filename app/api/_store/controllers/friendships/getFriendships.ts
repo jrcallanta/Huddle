@@ -2,18 +2,11 @@ import mongoose from "mongoose";
 import { GetFriendshipsResponse } from "../../controllerResponseTypes";
 import Friendship from "../../models/friendships";
 import { connectMongoose } from "../../connectMongoose";
+import { publicUserProjection } from "../users/getAllUsers";
 
 interface params {
     userId: string;
 }
-
-const publicUserProjection: mongoose.PipelineStage.Project = {
-    $project: {
-        email: 0,
-        createdAt: 0,
-        updatedAt: 0,
-    },
-};
 
 export const getFriendships: (
     params: params
