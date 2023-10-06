@@ -2,17 +2,29 @@ import { connectMongoose } from "@/app/api/_store/connectMongoose";
 import User from "@/app/api/_store/models/user";
 import { GetUserResponse } from "@/app/api/_store/controllerResponseTypes";
 
-interface params {
-    query: string;
+export enum UserSearchFilterGroups {
+    ALL = "ALL",
+    FRIENDS = "FRIENDS",
+    REQUESTS = "REQUESTS",
+    SUGGESTED = "SUGGESTED",
+}
+interface resultOptions {
     currentUserId?: string;
     page?: number;
+    filters?: UserSearchFilterGroups[];
+}
+interface params {
+    query: string;
+    options?: resultOptions;
 }
 
 export const getUsersByStringSearch: (
     params: params
-) => Promise<GetUserResponse> = async ({ query, currentUserId, page = 1 }) => {
+) => Promise<GetUserResponse> = async ({ query, options }) => {
     try {
         await connectMongoose();
+
+        const page = options?.page || 1;
 
         // if (!currentUserId) {
         let regex = new RegExp(

@@ -1,6 +1,7 @@
 "use client";
 
 import UserBanner from "@/components/UserBanner";
+import UserListTile from "@/components/UserListTile";
 import { useUser } from "@/hooks/useUser";
 import { UserType } from "@/types";
 import React, { useEffect, useState } from "react";
@@ -41,7 +42,7 @@ const SearchPage = ({ params: { query } }: { params: { query: string } }) => {
     return (
         <main
             className={twMerge(
-                "themed h-screen w-full overflow-hidden overflow-y-auto p-4 pr-6 bg-white flex flex-col mr-auto relative"
+                "themed h-screen w-full overflow-hidden overflow-y-auto p-4 pr-6 bg-white flex flex-col gap-4 mr-auto relative"
             )}
         >
             {!query && (
@@ -77,19 +78,20 @@ const SearchPage = ({ params: { query } }: { params: { query: string } }) => {
             )}
 
             {searchResults && fetchStatus !== "LOADING" && (
-                <div className='flex flex-col gap-6 mt-3 py-4 max-w-screen-lg'>
-                    {searchResults.map((user: UserType, i) => (
-                        <UserBanner
-                            user={user}
-                            className={twMerge("animate-fade-in")}
-                            style={{
-                                animationDelay: `${i * 25}ms`,
-                                animationTimingFunction: "ease-in",
-                                animationFillMode: "backwards",
-                            }}
-                        />
-                    ))}
-                </div>
+                // <div className='flex flex-col gap-6 mt-3 py-4 max-w-screen-lg'>
+                //     {searchResults.map((user: UserType, i) => (
+                //         <UserBanner
+                //             user={user}
+                //             className={twMerge("animate-fade-in")}
+                //             style={{
+                //                 animationDelay: `${i * 25}ms`,
+                //                 animationTimingFunction: "ease-in",
+                //                 animationFillMode: "backwards",
+                //             }}
+                //         />
+                //     ))}
+                // </div>
+                <UserListTile users={searchResults} />
             )}
         </main>
     );
