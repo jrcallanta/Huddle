@@ -41,7 +41,7 @@ const SearchPage = ({ params: { query } }: { params: { query: string } }) => {
     return (
         <main
             className={twMerge(
-                "themed h-screen w-full overflow-hidden overflow-y-auto p-8 bg-white flex flex-col mr-auto relative"
+                "themed h-screen w-full overflow-hidden overflow-y-auto p-4 pr-6 bg-white flex flex-col mr-auto relative"
             )}
         >
             {!query && (
@@ -81,11 +81,7 @@ const SearchPage = ({ params: { query } }: { params: { query: string } }) => {
                     {searchResults.map((user: UserType, i) => (
                         <UserBanner
                             user={user}
-                            className={twMerge(
-                                "animate-fade-in hover:-translate-y-2 hover:translate-x-2"
-                                // "animate-fade-in shadow bg-neutral-800 hover:bg-neutral-600 hover:-translate-y-2 hover:translate-x-2 [&_.text]:text-white [&_>_*]:border-white [&_.bannerIcon]:bg-white/25 border-black",
-                                // "bg-white shadow hover:shadow-lg hover:bg-neutral-200  [&_.text]:text-black [&_>_*]:border-black [&_.bannerIcon]:bg-black/25 border-black"
-                            )}
+                            className={twMerge("animate-fade-in")}
                             style={{
                                 animationDelay: `${i * 25}ms`,
                                 animationTimingFunction: "ease-in",
