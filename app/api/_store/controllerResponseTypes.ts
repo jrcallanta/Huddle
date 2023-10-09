@@ -30,6 +30,10 @@ export interface GetFriendshipsResponse extends Response {
     friendships?: FriendshipType[];
 }
 
+export interface PatchFriendshipResponse extends Response {
+    updatedFriendship?: FriendshipType | null;
+}
+
 // INVITES
 export interface GetInvitesResponse extends Response {
     invites?: InviteType[];

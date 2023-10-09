@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
-import { resetDB } from "../_store/controllers/seed/resetDB";
+import { resetDB } from "../../_store/controllers/seed/resetDB";
 import mongoose from "mongoose";
-import { connectMongoose } from "../_store/connectMongoose";
+import { connectMongoose } from "../../_store/connectMongoose";
 
 export async function GET(req: NextRequest) {
     console.log("resetting...");

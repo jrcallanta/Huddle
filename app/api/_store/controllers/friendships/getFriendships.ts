@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 import { GetFriendshipsResponse } from "../../controllerResponseTypes";
-import Friendship from "../../models/friendships";
+import Friendship from "../../models/friendship";
 import { connectMongoose } from "../../connectMongoose";
 import { publicUserProjection } from "../users/getAllUsers";
 

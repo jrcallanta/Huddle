@@ -1,9 +1,10 @@
 "use client";
 
 import UserBanner from "@/components/UserBanner";
-import UserListTile from "@/components/UserListTile";
+import { UserTypeForTile, INTERACTION_TYPE } from "@/components/UserTile";
+import UserTileList from "@/components/UserTileList";
 import { useUser } from "@/hooks/useUser";
-import { UserType } from "@/types";
+import { FRIENDSHIP_STATUS } from "@/types";
 import React, { useEffect, useState } from "react";
 import { twMerge } from "tailwind-merge";
 
@@ -29,6 +30,7 @@ const SearchPage = ({ params: { query } }: { params: { query: string } }) => {
             })
                 .then((res) => res.json())
                 .then((data) => {
+                    console.log(data);
                     setSearchResults(data.users?.length ? data.users : null);
                     setFetchStatus(FETCH_STATUS.idle);
                 });
@@ -43,7 +45,7 @@ const SearchPage = ({ params: { query } }: { params: { query: string } }) => {
         <main
             className={twMerge(
                 "themed h-screen w-full overflow-hidden overflow-y-auto p-4 pr-6 bg-white flex flex-col gap-4 mr-auto relative",
-                "[&_>_*]:animate-fade-in"
+                "[&_>_*:not(.loader)]:animate-fade-in"
             )}
         >
             {!query && (
@@ -75,10 +77,11 @@ const SearchPage = ({ params: { query } }: { params: { query: string } }) => {
             )}
 
             {query && fetchStatus === "LOADING" && (
-                <div className='m-auto w-8 h-8 rounded-full border-2 border-x-black border-y-white border-black animate-spin'></div>
+                <div className='loader m-auto w-8 h-8 rounded-full border-2 border-x-black border-y-white border-black animate-spin'></div>
             )}
 
-            {searchResults && fetchStatus !== "LOADING" && (
+            {searchResults &&
+                fetchStatus !== "LOADING" &&
                 // <div className='flex flex-col gap-6 mt-3 py-4 max-w-screen-lg'>
                 //     {searchResults.map((user: UserType, i) => (
                 //         <UserBanner
@@ -92,8 +95,53 @@ const SearchPage = ({ params: { query } }: { params: { query: string } }) => {
                 //         />
                 //     ))}
                 // </div>
-                <UserListTile users={searchResults} />
-            )}
+                (() => {
+                    let [friends, requests, others] = searchResults.reduce(
+                        (
+                            accum: UserTypeForTile[][],
+                            current: UserTypeForTile
+                        ) => {
+                            switch (current.friendStatus) {
+                                case FRIENDSHIP_STATUS.friends: {
+                                    accum[0].push(current);
+                                    break;
+                                }
+                                case FRIENDSHIP_STATUS.pending: {
+                                    accum[1].push(current);
+                                    break;
+                                }
+                                default: {
+                                    accum[2].push(current);
+                                }
+                            }
+                            return accum;
+                        },
+                        [[], [], []]
+                    );
+                    return (
+                        <>
+                            <UserTileList
+                                users={friends}
+                                interactions={INTERACTION_TYPE.friendship}
+                                label={"FRIENDS"}
+                            />
+                            <UserTileList
+                                users={requests}
+                                interactions={INTERACTION_TYPE.friendship}
+                                label={"REQUESTS"}
+                            />
+                            <UserTileList
+                                users={others}
+                                interactions={INTERACTION_TYPE.friendship}
+                                label={
+                                    friends.length || requests.length
+                                        ? "MORE ACCOUNTS"
+                                        : undefined
+                                }
+                            />
+                        </>
+                    );
+                })()}
         </main>
     );
 };

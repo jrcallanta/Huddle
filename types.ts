@@ -42,6 +42,12 @@ export interface UserType {
     updated_at?: Date;
 }
 
+export interface UserTypeForTile extends UserType {
+    friendStatus: string;
+    friendRequester?: boolean;
+    inviteStatus?: string;
+}
+
 export interface FriendshipType {
     _id?: string;
     status: string;
@@ -51,4 +57,8 @@ export interface FriendshipType {
     toUser?: UserType;
     created_at?: Date;
     updated_at?: Date;
+}
+export enum FRIENDSHIP_STATUS {
+    pending = "PENDING",
+    friends = "FRIENDS",
 }

@@ -1,6 +1,5 @@
+import { FRIENDSHIP_STATUS } from "@/types";
 import mongoose from "mongoose";
-
-export const FRIENDSHIP_STATUS = ["REQUESTING", "FRIENDS"];
 
 const friendshipSchema = new mongoose.Schema(
     {
@@ -16,14 +15,13 @@ const friendshipSchema = new mongoose.Schema(
         },
         status: {
             type: String,
-            enum: FRIENDSHIP_STATUS,
+            enum: Object.values(FRIENDSHIP_STATUS),
             required: true,
-            default: FRIENDSHIP_STATUS[0],
+            default: FRIENDSHIP_STATUS.pending,
         },
     },
     { timestamps: true }
 );
-
 const Friendship =
     mongoose.models.friendship ||
     mongoose.model("friendship", friendshipSchema);

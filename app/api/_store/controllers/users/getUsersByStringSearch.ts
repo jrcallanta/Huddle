@@ -1,9 +1,10 @@
 import { connectMongoose } from "@/app/api/_store/connectMongoose";
 import User from "@/app/api/_store/models/user";
 import { GetUserResponse } from "@/app/api/_store/controllerResponseTypes";
-import Friendship from "../../models/friendships";
+import Friendship from "../../models/friendship";
 import { publicUserProjection } from "./getAllUsers";
 import mongoose from "mongoose";
+import { FRIENDSHIP_STATUS } from "@/types";
 
 export enum UserSearchFilterGroups {
     ALL = "ALL",
@@ -86,6 +87,18 @@ async function _queryFriendshipsFirst({
                     },
                 },
                 status: 1,
+                requester: {
+                    $cond: {
+                        if: {
+                            $or: [
+                                { $eq: ["$status", FRIENDSHIP_STATUS.friends] },
+                                { $eq: ["$fromUser", id] },
+                            ],
+                        },
+                        then: undefined,
+                        else: true,
+                    },
+                },
             },
         },
         {
@@ -93,7 +106,7 @@ async function _queryFriendshipsFirst({
                 from: "users",
                 localField: "user",
                 foreignField: "_id",
-                as: "user",
+                as: "user_doc",
                 pipeline: [
                     publicUserProjection,
                     {
@@ -107,13 +120,16 @@ async function _queryFriendshipsFirst({
                 ],
             },
         },
-        { $unwind: { path: "$user" } },
+        { $unwind: { path: "$user_doc" } },
         {
             $replaceWith: {
-                $mergeObjects: ["$user", { friendStatus: "$status" }],
+                $mergeObjects: [
+                    "$user_doc",
+                    { friendStatus: "$status", friendRequester: "$requester" },
+                ],
             },
         },
-        { $sort: { friendStatus: 1 } },
+        { $sort: { friendStatus: 1, friendRequester: -1 } },
         { $limit: limit },
     ]);
 

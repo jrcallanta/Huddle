@@ -1,7 +1,8 @@
 import User from "@/app/api/_store/models/user";
 import Invite, { INVITE_STATUS } from "@/app/api/_store/models/invite";
 import Huddle from "@/app/api/_store/models/huddle";
-import Friendship, { FRIENDSHIP_STATUS } from "../../models/friendships";
+import Friendship from "../../models/friendship";
+import { FRIENDSHIP_STATUS } from "@/types";
 
 const HUDDLE_COUNT = 20;
 
@@ -148,7 +149,7 @@ export const resetDB = async function () {
                 .map((toUser) => ({
                     fromUser: fromUser,
                     toUser: toUser,
-                    status: _chooseRandom(FRIENDSHIP_STATUS),
+                    status: _chooseRandom(Object.values(FRIENDSHIP_STATUS)),
                 }));
             console.log(
                 `${fromUser.username} => [${ships
