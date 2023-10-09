@@ -1,6 +1,4 @@
-import mongoose from "mongoose";
 import { NextRequest, NextResponse } from "next/server";
-import { connectMongoose } from "../../../_store/connectMongoose";
 import { getFriendships } from "../../../_store/controllers/friendships/getFriendships";
 
 export async function GET(

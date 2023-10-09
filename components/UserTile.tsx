@@ -1,7 +1,9 @@
 "use client";
 
+import { useUser } from "@/hooks/useUser";
 import { FRIENDSHIP_STATUS, UserTypeForTile } from "@/types";
 import Image from "next/image";
+import { GrClose } from "react-icons/gr";
 import React, { useState } from "react";
 import { twMerge } from "tailwind-merge";
 
@@ -13,28 +15,83 @@ export const enum INTERACTION_TYPE {
 interface UserTileProps {
     user: UserTypeForTile;
     interactions?: INTERACTION_TYPE;
+    onRemoveFromUserList?: () => void;
 }
 
-const UserTile: React.FC<UserTileProps> = ({ user, interactions }) => {
-    const [friendshipStatusState, setFriendshipStatusState] = useState(
-        user.friendStatus
-    );
+const UserTile: React.FC<UserTileProps> = ({
+    user,
+    interactions,
+    onRemoveFromUserList,
+}) => {
+    const [friendshipStatusState, setFriendshipStatusState] = useState<
+        string | undefined
+    >(user.friendStatus);
 
-    const friendshipHandlers = {
-        onAccept: () => {
-            setFriendshipStatusState(FRIENDSHIP_STATUS.friends);
-        },
-        onDeny: () => {},
-        onRemove: () => {},
-        onAdd: () => {
-            setFriendshipStatusState(FRIENDSHIP_STATUS.pending);
-            console.log("added");
-        },
-        onCancel: () => {
-            setFriendshipStatusState(undefined);
-            console.log("canceled");
-        },
-    };
+    const { currentUser } = useUser();
+
+    const friendshipHandlers = currentUser
+        ? {
+              onAdd: async () => {
+                  setFriendshipStatusState(FRIENDSHIP_STATUS.pending);
+                  fetch(`/api/friendships/${currentUser?._id}/${user._id}`, {
+                      method: "POST",
+                  })
+                      .then((res) => res.json())
+                      .then((data) => console.log(data))
+                      .catch((error) => setFriendshipStatusState(undefined));
+              },
+              onCancel: async (remove?: boolean) => {
+                  setFriendshipStatusState(undefined);
+                  fetch(`/api/friendships/${currentUser?._id}/${user._id}`, {
+                      method: "DELETE",
+                  })
+                      .then((res) => res.json())
+                      .then((data) => console.log(data))
+                      .catch((error) =>
+                          setFriendshipStatusState(FRIENDSHIP_STATUS.pending)
+                      );
+                  if (remove && onRemoveFromUserList) onRemoveFromUserList();
+              },
+              onAccept: async () => {
+                  setFriendshipStatusState(FRIENDSHIP_STATUS.friends);
+                  fetch(`/api/friendships/${currentUser?._id}/${user._id}`, {
+                      method: "PATCH",
+                      body: JSON.stringify({
+                          changes: FRIENDSHIP_STATUS.friends,
+                      }),
+                  })
+                      .then((res) => res.json())
+                      .then((data) => console.log(data))
+                      .catch((error) =>
+                          setFriendshipStatusState(FRIENDSHIP_STATUS.pending)
+                      );
+              },
+              onIgnore: async (remove?: boolean) => {
+                  setFriendshipStatusState(undefined);
+                  fetch(`/api/friendships/${currentUser?._id}/${user._id}`, {
+                      method: "DELETE",
+                  })
+                      .then((res) => res.json())
+                      .then((data) => console.log(data))
+                      .catch((error) =>
+                          setFriendshipStatusState(FRIENDSHIP_STATUS.pending)
+                      );
+                  if (remove && onRemoveFromUserList) onRemoveFromUserList();
+              },
+              onRemove: async (remove?: boolean) => {
+                  setFriendshipStatusState(undefined);
+                  fetch(`/api/friendships/${currentUser?._id}/${user._id}`, {
+                      method: "DELETE",
+                  })
+                      .then((res) => res.json())
+                      .then((data) => console.log(data))
+                      .catch((error) =>
+                          setFriendshipStatusState(FRIENDSHIP_STATUS.friends)
+                      );
+                  if (remove && onRemoveFromUserList) onRemoveFromUserList();
+              },
+          }
+        : undefined;
 
     const inviteHandlers = {
         onToggleInvite: () => {},
@@ -77,15 +134,26 @@ const UserTile: React.FC<UserTileProps> = ({ user, interactions }) => {
             </div>
 
             {interactions === INTERACTION_TYPE.friendship &&
+                friendshipHandlers &&
                 (() => {
                     let cn =
                         "text-xs ml-auto h-fit bg-gray-100 text-gray-400 text-[var(--300)] [&:not(:not(button))]:hover:bg-gray-400 [&:not(:not(button))]:hover:text-white flex justify-center items-center px-3 py-1 rounded-full";
-                    let { onAccept, onDeny, onAdd, onCancel } =
+                    let { onRemove, onAccept, onIgnore, onAdd, onCancel } =
                         friendshipHandlers;
 
                     switch (friendshipStatusState) {
                         case FRIENDSHIP_STATUS.friends:
-                            return null;
+                            return (
+                                <button
+                                    className={"ml-auto"}
+                                    onClick={() => onRemove(false)}
+                                >
+                                    <GrClose
+                                        size={12}
+                                        className='opacity-25 hover:opacity-100'
+                                    />
+                                </button>
+                            );
                         case FRIENDSHIP_STATUS.pending:
                             return (
                                 <div className='flex gap-4 ml-auto'>
@@ -98,19 +166,19 @@ const UserTile: React.FC<UserTileProps> = ({ user, interactions }) => {
                                                     "bg-[var(--200)] hover:bg-[var(--300)]"
                                                 )}
                                             >
-                                                confirm
+                                                accept
                                             </button>
                                             <button
-                                                onClick={onDeny}
+                                                onClick={() => onIgnore(true)}
                                                 className={cn}
                                             >
-                                                delete
+                                                ignore
                                             </button>
                                         </>
                                     ) : (
                                         <>
                                             <button
-                                                onClick={onCancel}
+                                                onClick={() => onCancel(false)}
                                                 className={cn}
                                             >
                                                 cancel request

@@ -86,6 +86,7 @@ async function _queryFriendshipsFirst({
                         else: "$fromUser",
                     },
                 },
+                friendshipId: "$_id",
                 status: 1,
                 requester: {
                     $cond: {
@@ -125,7 +126,11 @@ async function _queryFriendshipsFirst({
             $replaceWith: {
                 $mergeObjects: [
                     "$user_doc",
-                    { friendStatus: "$status", friendRequester: "$requester" },
+                    {
+                        friendStatus: "$status",
+                        friendshipId: "$friendshipId",
+                        friendRequester: "$requester",
+                    },
                 ],
             },
         },
