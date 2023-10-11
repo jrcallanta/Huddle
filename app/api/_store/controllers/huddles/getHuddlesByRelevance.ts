@@ -3,19 +3,12 @@ import { connectMongoose } from "@/app/api/_store/connectMongoose";
 import Huddle from "@/app/api/_store/models/huddle";
 import Invite from "@/app/api/_store/models/invite";
 import mongoose from "mongoose";
+import { publicUserProjection } from "../users/getAllUsers";
 
 export const getHuddlesByRelevance: (
     userId: string
 ) => Promise<HuddleTypeForTile[]> = async (userId) => {
     await connectMongoose();
-
-    const publicUserProjection: mongoose.PipelineStage.Project = {
-        $project: {
-            email: 0,
-            createdAt: 0,
-            updatedAt: 0,
-        },
-    };
 
     const inviteListSorterPipeline: (userId: string) => any[] = (userId) => [
         {

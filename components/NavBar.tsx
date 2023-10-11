@@ -16,7 +16,7 @@ const NavBar: React.FC<NavBarProps> = ({ vertical = false }) => {
     const router = useRouter();
 
     const handleSearch = (query: string) => {
-        router.push(`/search/${encodeURI(query)}`);
+        router.push(`/search/${encodeURIComponent(query)}`);
     };
 
     return (

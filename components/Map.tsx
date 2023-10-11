@@ -55,7 +55,7 @@ const Map: React.FC<MapProps> = ({
             {selectedHuddle && selectedHuddle.location && (
                 <div
                     className={twMerge(
-                        "absolute top-0 md:top-auto md:bottom-0 left-0 right-0 h-fit py-6 px-8 z-10 bg-black/60 border-b-[4px] md:border-b-0 md:border-t-[4px] border-black text-white/90",
+                        "absolute animate-fade-in top-0 md:top-auto md:bottom-0 left-0 right-0 h-fit py-6 px-8 z-10 bg-black/60 border-b-[4px] md:border-b-0 md:border-t-[4px] border-black text-white/90",
                         "translate-y-0 transition-transform duration-300 ease-in-out",
                         focusedHuddle &&
                             "-translate-y-[100%] md:translate-y-[100%]"

@@ -1,4 +1,9 @@
-import { HuddleTypeForTile, InviteType, UserType } from "@/types";
+import {
+    FriendshipType,
+    HuddleTypeForTile,
+    InviteType,
+    UserType,
+} from "@/types";
 
 interface Response {
     message: string;
@@ -20,6 +25,20 @@ export interface PatchUserResponse extends Response {
     updatedUser?: UserType;
 }
 
+// FRIENDSHIPS
+export interface GetFriendshipsResponse extends Response {
+    friendships?: FriendshipType[];
+}
+
+export interface PostFriendshipResponse extends Response {
+    newFriendship?: FriendshipType | null;
+}
+export interface PatchFriendshipResponse extends Response {
+    updatedFriendship?: FriendshipType | null;
+}
+export interface DeleteFriendshipResponse extends Response {
+    deletedFriendship?: FriendshipType | null;
+}
 // INVITES
 export interface GetInvitesResponse extends Response {
     invites?: InviteType[];

@@ -1,6 +1,8 @@
 import User from "@/app/api/_store/models/user";
 import Invite, { INVITE_STATUS } from "@/app/api/_store/models/invite";
 import Huddle from "@/app/api/_store/models/huddle";
+import Friendship from "../../models/friendship";
+import { FRIENDSHIP_STATUS } from "@/types";
 
 const HUDDLE_COUNT = 20;
 
@@ -127,15 +129,47 @@ export const resetDB = async function () {
     // DELETE EVERYTHING
     await Invite.deleteMany({});
     await Huddle.deleteMany({});
+    await Friendship.deleteMany({});
     await User.deleteMany({});
 
     // SEED RANDOM USERS
-    console.log(`Seeding users...`);
+    console.log(`\n\n>>>>>>>>>> Seeding users...`);
     const savedUsers = await User.create(_generateUsers());
-    console.log(`Saved ${savedUsers.length} users...`);
+    console.log(`Saved ${savedUsers.length} users!`);
+
+    // SEED RANDOM FRIENDSHIPS
+    console.log(`\n\n>>>>>>>>>> Seeding friendships...`);
+    const savedFriendships = await Friendship.create(
+        savedUsers.reduce((accum, fromUser, i) => {
+            let ships = savedUsers
+                .filter(
+                    (toUser, j) =>
+                        fromUser._id !== toUser._id && j > i && _flipCoin()
+                )
+                .map((toUser) => ({
+                    fromUser: fromUser,
+                    toUser: toUser,
+                    status: _chooseRandom(Object.values(FRIENDSHIP_STATUS)),
+                }));
+            console.log(
+                `${fromUser.username} => [${ships
+                    .map((ship) => `${ship.toUser.username}/${ship.status[0]}`)
+                    .join(", ")}]\n`
+            );
+            return [
+                ...accum,
+                ...ships.map(({ fromUser, toUser, status }) => ({
+                    fromUser: fromUser._id,
+                    toUser: toUser._id,
+                    status,
+                })),
+            ];
+        }, [])
+    );
+    console.log(`Saved ${savedFriendships.length} friendships!`);
 
     // SEED RANDOM HUDDLES
-    console.log(`Seeding huddles...`);
+    console.log(`\n\n>>>>>>>>>> Seeding huddles...`);
     const savedHuddles = await Huddle.create(
         _generateHuddles(HUDDLE_COUNT).map((huddle) => ({
             author_id: _chooseRandom(savedUsers)._id,
@@ -145,10 +179,10 @@ export const resetDB = async function () {
             end_time: huddle.end_time,
         }))
     );
-    console.log(`Saved ${savedHuddles.length} huddles...`);
+    console.log(`Saved ${savedHuddles.length} huddles.!`);
 
     // SEED RANDOM INVITES
-    console.log(`Seeding invites...`);
+    console.log(`\n\n>>>>>>>>>> Seeding invites...`);
     const savedInvites = await Promise.all(
         savedHuddles.map(async (huddle) => {
             const invites = await Promise.all(
@@ -164,7 +198,7 @@ export const resetDB = async function () {
             );
 
             let invite_list = await Invite.create(invites);
-            console.log(`\tSaved ${invite_list.length} invites...`);
+            console.log(`\tSaved ${invite_list.length} invites!`);
             return {
                 huddle_id: huddle._id,
                 invite_list: invite_list,
@@ -185,5 +219,5 @@ export const resetDB = async function () {
         console.log("]");
     });
 
-    return { savedUsers, savedHuddles, savedInvites };
+    return { savedUsers, savedHuddles, savedInvites, savedFriendships };
 };
