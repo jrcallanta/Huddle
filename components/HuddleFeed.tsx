@@ -43,6 +43,7 @@ const HuddleFeed: React.FC<HuddleFeedProps> = ({ huddleSections }) => {
                 align-stretch
                 gap-4
                 cursor-auto
+                [&:has(.huddleTile[data-variant="LOADER"])]:pr-2
                 '
             >
                 {huddleSections &&
