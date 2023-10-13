@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { editExistingHuddle } from "../../_store/controllers/huddles/editExistingHuddle";
+import { editExistingHuddle } from "@/app/api/_store/controllers/huddles/editExistingHuddle";
 
 export async function PATCH(req: NextRequest) {
     const body = await req.json();

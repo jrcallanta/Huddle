@@ -53,8 +53,8 @@ const ActionButton = forwardRef<HTMLButtonElement, ActionButtonProps>(
                             font-semibold
                             group-hover/button:text-white
                             cursor-pointer
-                            pr-1
-                            hidden md:block`
+                            pr-1`
+                            // hidden md:block`
                             // `transition`
                         )}
                     >
