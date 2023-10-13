@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { editExistingInvite } from "../_store/controllers/invites/editExistingInvite";
+import { editExistingInvite } from "../../_store/controllers/invites/editExistingInvite";
 
 export async function PATCH(req: NextRequest) {
     const body = await req.json();
