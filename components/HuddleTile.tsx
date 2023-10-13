@@ -6,10 +6,11 @@ import { CSSProperties, MouseEventHandler, useState } from "react";
 import { twMerge } from "tailwind-merge";
 import { GrLocation } from "react-icons/gr";
 import { useHuddles } from "@/hooks/useHuddles";
-import AvatarList from "./AvatarList";
+import UserAvatarList from "./UserAvatarList";
 import { useUser } from "@/hooks/useUser";
 import DetailsModal from "./DetailsModal";
 import ActionsBar from "./ActionsBar";
+import UserAvatar from "./UserAvatar";
 
 interface HuddleTileProps {
     huddle: HuddleTypeForTile;
@@ -154,18 +155,13 @@ const HuddleTile: React.FC<HuddleTileProps> = ({
                 </div>
 
                 {huddle.invite_list && (
-                    <AvatarList
-                        inviteList={[
-                            {
-                                status: "GOING",
-                                user: huddle.author,
-                                huddle_id: huddle._id,
-                                created_at: huddle.created_at,
-                            },
-                            ...huddle.invite_list,
-                        ]}
-                        className={"px-4"}
-                    />
+                    <div className='flex items-center gap-1 px-4'>
+                        <UserAvatar
+                            username={huddle.author.username}
+                            imgUrl={huddle.author.imgUrl}
+                        />
+                        <UserAvatarList inviteList={huddle.invite_list} />
+                    </div>
                 )}
 
                 {huddle._id === selectedHuddle?._id && (
@@ -183,14 +179,6 @@ const HuddleTile: React.FC<HuddleTileProps> = ({
                                 </p>
                             </a>
                         )}
-
-                        {/* DESCRIPTION BOX */}
-                        {/* <div
-                            className={twMerge(
-                                "description h-full rounded-lg",
-                                "p-2 hover:bg-black hover:bg-opacity-[.1] transition-all"
-                            )}
-                        ></div> */}
 
                         <ActionsBar
                             inviteStatus={huddleInviteStatusState}

@@ -43,7 +43,7 @@ export interface UserType {
 }
 
 export interface UserTypeForTile extends UserType {
-    friendStatus: string;
+    friendStatus?: string;
     friensshipId?: string;
     friendRequester?: boolean;
     inviteStatus?: string;

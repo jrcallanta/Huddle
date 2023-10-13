@@ -2,25 +2,40 @@
 
 import { useUser } from "@/hooks/useUser";
 import { FRIENDSHIP_STATUS, UserTypeForTile } from "@/types";
-import Image from "next/image";
 import { GrClose } from "react-icons/gr";
 import React, { useState } from "react";
 import { twMerge } from "tailwind-merge";
+import UserAvatar from "./UserAvatar";
+import { BsCheck } from "react-icons/bs";
 
 export const enum INTERACTION_TYPE {
     friendship,
     invite,
 }
 
+interface DisplayOptions {
+    hideUsername?: boolean;
+    hideName?: boolean;
+    hideAvatar?: boolean;
+    avatarSize?: "sm" | "md";
+    hideInteractions?: boolean;
+    appendUsername?: string;
+    appendName?: string;
+}
+
 interface UserTileProps {
     user: UserTypeForTile;
     interactions?: INTERACTION_TYPE;
+    className?: string;
+    options?: DisplayOptions;
     onRemoveFromUserList?: () => void;
 }
 
 const UserTile: React.FC<UserTileProps> = ({
     user,
     interactions,
+    options,
+    className,
     onRemoveFromUserList,
 }) => {
     const [friendshipStatusState, setFriendshipStatusState] = useState<
@@ -100,113 +115,127 @@ const UserTile: React.FC<UserTileProps> = ({
     return (
         <div
             key={user._id}
-            className={
-                "animate-fade-in relative h-fit w-full flex items-center gap-4 p-2 border-b-2 border-white/10 last:border-none transition-colors"
-            }
+            className={twMerge(
+                "animate-fade-in relative h-fit w-full flex items-center gap-4 p-2 transition-colors",
+                String(className)
+            )}
         >
-            <div
-                className={
-                    "bannerIcon h-12 w-12 rounded-full flex-shrink-0 flex justify-center items-center border-white border-[2px] bg-black/80"
-                }
-            >
-                {user.imgUrl ? (
-                    <Image
-                        className='rounded-full w-full h-full'
-                        src={user.imgUrl}
-                        alt={user.username}
-                        width={40}
-                        height={40}
-                    />
-                ) : (
-                    <p className='text text-white'>{user.name?.slice(0, 2)}</p>
+            {!options?.hideAvatar && (
+                <UserAvatar
+                    username={user.username}
+                    imgUrl={user.imgUrl}
+                    size={options?.avatarSize}
+                />
+            )}
+
+            <div className='h-full flex flex-col justify-around'>
+                {!options?.hideUsername && (
+                    <p className='username text-lg text-black flex gap-2'>
+                        <span>@{user.username}</span>
+                        {options?.appendUsername && (
+                            <span className='opacity-50'>{`(${options?.appendUsername})`}</span>
+                        )}
+                    </p>
+                )}
+
+                {!options?.hideName && (
+                    <p className={"name text-xs text-black/75 flex gap-2"}>
+                        <span>{user.name}</span>
+                        {options?.appendName && (
+                            <span className='opacity-50'>{`(${options?.appendName})`}</span>
+                        )}
+                    </p>
                 )}
             </div>
 
-            <div className='h-full flex flex-col justify-between'>
-                {interactions === INTERACTION_TYPE.invite ? (
-                    <p className='my-auto text-lg text-black/75'>{user.name}</p>
-                ) : (
-                    <>
-                        <p className='text-lg text-black'>@{user.username}</p>
-                        <p className='text-xs text-black/75'>{user.name}</p>
-                    </>
-                )}
-            </div>
+            {!options?.hideInteractions && (
+                <>
+                    {interactions === INTERACTION_TYPE.friendship &&
+                        friendshipHandlers &&
+                        (() => {
+                            let cn =
+                                "text-xs ml-auto h-fit bg-gray-100 text-gray-400 text-[var(--300)] [&:not(:not(button))]:hover:bg-gray-400 [&:not(:not(button))]:hover:text-white flex justify-center items-center px-3 py-1 rounded-full";
+                            let {
+                                onRemove,
+                                onAccept,
+                                onIgnore,
+                                onAdd,
+                                onCancel,
+                            } = friendshipHandlers;
 
-            {interactions === INTERACTION_TYPE.friendship &&
-                friendshipHandlers &&
-                (() => {
-                    let cn =
-                        "text-xs ml-auto h-fit bg-gray-100 text-gray-400 text-[var(--300)] [&:not(:not(button))]:hover:bg-gray-400 [&:not(:not(button))]:hover:text-white flex justify-center items-center px-3 py-1 rounded-full";
-                    let { onRemove, onAccept, onIgnore, onAdd, onCancel } =
-                        friendshipHandlers;
+                            switch (friendshipStatusState) {
+                                case FRIENDSHIP_STATUS.friends:
+                                    return (
+                                        <button
+                                            className={"ml-auto"}
+                                            onClick={() => onRemove(false)}
+                                        >
+                                            <GrClose
+                                                size={12}
+                                                className='opacity-25 hover:opacity-100'
+                                            />
+                                        </button>
+                                    );
+                                case FRIENDSHIP_STATUS.pending:
+                                    return (
+                                        <div className='flex gap-4 ml-auto'>
+                                            {user.friendRequester ? (
+                                                <>
+                                                    <button
+                                                        onClick={onAccept}
+                                                        className={twMerge(
+                                                            cn,
+                                                            "bg-[var(--200)] hover:bg-[var(--300)]"
+                                                        )}
+                                                    >
+                                                        accept
+                                                    </button>
+                                                    <button
+                                                        onClick={() =>
+                                                            onIgnore(true)
+                                                        }
+                                                        className={cn}
+                                                    >
+                                                        ignore
+                                                    </button>
+                                                </>
+                                            ) : (
+                                                <>
+                                                    <button
+                                                        onClick={() =>
+                                                            onCancel(false)
+                                                        }
+                                                        className={cn}
+                                                    >
+                                                        cancel request
+                                                    </button>
+                                                </>
+                                            )}
+                                        </div>
+                                    );
+                                default:
+                                    return (
+                                        <button onClick={onAdd} className={cn}>
+                                            add friend
+                                        </button>
+                                    );
+                            }
+                        })()}
 
-                    switch (friendshipStatusState) {
-                        case FRIENDSHIP_STATUS.friends:
-                            return (
-                                <button
-                                    className={"ml-auto"}
-                                    onClick={() => onRemove(false)}
-                                >
-                                    <GrClose
-                                        size={12}
-                                        className='opacity-25 hover:opacity-100'
-                                    />
-                                </button>
-                            );
-                        case FRIENDSHIP_STATUS.pending:
-                            return (
-                                <div className='flex gap-4 ml-auto'>
-                                    {user.friendRequester ? (
-                                        <>
-                                            <button
-                                                onClick={onAccept}
-                                                className={twMerge(
-                                                    cn,
-                                                    "bg-[var(--200)] hover:bg-[var(--300)]"
-                                                )}
-                                            >
-                                                accept
-                                            </button>
-                                            <button
-                                                onClick={() => onIgnore(true)}
-                                                className={cn}
-                                            >
-                                                ignore
-                                            </button>
-                                        </>
-                                    ) : (
-                                        <>
-                                            <button
-                                                onClick={() => onCancel(false)}
-                                                className={cn}
-                                            >
-                                                cancel request
-                                            </button>
-                                        </>
-                                    )}
-                                </div>
-                            );
-                        default:
-                            return (
-                                <button onClick={onAdd} className={cn}>
-                                    add friend
-                                </button>
-                            );
-                    }
-                })()}
-
-            {interactions === INTERACTION_TYPE.invite &&
-                (() => {
-                    let cn =
-                        "ml-auto w-6 h-6 rounded-full border-[var(--400)] border-2";
-                    switch (user.inviteStatus) {
-                        case "INVITED":
-                            return <button className={cn}></button>;
-                        default:
-                            return <button className={cn}></button>;
-                    }
-                })()}
+                    {interactions === INTERACTION_TYPE.invite && (
+                        <label className='ml-auto rounded-full w-5 h-5 border-2 border-[var(--500)] flex justify-center items-center  cursor-pointer'>
+                            <span className='rounded-full w-full h-full hover:bg-[var(--500)] [&:has(+_input:checked)]:bg-[var(--500)] [&:has(+_input:checked)_svg]:block flex justify-center items-center'>
+                                <BsCheck className='hidden' color='white' />
+                            </span>
+                            <input
+                                className={"hidden"}
+                                type='checkbox'
+                                defaultChecked={user.inviteStatus === "INVITED"}
+                            />
+                        </label>
+                    )}
+                </>
+            )}
         </div>
     );
 };
