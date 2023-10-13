@@ -1,7 +1,7 @@
 import { getHuddlesByInvited } from "@/app/api/_store/controllers/huddles/getHuddlesByInvited";
 import { getHuddlesByOwner } from "@/app/api/_store/controllers/huddles/getHuddlesByOwner";
 import { getHuddlesByRelevance } from "@/app/api/_store/controllers/huddles/getHuddlesByRelevance";
-import { HuddleType, HuddleTypeForTile } from "@/types";
+import { HuddleTypeForTile } from "@/types";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(
