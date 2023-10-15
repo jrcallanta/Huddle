@@ -1,12 +1,7 @@
 "use client";
 
-import { useUser } from "@/hooks/useUser";
-import { FRIENDSHIP_STATUS, UserTypeForTile } from "@/types";
-import React, { useCallback, useState } from "react";
-import { twMerge } from "tailwind-merge";
-import UserAvatar from "./UserAvatar";
+import React, { useCallback } from "react";
 import { BsCheck } from "react-icons/bs";
-import { UserTileOptions } from "./UserTile";
 import UserTileGeneric, { UserTileProps } from "./UserTileGeneric";
 
 interface UserInviteTileProps extends UserTileProps {
