@@ -6,11 +6,11 @@ import { CSSProperties, MouseEventHandler, useState } from "react";
 import { twMerge } from "tailwind-merge";
 import { GrLocation } from "react-icons/gr";
 import { useHuddles } from "@/hooks/useHuddles";
-import UserAvatarList from "./UserAvatarList";
 import { useUser } from "@/hooks/useUser";
 import DetailsModal from "./DetailsModal";
 import ActionsBar from "./ActionsBar";
 import UserAvatar from "./UserAvatar";
+import UserAvatarList from "./UserAvatarList";
 
 interface HuddleTileProps {
     huddle: HuddleTypeForTile;
@@ -159,6 +159,8 @@ const HuddleTile: React.FC<HuddleTileProps> = ({
                         <UserAvatar
                             username={huddle.author.username}
                             imgUrl={huddle.author.imgUrl}
+                            size='sm'
+                            className='border-2 border-white'
                         />
                         <UserAvatarList inviteList={huddle.invite_list} />
                     </div>
@@ -179,6 +181,14 @@ const HuddleTile: React.FC<HuddleTileProps> = ({
                                 </p>
                             </a>
                         )}
+
+                        {/* DESCRIPTION BOX */}
+                        {/* <div
+                            className={twMerge(
+                                "description h-full rounded-lg",
+                                "p-2 hover:bg-black hover:bg-opacity-[.1] transition-all"
+                            )}
+                        ></div> */}
 
                         <ActionsBar
                             inviteStatus={huddleInviteStatusState}
