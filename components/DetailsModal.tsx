@@ -217,24 +217,11 @@ const DetailsModal: React.FC<DetailsModalProps> = ({
                   {huddleState.invite_list && (
                       <div className='section overflow-hidden overflow-y-auto flex flex-col cursor-pointer [&.section:hover]:brightness-[1.1] transition-all'>
                           <InviteListSelector
+                              currentUser={currentUser ?? undefined}
                               owner={huddleState.author as UserTypeForTile}
-                              inviteList={[
-                                  ...huddleState.invite_list,
-                                  ...huddleState.invite_list,
-                                  ...huddleState.invite_list,
-                                  ...huddleState.invite_list,
-                              ]}
+                              inviteList={[...huddleState.invite_list]}
                               isEditing={isInEditingMode}
                           />
-                          {/* <div className='flex items-center gap-1'>
-                              <UserAvatar
-                                  username={huddleState.author.username}
-                                  imgUrl={huddleState.author.imgUrl}
-                              />
-                              <UserAvatarList
-                                  inviteList={huddleState.invite_list}
-                              />
-                          </div> */}
                       </div>
                   )}
 
