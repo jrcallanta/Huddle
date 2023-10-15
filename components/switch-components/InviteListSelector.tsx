@@ -5,7 +5,6 @@ import React, { useCallback, useState } from "react";
 import UserAvatar from "../UserAvatar";
 import UserAvatarList from "../UserAvatarList";
 import { twMerge } from "tailwind-merge";
-import UserTile, { INTERACTION_TYPE } from "../UserTile";
 import { useUser } from "@/hooks/useUser";
 import UserInviteTile from "../UserInviteTile";
 
@@ -105,7 +104,7 @@ const InviteListSelector: React.FC<InviteListSelectorProps> = ({
                                     <p className={label_cn}>Hosts</p>
                                 </div>
                             )}
-                            <UserTile
+                            <UserInviteTile
                                 user={{
                                     _id: owner._id,
                                     name: owner.name,
