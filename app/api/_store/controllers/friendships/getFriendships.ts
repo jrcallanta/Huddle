@@ -3,6 +3,7 @@ import { GetFriendshipsResponse } from "../../controllerResponseTypes";
 import Friendship from "../../models/friendship";
 import { connectMongoose } from "../../connectMongoose";
 import { publicUserProjection } from "../users/getAllUsers";
+import { FRIENDSHIP_STATUS } from "@/types";
 
 interface params {
     userId: string;
@@ -18,27 +19,37 @@ export const getFriendships: (
 
         const friendships = await Friendship.aggregate([
             { $match: { $or: [{ fromUser: id }, { toUser: id }] } },
+            { $match: { status: FRIENDSHIP_STATUS.friends } },
             {
-                $lookup: {
-                    from: "users",
-                    localField: "fromUser",
-                    foreignField: "_id",
-                    as: "fromUser",
-                    pipeline: [publicUserProjection],
+                $project: {
+                    user: {
+                        $cond: {
+                            if: { $eq: ["$fromUser", id] },
+                            then: "$toUser",
+                            else: "$fromUser",
+                        },
+                    },
+                    friendshipId: "$_id",
                 },
             },
             {
                 $lookup: {
                     from: "users",
-                    localField: "toUser",
+                    localField: "user",
                     foreignField: "_id",
-                    as: "toUser",
+                    as: "user_doc",
                     pipeline: [publicUserProjection],
                 },
             },
-            { $unwind: { path: "$fromUser" } },
-            { $unwind: { path: "$toUser" } },
-            { $project: { fromUser: 1, toUser: 1, status: 1, _id: 0 } },
+            { $unwind: { path: "$user_doc" } },
+            {
+                $replaceWith: {
+                    $mergeObjects: ["$user_doc"],
+                },
+            },
+            { $addFields: { lowerName: { $toLower: "$name" } } },
+            { $sort: { lowerName: 1 } },
+            { $project: { lowerName: 0 } },
         ]).exec();
 
         return {
