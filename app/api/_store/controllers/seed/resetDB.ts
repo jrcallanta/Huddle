@@ -2,7 +2,8 @@ import User from "@/app/api/_store/models/user";
 import Invite, { INVITE_STATUS } from "@/app/api/_store/models/invite";
 import Huddle from "@/app/api/_store/models/huddle";
 import Friendship from "../../models/friendship";
-import { FRIENDSHIP_STATUS } from "@/types";
+import { FRIENDSHIP_STATUS, FriendshipType } from "@/types";
+import mongoose from "mongoose";
 
 const HUDDLE_COUNT = 20;
 
@@ -185,14 +186,28 @@ export const resetDB = async function () {
     console.log(`\n\n>>>>>>>>>> Seeding invites...`);
     const savedInvites = await Promise.all(
         savedHuddles.map(async (huddle) => {
+            // const invites = await Promise.all(
+            //     savedUsers
+            //         .filter(
+            //             (user) => user._id !== huddle.author_id && _flipCoin()
+            //         )
+            //         .map((invitedUser) => ({
+            //             huddle_id: huddle._id,
+            //             user_id: invitedUser._id,
+            //             status: _chooseRandom(INVITE_STATUS),
+            //         }))
+            // );
             const invites = await Promise.all(
-                savedUsers
+                savedFriendships
                     .filter(
-                        (user) => user._id !== huddle.author_id && _flipCoin()
+                        (ship: FriendshipType) =>
+                            ship.fromUser === huddle.author_id &&
+                            ship.status === FRIENDSHIP_STATUS.friends &&
+                            _flipCoin()
                     )
-                    .map((invitedUser) => ({
+                    .map((ship: FriendshipType) => ({
                         huddle_id: huddle._id,
-                        user_id: invitedUser._id,
+                        user_id: ship.toUser,
                         status: _chooseRandom(INVITE_STATUS),
                     }))
             );

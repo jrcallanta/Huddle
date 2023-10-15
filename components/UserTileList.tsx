@@ -1,19 +1,27 @@
 import React, { useState } from "react";
 import { twMerge } from "tailwind-merge";
-import UserTile, { INTERACTION_TYPE } from "./UserTile";
+// import UserTile, { INTERACTION_TYPE } from "./UserTile";
+import UserFriendshipTile from "./UserFriendshipTile";
 import { UserTypeForTile } from "@/types";
+import UserTileGeneric from "./UserTileGeneric";
+import UserInviteTile from "./UserInviteTile";
+
+export const enum INTERACTION_TYPE {
+    friendship,
+    invite,
+}
 
 interface UserTileListProps {
     users: UserTypeForTile[];
     label?: string;
-    interactions?: INTERACTION_TYPE;
+    interactionType?: INTERACTION_TYPE;
     className?: string;
 }
 
 const UserTileList: React.FC<UserTileListProps> = ({
     users,
     label,
-    interactions,
+    interactionType,
     className,
 }) => {
     const [userListState, setUserListState] =
@@ -36,14 +44,32 @@ const UserTileList: React.FC<UserTileListProps> = ({
             )}
 
             <div className='w-full h-fit rounded-lg overflow-clip flex flex-col'>
-                {userListState.map((user, i) => (
-                    <UserTile
-                        key={user._id}
-                        user={user}
-                        interactions={interactions}
-                        onRemoveFromUserList={() => onRemoveUser(user._id)}
-                    />
-                ))}
+                {interactionType === undefined &&
+                    userListState.map((user, i) => (
+                        <UserTileGeneric
+                            key={user._id}
+                            user={user}
+                            onRemoveFromUserList={() => onRemoveUser(user._id)}
+                        />
+                    ))}
+
+                {interactionType === INTERACTION_TYPE.friendship &&
+                    userListState.map((user, i) => (
+                        <UserFriendshipTile
+                            key={user._id}
+                            user={user}
+                            onRemoveFromUserList={() => onRemoveUser(user._id)}
+                        />
+                    ))}
+
+                {interactionType === INTERACTION_TYPE.invite &&
+                    userListState.map((user, i) => (
+                        <UserInviteTile
+                            key={user._id}
+                            user={user}
+                            onRemoveFromUserList={() => onRemoveUser(user._id)}
+                        />
+                    ))}
             </div>
         </div>
     ) : null;

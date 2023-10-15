@@ -6,10 +6,11 @@ import { CSSProperties, MouseEventHandler, useState } from "react";
 import { twMerge } from "tailwind-merge";
 import { GrLocation } from "react-icons/gr";
 import { useHuddles } from "@/hooks/useHuddles";
-import AvatarList from "./AvatarList";
 import { useUser } from "@/hooks/useUser";
 import DetailsModal from "./DetailsModal";
 import ActionsBar from "./ActionsBar";
+import UserAvatar from "./UserAvatar";
+import UserAvatarList from "./UserAvatarList";
 
 interface HuddleTileProps {
     huddle: HuddleTypeForTile;
@@ -154,20 +155,6 @@ const HuddleTile: React.FC<HuddleTileProps> = ({
                 </div>
 
                 {huddle.invite_list && (
-<<<<<<< Updated upstream
-                    <AvatarList
-                        inviteList={[
-                            {
-                                status: "GOING",
-                                user: huddle.author,
-                                huddle_id: huddle._id,
-                                created_at: huddle.created_at,
-                            },
-                            ...huddle.invite_list,
-                        ]}
-                        className={"px-4"}
-                    />
-=======
                     <div className='flex items-center gap-1 px-4'>
                         <UserAvatar
                             username={huddle.author.username}
@@ -177,7 +164,6 @@ const HuddleTile: React.FC<HuddleTileProps> = ({
                         />
                         <UserAvatarList inviteList={huddle.invite_list} />
                     </div>
->>>>>>> Stashed changes
                 )}
 
                 {huddle._id === selectedHuddle?._id && (

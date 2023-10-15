@@ -1,9 +1,8 @@
-import { HuddleTypeForTile } from "@/types";
+import { HuddleTypeForTile, UserTypeForTile } from "@/types";
 import dateFormat from "dateformat";
 import React, { useState } from "react";
 import { twMerge } from "tailwind-merge";
 import { GrLocation } from "react-icons/gr";
-import AvatarList from "./AvatarList";
 import { createPortal } from "react-dom";
 import ActionsBar, {
     HuddleEditActions,
@@ -14,12 +13,8 @@ import FormDiv from "./switch-components/FormDiv";
 import EditableTitle from "./switch-components/EditableTitle";
 import { useUser } from "@/hooks/useUser";
 import TimePicker from "./switch-components/TimePicker";
+import InviteListSelector from "./switch-components/InviteListSelector";
 
-/* NOTE:    When on 'By Timeline' tab,
-            updating invite response through
-            DetailsModal doesn't update styling
-            as when on 'By Plan' tab.
-*/
 interface DetailsModalProps {
     huddle: HuddleTypeForTile | null;
     isUpdatingInviteStatus: boolean;
@@ -40,8 +35,9 @@ const DetailsModal: React.FC<DetailsModalProps> = ({
     onRefresh,
     actionsBarActions,
 }) => {
-    const [huddleState, setHuddleState] = useState(huddle);
     const { currentUser } = useUser();
+
+    const [huddleState, setHuddleState] = useState(huddle);
     const container = document.getElementById("details-modal-root");
     const [isInEditingMode, setisInEditingMode] = useState(
         isInEditingModeInitial
@@ -145,7 +141,7 @@ const DetailsModal: React.FC<DetailsModalProps> = ({
                           huddleState.invite_status === "GOING"
                           ? "themed-darker"
                           : "themed",
-                      "absolute overflow-clip top-0 h-full left-0 right-0 rounded-t-3xl md:rounded-3xl flex flex-col",
+                      "absolute overflow-clip top-0 h-full bottom-0 left-0 right-0 rounded-t-3xl md:rounded-3xl flex flex-col",
                       "bg-[var(--500)] border-4 border-[var(--600)] [&_.section]:bg-[var(--400)]",
                       "[&_>_.section:not(:last-of-type)]:border-b-2 [&_>_.section]:border-inherit [&_>_.section]:transition-colors"
                   )}
@@ -219,17 +215,12 @@ const DetailsModal: React.FC<DetailsModalProps> = ({
                   )}
 
                   {huddleState.invite_list && (
-                      <div className='section flex flex-col p-4 cursor-pointer [&.section:hover]:brightness-[1.1] transition-all'>
-                          <AvatarList
-                              inviteList={[
-                                  {
-                                      status: "GOING",
-                                      user: huddleState.author,
-                                      huddle_id: huddleState._id,
-                                      created_at: huddleState.created_at,
-                                  },
-                                  ...huddleState.invite_list,
-                              ]}
+                      <div className='section overflow-hidden overflow-y-auto flex flex-col cursor-pointer [&.section:hover]:brightness-[1.1] transition-all'>
+                          <InviteListSelector
+                              currentUser={currentUser ?? undefined}
+                              owner={huddleState.author as UserTypeForTile}
+                              inviteList={[...huddleState.invite_list]}
+                              isEditing={isInEditingMode}
                           />
                       </div>
                   )}
@@ -255,7 +246,7 @@ const DetailsModal: React.FC<DetailsModalProps> = ({
                       )}
 
                       <ActionsBar
-                          //   className={"border-none"}
+                          className={"border-none"}
                           inviteStatus={huddleState?.invite_status}
                           huddleInviteResponseActions={
                               actionsBarActions.huddleInviteResponseActions

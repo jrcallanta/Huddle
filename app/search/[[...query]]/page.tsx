@@ -1,6 +1,6 @@
 "use client";
 
-import { INTERACTION_TYPE } from "@/components/UserTile";
+import { INTERACTION_TYPE } from "@/components/UserTileList";
 import UserTileList from "@/components/UserTileList";
 import { UserTypeForTile } from "@/types";
 import { useUser } from "@/hooks/useUser";
@@ -115,21 +115,21 @@ const SearchPage = ({ params: { query } }: { params: { query: string } }) => {
                                 <>
                                     <UserTileList
                                         users={friends}
-                                        interactions={
+                                        interactionType={
                                             INTERACTION_TYPE.friendship
                                         }
                                         label={"FRIENDS"}
                                     />
                                     <UserTileList
                                         users={requests}
-                                        interactions={
+                                        interactionType={
                                             INTERACTION_TYPE.friendship
                                         }
                                         label={"FRIEND REQUESTS"}
                                     />
                                     <UserTileList
                                         users={others}
-                                        interactions={
+                                        interactionType={
                                             INTERACTION_TYPE.friendship
                                         }
                                         label={
