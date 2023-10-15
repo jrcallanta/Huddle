@@ -154,6 +154,7 @@ const HuddleTile: React.FC<HuddleTileProps> = ({
                 </div>
 
                 {huddle.invite_list && (
+<<<<<<< Updated upstream
                     <AvatarList
                         inviteList={[
                             {
@@ -166,6 +167,17 @@ const HuddleTile: React.FC<HuddleTileProps> = ({
                         ]}
                         className={"px-4"}
                     />
+=======
+                    <div className='flex items-center gap-1 px-4'>
+                        <UserAvatar
+                            username={huddle.author.username}
+                            imgUrl={huddle.author.imgUrl}
+                            size='sm'
+                            className='border-2 border-white'
+                        />
+                        <UserAvatarList inviteList={huddle.invite_list} />
+                    </div>
+>>>>>>> Stashed changes
                 )}
 
                 {huddle._id === selectedHuddle?._id && (
