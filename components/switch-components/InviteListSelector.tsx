@@ -5,7 +5,6 @@ import React, { useCallback, useState } from "react";
 import UserAvatar from "../UserAvatar";
 import UserAvatarList from "../UserAvatarList";
 import { twMerge } from "tailwind-merge";
-import { useUser } from "@/hooks/useUser";
 import UserInviteTile from "../UserInviteTile";
 import UserTileGeneric from "../UserTileGeneric";
 
@@ -39,12 +38,16 @@ const InviteListSelector: React.FC<InviteListSelectorProps> = ({
                 .then((data) => setFriendsList(data.friendships));
     }, [currentUser]);
 
-    const handleClick = useCallback(async () => {
-        if (!friendsList) {
-            await getFriends();
+    const handleClick = useCallback(
+        async (e: any) => {
+            e.stopPropagation();
+
+            if (!friendsList) await getFriends();
+
             setIsExpanded((prev) => !prev);
-        } else setIsExpanded((prev) => !prev);
-    }, [friendsList, getFriends]);
+        },
+        [friendsList, getFriends]
+    );
 
     const handleToggleUserSelect = (user: UserTypeForTile) => {
         setNewInviteList((prev) => {
@@ -83,6 +86,14 @@ const InviteListSelector: React.FC<InviteListSelectorProps> = ({
                         avatarSize='sm'
                         displayLimit={5}
                     />
+                    <div className='ml-auto'>
+                        <button
+                            className='px-2 py-1 bg-white/20 rounded text-xs text-white/75 font-medium hover:text-white hover:bg-white/40'
+                            onClick={!isExpanded ? handleClick : () => {}}
+                        >
+                            view all
+                        </button>
+                    </div>
                 </>
             ) : (
                 (() => {
@@ -118,13 +129,15 @@ const InviteListSelector: React.FC<InviteListSelectorProps> = ({
                                 )}
                             />
 
-                            {isEditing && inviteListState.length > 0 && (
+                            {inviteListState.length > 0 && (
                                 <>
-                                    <div className='w-full px-4 py-2'>
-                                        <p className={label_cn}>
-                                            Already Invited
-                                        </p>
-                                    </div>
+                                    {isEditing && (
+                                        <div className='w-full px-4 py-2'>
+                                            <p className={label_cn}>
+                                                Already Invited
+                                            </p>
+                                        </div>
+                                    )}
                                     {inviteListState
                                         .filter(
                                             ({ status }) =>
@@ -189,7 +202,7 @@ const InviteListSelector: React.FC<InviteListSelectorProps> = ({
                             <div className='sticky z-[2] bottom-0 w-full group/hidebutton bg-[var(--400)] border-t-2 border-[var(--500)]'>
                                 <button
                                     className={
-                                        "w-full px-4 py-3 text-xs text-[var(--600)] group-hover/hidebutton:text-white group-hover/hidebutton:bg-white/20"
+                                        "w-full px-4 py-3 text-xs font-medium text-[var(--600)] group-hover/hidebutton:text-white group-hover/hidebutton:bg-white/10"
                                     }
                                     onClick={() => setIsExpanded(false)}
                                 >
