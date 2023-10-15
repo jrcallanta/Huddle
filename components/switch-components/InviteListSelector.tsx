@@ -7,6 +7,7 @@ import UserAvatarList from "../UserAvatarList";
 import { twMerge } from "tailwind-merge";
 import { useUser } from "@/hooks/useUser";
 import UserInviteTile from "../UserInviteTile";
+import UserTileGeneric from "../UserTileGeneric";
 
 interface InviteListSelectorProps {
     currentUser?: UserType;
@@ -23,8 +24,6 @@ const InviteListSelector: React.FC<InviteListSelectorProps> = ({
     isEditing,
     className,
 }) => {
-    // const { currentUser } = useUser();
-
     const [isExpanded, setIsExpanded] = useState(false);
     const [inviteListState, setInviteListState] =
         useState<InviteType[]>(inviteList);
@@ -33,8 +32,6 @@ const InviteListSelector: React.FC<InviteListSelectorProps> = ({
         null
     );
 
-    // FRIENDSLIST BEING FETCHED ON EVERY MODAL VIEW
-    // FIX TO ONLY RETRIEVE ON CURRENT USER OWNED
     const getFriends = useCallback(async () => {
         if (currentUser)
             fetch(`/api/friendships/${currentUser._id}`)
@@ -104,7 +101,7 @@ const InviteListSelector: React.FC<InviteListSelectorProps> = ({
                                     <p className={label_cn}>Hosts</p>
                                 </div>
                             )}
-                            <UserInviteTile
+                            <UserTileGeneric
                                 user={{
                                     _id: owner._id,
                                     name: owner.name,
@@ -113,7 +110,6 @@ const InviteListSelector: React.FC<InviteListSelectorProps> = ({
                                 }}
                                 options={{
                                     ...options,
-                                    hideInteractions: true,
                                     appendName: !isEditing ? "host" : undefined,
                                 }}
                                 className={twMerge(
