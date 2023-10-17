@@ -85,7 +85,7 @@ const UserInviteModal: React.FC<UserInviteModalProps> = ({
 
             {/* HOSTS */}
             <div className='w-full px-4 py-2'>
-                <p className={label_cn}>Hosts</p>
+                <p className={label_cn}>Host</p>
             </div>
             <UserTileGeneric
                 user={{
