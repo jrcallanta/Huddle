@@ -24,7 +24,7 @@ const InviteListSelector: React.FC<InviteListSelectorProps> = ({
     inviteList,
     className,
 }) => {
-    const [isExpanded, setIsExpanded] = useState(false);
+    const [isModalDisplayed, setIsModalDisplayed] = useState(false);
     const [inviteListState, setInviteListState] =
         useState<InviteType[]>(inviteList);
     let inviteListModal = document.getElementById("invite-list-modal");
@@ -35,7 +35,9 @@ const InviteListSelector: React.FC<InviteListSelectorProps> = ({
                 "w-full flex justify-between gap-1 bg-[var(--400)] [&_.userAvatar]:bg-[var(--500)]",
                 String(className)
             )}
-            onClick={!isExpanded ? () => setIsExpanded(true) : undefined}
+            onClick={
+                !isModalDisplayed ? () => setIsModalDisplayed(true) : undefined
+            }
         >
             <div className='flex flex-[4] gap-1 p-4'>
                 <UserAvatar
@@ -51,14 +53,14 @@ const InviteListSelector: React.FC<InviteListSelectorProps> = ({
                 />
             </div>
 
-            {isExpanded &&
+            {isModalDisplayed &&
                 inviteListModal &&
                 createPortal(
                     <UserInviteModal
                         currentUser={currentUser}
                         owner={host}
                         inviteList={inviteListState}
-                        onCloseModal={() => setIsExpanded(false)}
+                        onCloseModal={() => setIsModalDisplayed(false)}
                     />,
                     inviteListModal
                 )}
