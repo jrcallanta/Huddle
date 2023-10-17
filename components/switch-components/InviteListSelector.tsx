@@ -7,6 +7,7 @@ import UserAvatarList from "../UserAvatarList";
 import { twMerge } from "tailwind-merge";
 import UserInviteTile from "../UserInviteTile";
 import UserTileGeneric from "../UserTileGeneric";
+import { PiCaretLeftBold } from "react-icons/pi";
 
 interface InviteListSelectorProps {
     currentUser?: UserType;
@@ -49,7 +50,7 @@ const InviteListSelector: React.FC<InviteListSelectorProps> = ({
         [friendsList, getFriends]
     );
 
-    const handleToggleUserSelect = (user: UserTypeForTile) => {
+    const handleToggleUserSelect = useCallback((user: UserTypeForTile) => {
         setNewInviteList((prev) => {
             let newList = [...prev];
             let index = newList.map((user) => user._id).indexOf(user._id);
@@ -58,17 +59,14 @@ const InviteListSelector: React.FC<InviteListSelectorProps> = ({
             console.log(newList);
             return newList;
         });
-    };
+    }, []);
 
     return (
         <div
             className={twMerge(
-                "relative w-full p-4 flex items-center gap-1 [&_.userAvatar]:bg-[var(--500)]",
+                "relative w-full p-4 flex items-center gap-1 bg-[var(--400)] [&_.userAvatar]:bg-[var(--500)]",
                 isExpanded &&
-                    "h-full p-0 gap-0 flex-col overflow-hidden overflow-y-auto",
-                // isExpanded &&
-                //     isEditing &&
-                //     "bg-[var(--500)] [&_.userAvatar]:bg-[var(--900)]",
+                    "absolute z-[1] top-0 bottom-0 transition-[top]  p-0 gap-0 flex-col overflow-hidden overflow-y-auto",
                 String(className)
             )}
             onClick={!isExpanded ? handleClick : () => {}}
@@ -91,7 +89,7 @@ const InviteListSelector: React.FC<InviteListSelectorProps> = ({
                             className='px-2 py-1 bg-white/20 rounded text-xs text-white/75 font-medium hover:text-white hover:bg-white/40'
                             onClick={!isExpanded ? handleClick : () => {}}
                         >
-                            view all
+                            invite
                         </button>
                     </div>
                 </>
@@ -107,6 +105,35 @@ const InviteListSelector: React.FC<InviteListSelectorProps> = ({
                     };
                     return (
                         <>
+                            <div
+                                className={twMerge(
+                                    "flex w-full bg-[var(--400)] border-b-2 border-[var(--500)]",
+                                    "[&_>_button]:border-inherit [&_>_button:not(:only-child):nth-child(1)]:border-r-2"
+                                )}
+                            >
+                                <button
+                                    className={
+                                        "flex items-center gap-2 [&:not(:only-child)]:flex-[2] whitespace-nowrap w-full h-full px-2 py-4  font-medium text-[var(--600)] hover:text-white hover:bg-white/10"
+                                    }
+                                    onClick={() => setIsExpanded(false)}
+                                >
+                                    <PiCaretLeftBold size={26} />
+                                    <span className='text-sm text-left'>
+                                        back
+                                    </span>
+                                </button>
+                                {newInviteList.length > 0 && (
+                                    <button
+                                        className={
+                                            "[&:not(:only-child)]:flex-[4] w-full h-full px-4 py-3 text-xs font-medium text-[var(--600)] hover:text-white hover:bg-white/10"
+                                        }
+                                        onClick={() => setIsExpanded(false)}
+                                    >
+                                        send invites
+                                    </button>
+                                )}
+                            </div>
+
                             {isEditing && (
                                 <div className='w-full px-4 py-2'>
                                     <p className={label_cn}>Hosts</p>
@@ -185,7 +212,15 @@ const InviteListSelector: React.FC<InviteListSelectorProps> = ({
                                         .map((user, i) => (
                                             <UserInviteTile
                                                 key={i}
-                                                user={user}
+                                                user={{
+                                                    ...user,
+                                                    inviteStatus:
+                                                        newInviteList.includes(
+                                                            user
+                                                        )
+                                                            ? "NEW_INVITE"
+                                                            : undefined,
+                                                }}
                                                 options={options}
                                                 onToggleInvite={() =>
                                                     handleToggleUserSelect(user)
@@ -198,17 +233,6 @@ const InviteListSelector: React.FC<InviteListSelectorProps> = ({
                                         ))}
                                 </>
                             )}
-
-                            <div className='sticky z-[2] bottom-0 w-full group/hidebutton bg-[var(--400)] border-t-2 border-[var(--500)]'>
-                                <button
-                                    className={
-                                        "w-full px-4 py-3 text-xs font-medium text-[var(--600)] group-hover/hidebutton:text-white group-hover/hidebutton:bg-white/10"
-                                    }
-                                    onClick={() => setIsExpanded(false)}
-                                >
-                                    show less
-                                </button>
-                            </div>
                         </>
                     );
                 })()
