@@ -215,12 +215,17 @@ const DetailsModal: React.FC<DetailsModalProps> = ({
                   )}
 
                   {huddleState.invite_list && (
-                      <InviteListSelector
-                          currentUser={currentUser ?? undefined}
-                          owner={huddleState.author as UserTypeForTile}
-                          inviteList={[...huddleState.invite_list]}
-                          isEditing={isInEditingMode}
-                      />
+                      <>
+                          <div
+                              id='invite-list-modal'
+                              className='absolute w-full z-[1] top-0 bottom-0 empty:pointer-events-none left-0 empty:left-full transition-[left]'
+                          ></div>
+                          <InviteListSelector
+                              currentUser={currentUser ?? undefined}
+                              host={huddleState.author as UserTypeForTile}
+                              inviteList={[...huddleState.invite_list]}
+                          />
+                      </>
                   )}
 
                   <div className='section mt-auto'>
