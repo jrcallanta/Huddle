@@ -17,35 +17,12 @@ const HuddleFeed: React.FC<HuddleFeedProps> = ({ huddleSections }) => {
     return (
         <div
             className={twMerge(
-                `
-                h-full
-                w-full 
-                overflow-hidden
-                overflow-y-auto
-                no-scrollbar
-                justify-start
-                gap-4
-                py-8
-                pr-1
-                md:pr-2
-            `,
-                `rounded-t-3xl`
+                "h-full w-full overflow-hidden overflow-y-auto no-scrollbar justify-start gap-4 py-8 pr-1 md:pr-2",
+                "rounded-t-3xl"
                 // !huddleSections && "overflow-y-hidden"
             )}
         >
-            <div
-                className='
-                w-full
-                h-fit
-                flex
-                flex-col
-                justify-start
-                align-stretch
-                gap-4
-                cursor-auto
-                [&:has(.huddleTile[data-variant="LOADER"])]:pr-2
-                '
-            >
+            <div className="w-full h-fit flex flex-col justify-start items-stretch gap-4 cursor-auto [&:has(.huddleTile[data-variant='LOADER'])]:pr-2">
                 {huddleSections &&
                     huddleSections
                         .filter(

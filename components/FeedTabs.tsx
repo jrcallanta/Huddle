@@ -41,7 +41,10 @@ const FeedTabs: React.FC<FeedTabsProps> = ({
                 String(className)
             )}
         >
-            <div className='absolute md:hidden -top-2 left-0 right-0 mx-auto rounded bg-[var(--200)] min-w-[2rem] w-1/6 h-1'></div>
+            <div
+                id='slider-indicator'
+                className='absolute md:hidden -top-2 left-0 right-0 mx-auto rounded bg-[var(--200)] min-w-[2rem] w-1/6 h-1'
+            ></div>
             <div
                 id='active-indicator'
                 style={activeIndicatorStyles()}

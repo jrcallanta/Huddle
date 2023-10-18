@@ -14,7 +14,7 @@ export interface HuddleType {
     location?: LocationType;
     start_time: Date;
     end_time?: Date;
-    created_at?: Date;
+    created_at: Date;
     updated_at?: Date;
 }
 
