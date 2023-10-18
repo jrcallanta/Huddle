@@ -28,7 +28,19 @@ const UserInviteModal: React.FC<UserInviteModalProps> = ({
             if (currentUser)
                 fetch(`/api/friendships/${currentUser._id}`)
                     .then((res) => res.json())
-                    .then((data) => setFriendsList(data.friendships));
+                    .then((data) =>
+                        setFriendsList([
+                            ...data.friendships,
+                            ...data.friendships,
+                            ...data.friendships,
+                            ...data.friendships,
+                            ...data.friendships,
+                            ...data.friendships,
+                            ...data.friendships,
+                            ...data.friendships,
+                            ...data.friendships,
+                        ])
+                    );
         };
 
         if (owner._id === currentUser?._id) getFriends();
@@ -46,7 +58,7 @@ const UserInviteModal: React.FC<UserInviteModalProps> = ({
     }, []);
 
     let usertile_cn =
-        "px-4 py-2 animate-none [&_p]:text-white/75 hover:bg-white/10";
+        "px-4 py-2 animate-none [&_p]:text-white/75 [&:has(input:checked)]:bg-white/10 hover:!bg-white/20";
     let label_cn = "pt-2 text-sm text-white/80 font-medium uppercase";
     let options = {
         hideUsername: true,
@@ -54,11 +66,11 @@ const UserInviteModal: React.FC<UserInviteModalProps> = ({
     };
 
     return (
-        <div className='absolute w-full z-[1] top-0 bottom-0 transition-[top] p-0 gap-0 flex-col overflow-hidden overflow-y-auto bg-[var(--400)]'>
+        <div className='absolute w-full z-[1] top-0 bottom-0 transition-[top] flex flex-col bg-[var(--400)]'>
             {/* UPPER BUTTON BAR */}
             <div
                 className={twMerge(
-                    "flex items-center w-full bg-[var(--400)] border-b-2 border-[var(--500)]",
+                    "h-fit flex items-center w-full bg-[var(--400)] border-b-2 border-[var(--500)]",
                     "[&_>_button]:border-inherit [&_>_button:not(:only-child):nth-child(1)]:border-r-2"
                 )}
             >
@@ -78,42 +90,40 @@ const UserInviteModal: React.FC<UserInviteModalProps> = ({
                         }
                         onClick={() => onCloseModal()}
                     >
-                        send invites
+                        <span className='text-sm text-left'>{`Send ${newInviteList?.length}
+                        Invites`}</span>
                     </button>
                 )}
             </div>
 
-            {/* HOSTS */}
-            <div className='w-full px-4 py-2'>
-                <p className={label_cn}>Host</p>
-            </div>
-            <UserTileGeneric
-                user={{
-                    _id: owner._id,
-                    name: owner.name,
-                    username: owner.username,
-                    imgUrl: owner.imgUrl,
-                }}
-                options={options}
-                className={twMerge(
-                    usertile_cn,
-                    "[&_>_.userAvatar]:border-2 [&_>_.userAvatar]:border-white "
-                )}
-            />
-
-            {/* USERS ALREADY INVITED */}
-            {inviteList.length > 0 && (
-                <>
-                    <div className='w-full px-4 py-2'>
-                        <p className={label_cn}>Invited</p>
+            <div className='flex-1 flex flex-col pb-4 overflow-hidden overflow-y-auto'>
+                {/* HOSTS */}
+                <div className='w-full inline-block'>
+                    <div className='sticky top-0 bg-[var(--400)] z-[1] w-full px-4 py-2'>
+                        <p className={label_cn}>Host</p>
                     </div>
-                    {inviteList
-                        // .filter(
-                        //     ({ status }) =>
-                        //         isEditing ||
-                        //         status !== "NOT_GOING"
-                        // )
-                        .map(({ user, status }, i) =>
+                    <UserTileGeneric
+                        user={{
+                            _id: owner._id,
+                            name: owner.name,
+                            username: owner.username,
+                            imgUrl: owner.imgUrl,
+                        }}
+                        options={options}
+                        className={twMerge(
+                            usertile_cn,
+                            "[&_>_.userAvatar]:border-2 [&_>_.userAvatar]:border-white "
+                        )}
+                    />
+                </div>
+
+                {/* USERS ALREADY INVITED */}
+                {inviteList.length > 0 && (
+                    <div className='w-full inline-block'>
+                        <div className='sticky top-0 bg-[var(--400)] z-[1] w-full px-4 py-2'>
+                            <p className={label_cn}>Invited</p>
+                        </div>
+                        {inviteList.map(({ user, status }, i) =>
                             user ? (
                                 <UserInviteTile
                                     key={i}
@@ -131,43 +141,46 @@ const UserInviteModal: React.FC<UserInviteModalProps> = ({
                                 />
                             ) : null
                         )}
-                </>
-            )}
-
-            {/* FRIENDS NOT YET INVITED */}
-            {friendsList?.length && (
-                <>
-                    <div className='w-full px-4 py-2'>
-                        <p className={label_cn}>Invite Others</p>
                     </div>
-                    {friendsList
-                        .filter(
-                            ({ _id }) =>
-                                !inviteList
-                                    .map((invite) => invite.user?._id)
-                                    .includes(_id.toString())
-                        )
-                        .map((user, i) => (
-                            <UserInviteTile
-                                key={i}
-                                user={{
-                                    ...user,
-                                    inviteStatus: newInviteList.includes(user)
-                                        ? "NEW_INVITE"
-                                        : undefined,
-                                }}
-                                options={options}
-                                onToggleInvite={() =>
-                                    handleToggleUserSelect(user)
-                                }
-                                className={twMerge(
-                                    usertile_cn,
-                                    "[&_button]:bg-[var(--500)] [&_button]:text-white"
-                                )}
-                            />
-                        ))}
-                </>
-            )}
+                )}
+
+                {/* FRIENDS NOT YET INVITED */}
+                {friendsList?.length && (
+                    <div className='w-full inline-block'>
+                        <div className='sticky top-0 bg-[var(--400)] z-[1] w-full px-4 py-2'>
+                            <p className={label_cn}>Invite Others</p>
+                        </div>
+                        {friendsList
+                            .filter(
+                                ({ _id }) =>
+                                    !inviteList
+                                        .map((invite) => invite.user?._id)
+                                        .includes(_id.toString())
+                            )
+                            .map((user, i) => (
+                                <UserInviteTile
+                                    key={i}
+                                    user={{
+                                        ...user,
+                                        inviteStatus: newInviteList.includes(
+                                            user
+                                        )
+                                            ? "NEW_INVITE"
+                                            : undefined,
+                                    }}
+                                    options={options}
+                                    onToggleInvite={() =>
+                                        handleToggleUserSelect(user)
+                                    }
+                                    className={twMerge(
+                                        usertile_cn,
+                                        "[&_button]:bg-[var(--500)] [&_button]:text-white"
+                                    )}
+                                />
+                            ))}
+                    </div>
+                )}
+            </div>
         </div>
     );
 };

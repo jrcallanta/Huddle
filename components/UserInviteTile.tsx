@@ -26,7 +26,13 @@ const UserInviteTile: React.FC<UserInviteTileProps> = ({
         <UserTileGeneric
             user={user}
             className={className}
-            options={{ ...options, onClick: handleClick }}
+            options={{
+                ...options,
+                onClick:
+                    user.inviteStatus && user.inviteStatus !== "NEW_INVITE"
+                        ? undefined
+                        : handleClick,
+            }}
             interactions={
                 user.inviteStatus && user.inviteStatus !== "NEW_INVITE" ? (
                     <div className='ml-auto bg-white/20 rounded px-2 py-1'>

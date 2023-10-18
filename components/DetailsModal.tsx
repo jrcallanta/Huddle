@@ -14,6 +14,7 @@ import EditableTitle from "./switch-components/EditableTitle";
 import { useUser } from "@/hooks/useUser";
 import TimePicker from "./switch-components/TimePicker";
 import InviteListSelector from "./switch-components/InviteListSelector";
+import UserAvatar from "./UserAvatar";
 
 interface DetailsModalProps {
     huddle: HuddleTypeForTile | null;
@@ -147,8 +148,31 @@ const DetailsModal: React.FC<DetailsModalProps> = ({
                   )}
                   onSubmit={handleSaveDetails}
               >
-                  <div className='section border-none w-full flex justify-center items-center p-4 gap-2'>
-                      <p className='text text-sm text-center text-white/75 hover:text-white font-medium cursor-pointer'>{`@${huddleState.author.username}`}</p>
+                  <div className='relative section border-none w-full flex justify-end items-center p-4 gap-2'>
+                      <button
+                          className={
+                              "absolute left-3 flex justify-center items-center"
+                          }
+                          onClick={onClose}
+                      >
+                          <BsX
+                              size={32}
+                              strokeWidth={".5px"}
+                              className={twMerge(
+                                  "stroke-[var(--700)] fill-[var(--700)] hover:fill-white hover:stroke-white",
+                                  (!huddleState?.invite_status ||
+                                      huddleState?.invite_status === "GOING") &&
+                                      "stroke-[var(--700)] fill-[var(--700)]"
+                              )}
+                          />
+                      </button>
+                      <p className='text text-xs text-center text-white/75 hover:text-white font-medium cursor-pointer'>{`${huddleState.author.name}`}</p>
+                      <UserAvatar
+                          username={huddleState.author.username}
+                          imgUrl={huddleState.author.imgUrl}
+                          size='sm'
+                          className='border-2 border-white'
+                      />
                   </div>
 
                   <div id='header' className='section flex flex-col gap-5 p-4'>
@@ -199,12 +223,12 @@ const DetailsModal: React.FC<DetailsModalProps> = ({
                   </div>
 
                   {huddleState.location && (
-                      <div className='section flex flex-col p-4 cursor-pointer [&.section:hover]:brightness-[1.1] transition-all'>
+                      <div className='section flex flex-col p-4 cursor-pointer transition-all'>
                           <a
                               href=''
                               target={"_blank"}
                               onClick={(e) => e.stopPropagation()}
-                              className='location w-fit flex gap-1 items-center  [&_>_svg_path]:stroke-white/80 [&:hover_>_svg_path]:stroke-white [&:hover_>_p]:text-white'
+                              className='location w-fit flex gap-1 items-center [&_>_svg_path]:stroke-white/80 [&:hover_>_svg_path]:stroke-white [&:hover_>_p]:text-white'
                           >
                               <GrLocation size={24} />
                               <p className='text-white/80 text-sm font-medium'>
@@ -220,11 +244,14 @@ const DetailsModal: React.FC<DetailsModalProps> = ({
                               id='invite-list-modal'
                               className='absolute w-full z-[1] top-0 bottom-0 empty:pointer-events-none left-0 empty:left-full transition-[left]'
                           ></div>
-                          <InviteListSelector
-                              currentUser={currentUser ?? undefined}
-                              host={huddleState.author as UserTypeForTile}
-                              inviteList={[...huddleState.invite_list]}
-                          />
+                          <div className='section flex w-full h-fit cursor-pointer'>
+                              <InviteListSelector
+                                  currentUser={currentUser ?? undefined}
+                                  host={huddleState.author as UserTypeForTile}
+                                  inviteList={[...huddleState.invite_list]}
+                                  className='hover:bg-white/20'
+                              />
+                          </div>
                       </>
                   )}
 
@@ -269,24 +296,6 @@ const DetailsModal: React.FC<DetailsModalProps> = ({
                           }
                       />
                   </div>
-
-                  <button
-                      className={
-                          "absolute left-2 top-3 flex justify-center items-center"
-                      }
-                      onClick={onClose}
-                  >
-                      <BsX
-                          size={32}
-                          strokeWidth={".5px"}
-                          className={twMerge(
-                              "stroke-[var(--700)] fill-[var(--700)] hover:fill-white hover:stroke-white",
-                              (!huddleState?.invite_status ||
-                                  huddleState?.invite_status === "GOING") &&
-                                  "stroke-[var(--700)] fill-[var(--700)]"
-                          )}
-                      />
-                  </button>
               </FormDiv>,
               container
           )
