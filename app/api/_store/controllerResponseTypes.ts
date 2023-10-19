@@ -53,6 +53,9 @@ export interface PatchInviteResponse extends Response {
 }
 
 // HUDDLES
+export interface PostHuddleResponse extends Response {
+    newHuddle?: HuddleTypeForTile;
+}
 export interface PatchHuddleResponse extends Response {
     updatedHuddle?: HuddleTypeForTile;
 }
