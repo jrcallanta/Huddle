@@ -1,38 +1,31 @@
 "use client";
 
-import { InviteType, UserType, UserTypeForTile } from "@/types";
-import React, { useCallback, useState } from "react";
-import UserAvatar from "../UserAvatar";
+import { HuddleTypeForTile, UserType } from "@/types";
+import React, { useState } from "react";
 import UserAvatarList from "../UserAvatarList";
 import { twMerge } from "tailwind-merge";
-import UserInviteTile from "../UserInviteTile";
-import UserTileGeneric from "../UserTileGeneric";
-import { PiCaretLeftBold } from "react-icons/pi";
 import { createPortal } from "react-dom";
 import UserInviteModal from "../UserInviteModal";
-import { INVITE_STATUS } from "@/app/api/_store/models/invite";
 
 interface InviteListSelectorProps {
     currentUser?: UserType;
-    host: UserTypeForTile;
-    inviteList: InviteType[];
+    huddle: HuddleTypeForTile;
     className?: string;
 }
 
 const InviteListSelector: React.FC<InviteListSelectorProps> = ({
     currentUser,
-    host,
-    inviteList,
+    huddle,
     className,
 }) => {
+    const { invite_list: inviteList } = huddle;
+
     const [isModalDisplayed, setIsModalDisplayed] = useState(false);
-    const [inviteListState, setInviteListState] =
-        useState<InviteType[]>(inviteList);
     let inviteListModal = document.getElementById("invite-list-modal");
 
-    let going = inviteListState.filter(({ status }) => status === "GOING");
+    let going = inviteList?.filter(({ status }) => status === "GOING");
 
-    return (
+    return !(inviteList && going) ? null : (
         <div
             className={twMerge(
                 "w-full flex justify-between gap-1 [&_.userAvatar]:bg-[var(--500)]",
@@ -44,7 +37,7 @@ const InviteListSelector: React.FC<InviteListSelectorProps> = ({
         >
             <div className='flex flex-[4] gap-1 p-4'>
                 <UserAvatarList
-                    inviteList={going.length > 0 ? going : inviteListState}
+                    inviteList={going.length > 0 ? going : inviteList}
                     avatarSize='sm'
                     showAll
                     displayLimit={3}
@@ -58,7 +51,7 @@ const InviteListSelector: React.FC<InviteListSelectorProps> = ({
                                     return (
                                         <>
                                             <span className='font-semibold text-white'>
-                                                {inviteListState.length}
+                                                {inviteList.length}
                                             </span>
                                             {" invited"}
                                         </>
@@ -113,8 +106,7 @@ const InviteListSelector: React.FC<InviteListSelectorProps> = ({
                 createPortal(
                     <UserInviteModal
                         currentUser={currentUser}
-                        owner={host}
-                        inviteList={inviteListState}
+                        huddle={huddle}
                         onCloseModal={() => setIsModalDisplayed(false)}
                     />,
                     inviteListModal

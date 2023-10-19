@@ -1,5 +1,4 @@
-import { HuddleTypeForTile, UserTypeForTile } from "@/types";
-import dateFormat from "dateformat";
+import { HuddleTypeForTile } from "@/types";
 import React, { useEffect, useState } from "react";
 import { twMerge } from "tailwind-merge";
 import { GrLocation } from "react-icons/gr";
@@ -249,8 +248,7 @@ const DetailsModal: React.FC<DetailsModalProps> = ({
                           <div className='section flex w-full h-fit cursor-pointer'>
                               <InviteListSelector
                                   currentUser={currentUser ?? undefined}
-                                  host={huddleState.author as UserTypeForTile}
-                                  inviteList={[...huddleState.invite_list]}
+                                  huddle={huddleState}
                                   className='hover:bg-white/20'
                               />
                           </div>
