@@ -82,7 +82,7 @@ export default function Home() {
 
             <div
                 className={twMerge(
-                    "relative w-full h-full overflow-hidden overflow-y-auto pointer-events-none z-[10]"
+                    "relative w-full md:max-w-[28rem] h-full overflow-hidden overflow-y-auto pointer-events-none z-[10]"
                 )}
             >
                 <div
@@ -95,7 +95,7 @@ export default function Home() {
                         "pointer-events-auto",
                         "h-full w-full sticky top-0 p-4 pb-0 mx-auto z-[2] overflow-hidden",
                         "bg-[var(--background-color)] rounded-t-3xl",
-                        "md:max-w-[36rem] md:pr-0 md:relative"
+                        "md:pr-0 md:relative"
                     )}
                 >
                     <div

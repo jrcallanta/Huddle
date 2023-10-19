@@ -193,6 +193,7 @@ const UserInviteModal: React.FC<UserInviteModalProps> = ({
                                         }
                                         className={twMerge(
                                             usertile_cn,
+                                            "cursor-pointer",
                                             "[&_button]:bg-[var(--500)] [&_button]:text-white"
                                         )}
                                     />

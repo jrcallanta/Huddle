@@ -39,22 +39,26 @@ const InviteListSelector: React.FC<InviteListSelectorProps> = ({
                 <UserAvatarList
                     inviteList={going.length > 0 ? going : inviteList}
                     avatarSize='sm'
-                    showAll
-                    displayLimit={3}
+                    displayLimit={6}
+                    // showAll
                 />
                 <div className='flex-1 h-full flex items-center px-2'>
-                    <p className='text-xs text-white/50 truncate'>
+                    <p className='ml-auto text-xs text-white/50 truncate'>
                         {(() => {
                             let list = going.map((invite) => invite.user?.name);
                             switch (list.length) {
                                 case 0:
-                                    return (
+                                    return inviteList.length > 0 ? (
                                         <>
                                             <span className='font-semibold text-white'>
                                                 {inviteList.length}
                                             </span>
                                             {" invited"}
                                         </>
+                                    ) : (
+                                        <button className='font-semibold hover:text-white'>
+                                            {"Invite"}
+                                        </button>
                                     );
                                 case 1:
                                     return (
