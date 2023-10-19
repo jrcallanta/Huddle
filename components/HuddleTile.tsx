@@ -1,7 +1,7 @@
 "use client";
 
 import dateFormat from "dateformat";
-import { HuddleTypeForTile } from "@/types";
+import { HuddleType, HuddleTypeForTile } from "@/types";
 import { CSSProperties, MouseEventHandler, useState } from "react";
 import { twMerge } from "tailwind-merge";
 import { GrLocation } from "react-icons/gr";
@@ -87,20 +87,27 @@ const HuddleTile: React.FC<HuddleTileProps> = ({
         if (selectedHuddle) setFocusedHuddle(selectedHuddle);
     };
 
-    const handleEditDetails = (event: any) => {
+    const handleEditDetails = async (event: any) => {
         event.stopPropagation();
-        console.log("editing");
         if (selectedHuddle) {
-            setIsInEditingMode(true);
             setFocusedHuddle(selectedHuddle);
+            setIsInEditingMode(true);
         }
     };
 
-    const handleSaveDetails = (event: any) => {
-        event.preventDefault();
-        console.log("saving");
-
-        console.log(new FormData(event.target).get("title"));
+    const handleSaveChanges = async (changes: {
+        title: string;
+        start_time: Date;
+        end_time: Date | undefined;
+    }) => {
+        return fetch("/api/huddle/edit", {
+            method: "PATCH",
+            body: JSON.stringify({
+                userId: currentUser?._id,
+                huddleId: huddle?._id,
+                changes: changes,
+            }),
+        });
     };
 
     const handleCloseDetailsModal = (event: any) => {
@@ -205,7 +212,9 @@ const HuddleTile: React.FC<HuddleTileProps> = ({
                             }
                             huddleEditActions={
                                 !huddleInviteStatusState
-                                    ? { onEditDetails: handleEditDetails }
+                                    ? {
+                                          onEditDetails: handleEditDetails,
+                                      }
                                     : undefined
                             }
                         />
@@ -239,7 +248,7 @@ const HuddleTile: React.FC<HuddleTileProps> = ({
                 </p>
             )}
 
-            {focusedHuddle?._id === huddle._id && (
+            {(focusedHuddle as HuddleType)?._id === huddle._id && (
                 <DetailsModal
                     huddle={huddle}
                     isUpdatingInviteStatus={isUpdatingInviteStatus}
@@ -254,7 +263,10 @@ const HuddleTile: React.FC<HuddleTileProps> = ({
                               }
                             : undefined,
                         huddleEditActions: !huddleInviteStatusState
-                            ? { onEditDetails: handleEditDetails }
+                            ? {
+                                  onEditDetails: handleEditDetails,
+                                  onSaveChanges: handleSaveChanges,
+                              }
                             : undefined,
                     }}
                 />

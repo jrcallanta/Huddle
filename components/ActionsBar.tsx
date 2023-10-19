@@ -10,9 +10,10 @@ export interface HuddleInviteResponseActions {
 }
 
 export interface HuddleEditActions {
-    onEditDetails?: (e: any) => void;
-    onSaveChanges?: (e: any) => void;
-    onDiscardChanges?: (e: any) => void;
+    onEditDetails?: (args: any) => Promise<any>;
+    onSaveChanges?: (args: any) => Promise<any>;
+    onDiscardChanges?: (args: any) => Promise<any>;
+    preventDiscard?: boolean;
 }
 
 interface ActionsBarProps {
@@ -86,13 +87,15 @@ const ActionsBar: React.FC<ActionsBarProps> = ({
                                 type='submit'
                             />
 
-                            <ActionButton
-                                className={twMerge(
-                                    "bg-red-300 hover:!bg-red-400 w-full h-10 rounded-none border-r-2 border-solid border-r-[var(--500)] last:border-r-0 group/button"
-                                )}
-                                text='Cancel'
-                                onClick={huddleEditActions.onDiscardChanges}
-                            />
+                            {huddleEditActions.onDiscardChanges && (
+                                <ActionButton
+                                    className={twMerge(
+                                        "bg-red-300 hover:!bg-red-400 w-full h-10 rounded-none border-r-2 border-solid border-r-[var(--500)] last:border-r-0 group/button"
+                                    )}
+                                    text='Cancel'
+                                    onClick={huddleEditActions.onDiscardChanges}
+                                />
+                            )}
                         </>
                     )}
                 </>

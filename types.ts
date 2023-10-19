@@ -23,6 +23,12 @@ export interface HuddleTypeForTile extends HuddleType {
     invite_status?: string;
 }
 
+export interface HuddleTemplateType {
+    author: UserType;
+    title: string;
+    start_time: Date;
+}
+
 export interface InviteType {
     huddle_id: string;
     user_id?: string;

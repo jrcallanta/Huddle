@@ -1,6 +1,6 @@
 "use client";
 
-import { HuddleType } from "@/types";
+import { HuddleTemplateType, HuddleType } from "@/types";
 import { useUser } from "@/hooks/useUser";
 import {
     Dispatch,
@@ -14,13 +14,16 @@ import {
 type HuddleContextType = {
     states: {
         selectedHuddle: HuddleType | null;
-        focusedHuddle: HuddleType | null;
+        focusedHuddle: HuddleType | HuddleTemplateType | null;
         huddleList: HuddleType[] | null;
     };
     funcs: {
         setSelectedHuddle: Dispatch<SetStateAction<HuddleType | null>>;
-        setFocusedHuddle: Dispatch<SetStateAction<HuddleType | null>>;
+        setFocusedHuddle: Dispatch<
+            SetStateAction<HuddleType | HuddleTemplateType | null>
+        >;
         refreshHuddles: () => Promise<Response> | Promise<void>;
+        getHuddleTemplate: any;
     };
 };
 
@@ -34,7 +37,9 @@ export const HuddleProvider = (props: { [propName: string]: any }) => {
     const [selectedHuddle, setSelectedHuddle] = useState<HuddleType | null>(
         null
     );
-    const [focusedHuddle, setFocusedHuddle] = useState<HuddleType | null>(null);
+    const [focusedHuddle, setFocusedHuddle] = useState<
+        HuddleType | HuddleTemplateType | null
+    >(null);
 
     useEffect(() => {
         console.log(huddleList);
@@ -72,6 +77,18 @@ export const HuddleProvider = (props: { [propName: string]: any }) => {
         });
     };
 
+    const getHuddleTemplate: () => HuddleTemplateType | null =
+        useCallback(() => {
+            return currentUser
+                ? {
+                      author: currentUser,
+                      author_id: currentUser._id,
+                      title: "New Huddle",
+                      start_time: new Date(),
+                  }
+                : null;
+        }, [currentUser]);
+
     const value = {
         states: {
             selectedHuddle,
@@ -82,6 +99,7 @@ export const HuddleProvider = (props: { [propName: string]: any }) => {
             setSelectedHuddle,
             setFocusedHuddle,
             refreshHuddles,
+            getHuddleTemplate,
         },
     };
 

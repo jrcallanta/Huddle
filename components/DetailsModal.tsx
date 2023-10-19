@@ -1,5 +1,5 @@
 import { HuddleTypeForTile } from "@/types";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { twMerge } from "tailwind-merge";
 import { GrLocation } from "react-icons/gr";
 import { createPortal } from "react-dom";
@@ -46,10 +46,15 @@ const DetailsModal: React.FC<DetailsModalProps> = ({
 
     useEffect(() => setHuddleState(huddle), [huddle]);
 
-    const toggleEditMode = () => {
+    const openEditMode = useCallback(async () => {
         setSaveFeedback(null);
-        setisInEditingMode((prev) => !prev);
-    };
+        setisInEditingMode(true);
+    }, []);
+
+    const closeEditMode = useCallback(async () => {
+        setSaveFeedback(null);
+        setisInEditingMode(false);
+    }, []);
 
     const _validateInputs: (props: {
         title: string;
@@ -74,7 +79,7 @@ const DetailsModal: React.FC<DetailsModalProps> = ({
         return true;
     };
 
-    const handleSaveDetails = (event: any) => {
+    const handleSaveDetails = async (event: any) => {
         event.preventDefault();
         console.log("saving");
 
@@ -102,24 +107,20 @@ const DetailsModal: React.FC<DetailsModalProps> = ({
         });
         setSaveFeedback(null);
 
-        const fetchRequest = async () => {
-            await fetch("/api/huddle/edit", {
-                method: "PATCH",
-                body: JSON.stringify({
-                    userId: currentUser?._id,
-                    huddleId: huddleState?._id,
-                    changes: {
-                        title: newTitle,
-                        start_time: new Date(Number(startTime)),
-                        end_time: new Date(Number(endTime)),
-                    },
-                }),
-            })
+        if (actionsBarActions.huddleEditActions?.onSaveChanges) {
+            actionsBarActions.huddleEditActions
+                ?.onSaveChanges({
+                    ...huddleState,
+                    title: newTitle,
+                    start_time: new Date(Number(startTime)),
+                    end_time:
+                        endTime !== "?" ? new Date(Number(endTime)) : undefined,
+                })
                 .then((res) => res.json())
                 .then(async (data) => {
-                    if (data.updatedHuddle) {
+                    if (!data.error) {
                         setisInEditingMode(false);
-                        await onRefresh();
+                        if (onRefresh) await onRefresh();
                     } else {
                         setTimeout(() => {
                             setHuddleState(huddle);
@@ -129,8 +130,7 @@ const DetailsModal: React.FC<DetailsModalProps> = ({
                         }, 500);
                     }
                 });
-        };
-        fetchRequest();
+        }
     };
 
     return container && huddleState
@@ -284,14 +284,17 @@ const DetailsModal: React.FC<DetailsModalProps> = ({
                           huddleEditActions={
                               actionsBarActions.huddleEditActions && {
                                   onEditDetails: !isInEditingMode
-                                      ? toggleEditMode
+                                      ? openEditMode
                                       : undefined,
                                   onSaveChanges: isInEditingMode
                                       ? handleSaveDetails
                                       : undefined,
-                                  onDiscardChanges: isInEditingMode
-                                      ? toggleEditMode
-                                      : undefined,
+                                  onDiscardChanges:
+                                      isInEditingMode &&
+                                      !actionsBarActions.huddleEditActions
+                                          .preventDiscard
+                                          ? closeEditMode
+                                          : undefined,
                               }
                           }
                       />
