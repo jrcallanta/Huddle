@@ -114,7 +114,7 @@ const HuddleTile: React.FC<HuddleTileProps> = ({
             data-variant={huddleInviteStatusState}
             data-expanded={huddle._id === selectedHuddle?._id}
             className={twMerge(
-                !huddleInviteStatusState || huddleInviteStatusState === "GOING"
+                huddleInviteStatusState !== "PENDING"
                     ? "themed-darker"
                     : "themed",
                 "huddleTile relative w-full rounded-xl transition-all duration-250 group/huddle",

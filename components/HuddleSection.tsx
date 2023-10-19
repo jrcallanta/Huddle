@@ -65,9 +65,7 @@ const HuddleSection: React.FC<HuddleSectionProps> = ({
                     {huddles.map((huddle, j) => (
                         <HuddleTile
                             key={huddle._id}
-                            huddle={{
-                                ...huddle,
-                            }}
+                            huddle={huddle}
                             // className={"animate-fade-in"}
                             // style={{ animationDelay: `${j * 0.05}s` }}
                         />

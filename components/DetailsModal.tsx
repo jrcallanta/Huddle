@@ -1,6 +1,6 @@
 import { HuddleTypeForTile, UserTypeForTile } from "@/types";
 import dateFormat from "dateformat";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { twMerge } from "tailwind-merge";
 import { GrLocation } from "react-icons/gr";
 import { createPortal } from "react-dom";
@@ -44,6 +44,8 @@ const DetailsModal: React.FC<DetailsModalProps> = ({
         isInEditingModeInitial
     );
     const [saveFeedback, setSaveFeedback] = useState<string | null>(null);
+
+    useEffect(() => setHuddleState(huddle), [huddle]);
 
     const toggleEditMode = () => {
         setSaveFeedback(null);
