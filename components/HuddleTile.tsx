@@ -211,31 +211,10 @@ const HuddleTile: React.FC<HuddleTileProps> = ({
                             )}
                         ></div> */}
 
-                        {/* <ActionsBar
-                            inviteStatus={huddleInviteStatusState}
-                            onViewDetails={handleViewDetailsModal}
-                            huddleInviteResponseActions={
-                                huddleInviteStatusState
-                                    ? {
-                                          onToggleAccept:
-                                              handleToggleAcceptInvite,
-                                          onToggleDecline:
-                                              handleToggleDeclineInvite,
-                                      }
-                                    : undefined
-                            }
-                            huddleEditActions={
-                                !huddleInviteStatusState
-                                    ? {
-                                          onEditDetails: handleEditDetails,
-                                      }
-                                    : undefined
-                            }
-                        /> */}
                         {huddleInviteStatusState && (
                             <ActionsBar
                                 interactions={"invite"}
-                                // onView={handleViewDetailsModal}
+                                onView={handleViewDetailsModal}
                                 onAccept={handleToggleAcceptInvite}
                                 isAccepted={huddleInviteStatusState === "GOING"}
                                 onDecline={handleToggleDeclineInvite}
