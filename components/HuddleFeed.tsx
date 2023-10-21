@@ -19,12 +19,7 @@ interface HuddleFeedProps {
 
 const HuddleFeed: React.FC<HuddleFeedProps> = ({ huddleSections }) => {
     const {
-        funcs: {
-            getHuddleTemplate,
-            refreshHuddles,
-            setSelectedHuddle,
-            setFocusedHuddle,
-        },
+        funcs: { getHuddleTemplate, refreshHuddles, setFocusedHuddle },
     } = useHuddles();
 
     const [isCreatingNewHuddle, setIsCreatingNewHuddle] = useState(false);
@@ -42,7 +37,6 @@ const HuddleFeed: React.FC<HuddleFeedProps> = ({ huddleSections }) => {
             .then(async (data) => {
                 if (data.newHuddle) {
                     await refreshHuddles();
-                    setSelectedHuddle(data.newHuddle as HuddleTypeForTile);
                     setFocusedHuddle(data.newHuddle as HuddleTypeForTile);
                     setTimeout(() => setIsCreatingNewHuddle(false), 0);
                 }

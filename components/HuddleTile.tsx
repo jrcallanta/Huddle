@@ -110,6 +110,19 @@ const HuddleTile: React.FC<HuddleTileProps> = ({
         });
     };
 
+    const handleDeleteHuddle = async (
+        callback?: (data: any) => any | Promise<any>
+    ) => {
+        return fetch(`/api/huddle/delete/${huddle._id}`, {
+            method: "DELETE",
+        })
+            .then((res) => res.json())
+            .then((data) => {
+                setFocusedHuddle(null);
+                if (callback) callback(data);
+            });
+    };
+
     const handleCloseDetailsModal = (event: any) => {
         event.stopPropagation();
         setIsInEditingMode(false);
@@ -255,6 +268,7 @@ const HuddleTile: React.FC<HuddleTileProps> = ({
                     isInEditingMode={isInEditingMode}
                     onClose={handleCloseDetailsModal}
                     onRefresh={refreshHuddles}
+                    onDelete={handleDeleteHuddle}
                     actionsBarActions={{
                         huddleInviteResponseActions: huddleInviteStatusState
                             ? {

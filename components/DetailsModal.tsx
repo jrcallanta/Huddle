@@ -1,16 +1,19 @@
-import { HuddleTypeForTile } from "@/types";
 import React, { useCallback, useEffect, useState } from "react";
-import { twMerge } from "tailwind-merge";
-import { GrLocation } from "react-icons/gr";
+import { useUser } from "@/hooks/useUser";
 import { createPortal } from "react-dom";
+import { twMerge } from "tailwind-merge";
+import { HuddleTypeForTile } from "@/types";
+
+import { GrLocation } from "react-icons/gr";
+import { BsX } from "react-icons/bs";
+import { FaTrashCan } from "react-icons/fa6";
+
 import ActionsBar, {
     HuddleEditActions,
     HuddleInviteResponseActions,
 } from "./ActionsBar";
-import { BsX } from "react-icons/bs";
 import FormDiv from "./switch-components/FormDiv";
 import EditableTitle from "./switch-components/EditableTitle";
-import { useUser } from "@/hooks/useUser";
 import TimePicker from "./switch-components/TimePicker";
 import InviteListSelector from "./switch-components/InviteListSelector";
 import UserAvatar from "./UserAvatar";
@@ -21,6 +24,7 @@ interface DetailsModalProps {
     isInEditingMode: boolean;
     onClose?: any;
     onRefresh?: any;
+    onDelete?: (data: any) => any | Promise<any>;
     actionsBarActions: {
         huddleEditActions?: HuddleEditActions;
         huddleInviteResponseActions?: HuddleInviteResponseActions;
@@ -33,6 +37,7 @@ const DetailsModal: React.FC<DetailsModalProps> = ({
     isInEditingMode: isInEditingModeInitial,
     onClose,
     onRefresh,
+    onDelete,
     actionsBarActions,
 }) => {
     const { currentUser } = useUser();
@@ -133,6 +138,19 @@ const DetailsModal: React.FC<DetailsModalProps> = ({
         }
     };
 
+    const handleDelete = () => {
+        setSaveFeedback(null);
+
+        if (onDelete)
+            onDelete((data: any) => {
+                if (!data.error) {
+                    if (onRefresh) onRefresh();
+                } else {
+                    setSaveFeedback("Could not delete. Try again.");
+                }
+            });
+    };
+
     return container && huddleState
         ? createPortal(
               <FormDiv
@@ -174,6 +192,17 @@ const DetailsModal: React.FC<DetailsModalProps> = ({
                           size='sm'
                           className='border-2 border-white'
                       />
+                      {huddle?._id && isInEditingMode && (
+                          <button
+                              className='flex justify-center items-center'
+                              onClick={handleDelete}
+                          >
+                              <FaTrashCan
+                                  size={20}
+                                  className='fill-[var(--700)] stroke-[var(--700)] hover:fill-white hover:stroke-white'
+                              />
+                          </button>
+                      )}
                   </div>
 
                   <div id='header' className='section flex flex-col gap-5 p-4'>
