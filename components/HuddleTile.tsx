@@ -8,7 +8,8 @@ import { GrLocation } from "react-icons/gr";
 import { useHuddles } from "@/hooks/useHuddles";
 import { useUser } from "@/hooks/useUser";
 import DetailsModal from "./DetailsModal";
-import ActionsBar from "./ActionsBar";
+import ActionsBar from "./ActionsBarOpt";
+import ActionButton from "./ActionButtonOpt";
 import UserAvatar from "./UserAvatar";
 import UserAvatarList from "./UserAvatarList";
 
@@ -151,7 +152,7 @@ const HuddleTile: React.FC<HuddleTileProps> = ({
                     content absolute peer group h-full  w-full flex flex-col gap-4 -top-2 left-2
                     transition-all duration-250
                     overflow-hidden border-4 rounded-xl
-                    hover:-top-3 hover:left-3 [&:active:not(:has(.options_button:active))]:top-0 [&:active:not(:has(.options_button:active))]:left-0
+                    hover:-top-3 hover:left-3 [&:active:not(:has(button:active))]:top-0 [&:active:not(:has(button:active))]:left-0
                     `
                 )}
             >
@@ -210,7 +211,7 @@ const HuddleTile: React.FC<HuddleTileProps> = ({
                             )}
                         ></div> */}
 
-                        <ActionsBar
+                        {/* <ActionsBar
                             inviteStatus={huddleInviteStatusState}
                             onViewDetails={handleViewDetailsModal}
                             huddleInviteResponseActions={
@@ -230,32 +231,57 @@ const HuddleTile: React.FC<HuddleTileProps> = ({
                                       }
                                     : undefined
                             }
-                        />
+                        /> */}
+                        {huddleInviteStatusState && (
+                            <ActionsBar
+                                interactions={"invite"}
+                                // onView={handleViewDetailsModal}
+                                onAccept={handleToggleAcceptInvite}
+                                isAccepted={huddleInviteStatusState === "GOING"}
+                                onDecline={handleToggleDeclineInvite}
+                                isDeclined={
+                                    huddleInviteStatusState === "NOT_GOING"
+                                }
+                            />
+                        )}
+
+                        {!huddleInviteStatusState && (
+                            <>
+                                {!isInEditingMode ? (
+                                    <ActionsBar
+                                        interactions='owner'
+                                        onView={handleViewDetailsModal}
+                                        onEdit={handleEditDetails}
+                                    />
+                                ) : (
+                                    <ActionsBar
+                                        interactions='editor'
+                                        onSave={handleSaveChanges}
+                                        onCancel={handleCloseDetailsModal}
+                                    />
+                                )}
+                            </>
+                        )}
                     </div>
                 )}
             </div>
 
             {(huddle.invite_status === "PENDING" || isUpdatingInviteStatus) && (
                 <p
-                    className='
-                    status
-                    absolute
-                    py-1
-                    px-2
-                    rounded-lg
-                    bg-[var(--500)]
-                    text-white/75
-                    text-xs
-                    font-semibold
-                    z-10
-                    -top-4
-                    left-5
-                    peer-hover:-top-5
-                    peer-hover:left-6
-                    peer-[:active:not(:has(button:active))]:-top-2
-                    peer-[:active:not(:has(button:active))]:left-3
-                    transition-all
-                    '
+                    className={twMerge(
+                        "status",
+                        "absolute py-1 px-2",
+                        "rounded-lg bg-[var(--500)]",
+                        "text-white/75 text-xs font-semibold",
+                        "-top-4 left-5",
+                        "peer-hover:-top-5",
+                        "peer-hover:left-6",
+                        // "peer-active:-top-2",
+                        // "peer-active:left-3",
+                        "peer-[:active:not(:has(button:active))]:-top-2",
+                        "peer-[:active:not(:has(button:active))]:left-3",
+                        "transition-all"
+                    )}
                 >
                     {isUpdatingInviteStatus ? "UPDATING..." : "PENDING"}
                 </p>

@@ -66,6 +66,10 @@ body {
         --900: theme(colors.slate.950);
     }
 
+    .flex-center {
+        @apply flex justify-center items-center;
+    }
+
     .before-bg {
         content: "";
         position: relative;
