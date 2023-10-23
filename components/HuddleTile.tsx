@@ -136,7 +136,7 @@ const HuddleTile: React.FC<HuddleTileProps> = ({
             data-variant={huddleInviteStatusState}
             data-expanded={huddle._id === selectedHuddle?._id}
             className={twMerge(
-                huddleInviteStatusState !== "PENDING"
+                !huddleInviteStatusState || huddleInviteStatusState === "GOING"
                     ? "themed-darker"
                     : "themed",
                 "huddleTile relative w-full rounded-xl transition-all duration-250 group/huddle",
@@ -225,22 +225,12 @@ const HuddleTile: React.FC<HuddleTileProps> = ({
                             />
                         )}
 
-                        {!huddleInviteStatusState && (
-                            <>
-                                {!isInEditingMode ? (
-                                    <ActionsBar
-                                        interactions='owner'
-                                        onView={handleViewDetailsModal}
-                                        onEdit={handleEditDetails}
-                                    />
-                                ) : (
-                                    <ActionsBar
-                                        interactions='editor'
-                                        onSave={handleSaveChanges}
-                                        onCancel={handleCloseDetailsModal}
-                                    />
-                                )}
-                            </>
+                        {!huddleInviteStatusState && !isInEditingMode && (
+                            <ActionsBar
+                                interactions='owner'
+                                onView={handleViewDetailsModal}
+                                onEdit={handleEditDetails}
+                            />
                         )}
                     </div>
                 )}
@@ -256,8 +246,6 @@ const HuddleTile: React.FC<HuddleTileProps> = ({
                         "-top-4 left-5",
                         "peer-hover:-top-5",
                         "peer-hover:left-6",
-                        // "peer-active:-top-2",
-                        // "peer-active:left-3",
                         "peer-[:active:not(:has(button:active))]:-top-2",
                         "peer-[:active:not(:has(button:active))]:left-3",
                         "transition-all"

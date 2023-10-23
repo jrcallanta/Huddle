@@ -4,7 +4,7 @@ import { twMerge } from "tailwind-merge";
 import HuddleSection from "./HuddleSection";
 import { BsPlus } from "react-icons/bs";
 import { useHuddles } from "@/hooks/useHuddles";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import DetailsModal from "./DetailsModal";
 
 export interface HuddleSection {
@@ -19,33 +19,15 @@ interface HuddleFeedProps {
 
 const HuddleFeed: React.FC<HuddleFeedProps> = ({ huddleSections }) => {
     const {
-        funcs: { getHuddleTemplate, refreshHuddles, setFocusedHuddle },
+        states: { focusedHuddle },
+        funcs: { getHuddleTemplate },
     } = useHuddles();
 
     const [isCreatingNewHuddle, setIsCreatingNewHuddle] = useState(false);
 
-    const handleSaveNewHuddle = async (newHuddle: HuddleType) => {
-        console.log(newHuddle);
-
-        let data = await fetch("/api/huddle", {
-            method: "POST",
-            body: JSON.stringify({
-                huddle: newHuddle,
-            }),
-        })
-            .then((res) => res.json())
-            .then(async (data) => {
-                if (data.newHuddle) {
-                    await refreshHuddles();
-                    setFocusedHuddle(data.newHuddle as HuddleTypeForTile);
-                    setTimeout(() => setIsCreatingNewHuddle(false), 0);
-                }
-
-                return data;
-            });
-
-        return new Promise(() => data);
-    };
+    useEffect(() => {
+        if (focusedHuddle) setTimeout(() => setIsCreatingNewHuddle(false), 0);
+    }, [focusedHuddle]);
 
     return (
         <div
@@ -74,24 +56,19 @@ const HuddleFeed: React.FC<HuddleFeedProps> = ({ huddleSections }) => {
                                 />
                             </button>
 
-                            {isCreatingNewHuddle && (
-                                <DetailsModal
-                                    huddle={getHuddleTemplate()}
-                                    isUpdatingInviteStatus={false}
-                                    isInEditingMode={true}
-                                    actionsBarActions={{
-                                        huddleEditActions: {
-                                            onSaveChanges: handleSaveNewHuddle,
-                                            preventDiscard: true,
-                                        },
-                                        huddleInviteResponseActions: undefined,
-                                    }}
-                                    onClose={() =>
-                                        setIsCreatingNewHuddle(false)
-                                    }
-                                    onRefresh={refreshHuddles}
-                                />
-                            )}
+                            {isCreatingNewHuddle &&
+                                (() => {
+                                    let template = getHuddleTemplate();
+                                    return !template ? null : (
+                                        <DetailsModal
+                                            huddle={template}
+                                            isInEditingMode={true}
+                                            onClose={() =>
+                                                setIsCreatingNewHuddle(false)
+                                            }
+                                        />
+                                    );
+                                })()}
                         </div>
 
                         {huddleSections

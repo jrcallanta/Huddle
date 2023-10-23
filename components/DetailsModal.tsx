@@ -30,7 +30,9 @@ const DetailsModal: React.FC<DetailsModalProps> = ({
     const { currentUser } = useUser();
     const {
         funcs: {
+            setFocusedHuddle,
             updateHuddleDetails,
+            createNewHuddle,
             respondToInvite,
             deleteHuddle,
             refreshHuddles,
@@ -92,27 +94,32 @@ const DetailsModal: React.FC<DetailsModalProps> = ({
             invite_status: respond,
         }));
 
-        await respondToInvite(
-            {
-                huddleId: huddle._id,
-                response: respond,
-            },
-            async (data: any) => {
-                if (data.updatedInvite) {
-                    setIsUpdatingInviteStatus(false);
-                    await refreshHuddles();
-                } else {
-                    setTimeout(() => {
-                        setSaveFeedback("Could not send response. Try again.");
-                        setHuddleState((prev) => ({
-                            ...prev,
-                            invite_status: huddle.invite_status,
-                        }));
+        if (huddle._id)
+            await respondToInvite(
+                {
+                    huddleId: huddle._id,
+                    response: respond,
+                },
+                async (data: any) => {
+                    if (data.updatedInvite) {
                         setIsUpdatingInviteStatus(false);
-                    }, 500);
+                        if (data.updatedInvite.status === "NOT_GOING")
+                            setFocusedHuddle(null);
+                        await refreshHuddles();
+                    } else {
+                        setTimeout(() => {
+                            setSaveFeedback(
+                                "Could not send response. Try again."
+                            );
+                            setHuddleState((prev) => ({
+                                ...prev,
+                                invite_status: huddle.invite_status,
+                            }));
+                            setIsUpdatingInviteStatus(false);
+                        }, 500);
+                    }
                 }
-            }
-        );
+            );
     };
 
     const handleToggleAcceptInvite = (event: any) =>
@@ -121,15 +128,15 @@ const DetailsModal: React.FC<DetailsModalProps> = ({
             huddleState.invite_status !== "GOING" ? "GOING" : "PENDING"
         );
 
-    const handleToggleDeclineInvite = (event: any) =>
+    const handleToggleDeclineInvite = (event: any) => {
         handleRespondInvite(
             event,
             huddleState.invite_status !== "NOT_GOING" ? "NOT_GOING" : "PENDING"
         );
+    };
 
     const handleSaveDetails = async (event: any) => {
         event.preventDefault();
-        console.log("saving");
 
         const form = document.getElementById("huddle-form") as HTMLFormElement;
         if (!form) return;
@@ -156,38 +163,70 @@ const DetailsModal: React.FC<DetailsModalProps> = ({
                     endTime !== "?" ? new Date(Number(endTime)) : undefined,
             } as HuddleTypeForTile;
         });
-        setSaveFeedback(null);
-        updateHuddleDetails(
-            {
-                huddleId: huddle?._id,
-                changes: {
+        setSaveFeedback("Saving...");
+
+        if (huddle._id)
+            updateHuddleDetails(
+                {
+                    huddleId: huddle?._id,
+                    changes: {
+                        ...huddleState,
+                        title: newTitle as string,
+                        startTime: new Date(Number(startTime)),
+                        endTime:
+                            endTime !== "?"
+                                ? new Date(Number(endTime))
+                                : undefined,
+                    },
+                },
+                (data: any) => {
+                    if (!data.error) {
+                        setisInEditingMode(false);
+                        refreshHuddles();
+                        setSaveFeedback(null);
+                    } else {
+                        setTimeout(() => {
+                            setSaveFeedback(
+                                "Could not save changes. Try again."
+                            );
+                        }, 500);
+                    }
+                }
+            );
+        else
+            createNewHuddle(
+                {
                     ...huddleState,
                     title: newTitle as string,
-                    startTime: new Date(Number(startTime)),
-                    endTime:
+                    start_time: new Date(Number(startTime)),
+                    end_time:
                         endTime !== "?" ? new Date(Number(endTime)) : undefined,
                 },
-            },
-            (data: any) => {
-                if (!data.error) {
-                    setisInEditingMode(false);
-                    refreshHuddles();
-                } else {
-                    setTimeout(() => {
-                        setHuddleState(huddle);
-                        setSaveFeedback("Could not save changes. Try again.");
-                    }, 500);
+                async (data: any) => {
+                    if (data.newHuddle) {
+                        await refreshHuddles();
+                        setFocusedHuddle(data.newHuddle as HuddleTypeForTile);
+                    } else {
+                        setTimeout(() => {
+                            setSaveFeedback(
+                                "Could not save changes. Try again."
+                            );
+                        }, 500);
+                    }
                 }
-            }
-        );
+            );
     };
 
     const handleDelete = () => {
-        setSaveFeedback(null);
-        deleteHuddle({ huddleId: huddle._id }, (data: any) => {
-            if (!data.error) refreshHuddles();
-            else setSaveFeedback("Could not delete. Try again.");
-        });
+        if (huddle._id) {
+            setSaveFeedback("Deleting...");
+            deleteHuddle({ huddleId: huddle._id }, (data: any) => {
+                if (!data.error) {
+                    setFocusedHuddle(null);
+                    refreshHuddles();
+                } else setSaveFeedback("Could not delete. Try again.");
+            });
+        }
     };
 
     return container && huddleState
@@ -235,6 +274,7 @@ const DetailsModal: React.FC<DetailsModalProps> = ({
                           <button
                               className='flex justify-center items-center'
                               onClick={handleDelete}
+                              type='button'
                           >
                               <FaTrashCan
                                   size={20}

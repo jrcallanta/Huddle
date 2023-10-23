@@ -28,7 +28,7 @@ type HuddleContextType = {
             SetStateAction<HuddleType | HuddleTemplateType | null>
         >;
         refreshHuddles: () => Promise<Response> | Promise<void>;
-        getHuddleTemplate: () => HuddleTemplateType | null;
+        getHuddleTemplate: () => HuddleType | null;
         respondToInvite: (
             args: {
                 huddleId: string;
@@ -36,6 +36,10 @@ type HuddleContextType = {
             },
             callback?: any
         ) => Promise<InviteType | null>;
+        createNewHuddle: (
+            newHuddle: HuddleType,
+            callback?: any
+        ) => Promise<HuddleTypeForTile | null>;
         updateHuddleDetails: (
             args: {
                 huddleId: string;
@@ -76,17 +80,17 @@ export const HuddleProvider = (props: { [propName: string]: any }) => {
      * with starting values.
      *
      */
-    const getHuddleTemplate: () => HuddleTemplateType | null =
-        useCallback(() => {
-            return currentUser
-                ? {
-                      author: currentUser,
-                      author_id: currentUser._id,
-                      title: "New Huddle",
-                      start_time: new Date(),
-                  }
-                : null;
-        }, [currentUser]);
+    const getHuddleTemplate: () => HuddleType | null = useCallback(() => {
+        return currentUser
+            ? {
+                  _id: undefined,
+                  author: currentUser,
+                  author_id: currentUser._id,
+                  title: "New Huddle",
+                  start_time: new Date(),
+              }
+            : null;
+    }, [currentUser]);
 
     /***
      * Function used to refresh huddle list, retrieving
@@ -130,6 +134,37 @@ export const HuddleProvider = (props: { [propName: string]: any }) => {
                         userId: currentUser?._id,
                         huddleId: huddleId,
                         status: response,
+                    }),
+                })
+                    .then((res) => res.json())
+                    .then((data) => {
+                        if (callback) callback(data);
+                    })
+                    .catch((error) => {
+                        if (callback) callback(error);
+                    });
+            }
+
+            return null;
+        },
+        [currentUser]
+    );
+
+    /***
+     * Function used to create a new huddle
+     * for the currentUser with values passed.
+     *
+     */
+    const createNewHuddle: (
+        newHuddle: HuddleType,
+        callback?: any
+    ) => Promise<HuddleTypeForTile | null> = useCallback(
+        async (newHuddle, callback) => {
+            if (currentUser) {
+                await fetch("/api/huddle", {
+                    method: "POST",
+                    body: JSON.stringify({
+                        huddle: newHuddle,
                     }),
                 })
                     .then((res) => res.json())
@@ -246,6 +281,7 @@ export const HuddleProvider = (props: { [propName: string]: any }) => {
             setFocusedHuddle,
             refreshHuddles,
             getHuddleTemplate,
+            createNewHuddle,
             respondToInvite,
             updateHuddleDetails,
             deleteHuddle,

@@ -6,7 +6,7 @@ export interface LocationType {
     };
 }
 export interface HuddleType {
-    _id: string;
+    _id: string | undefined;
     author_id: string;
     author: UserType;
     title: string;
@@ -14,7 +14,7 @@ export interface HuddleType {
     location?: LocationType;
     start_time: Date;
     end_time?: Date;
-    created_at: Date;
+    created_at?: Date;
     updated_at?: Date;
 }
 
