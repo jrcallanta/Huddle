@@ -8,55 +8,52 @@ import { GrLocation } from "react-icons/gr";
 import { BsX } from "react-icons/bs";
 import { FaTrashCan } from "react-icons/fa6";
 
-import ActionsBar, {
-    HuddleEditActions,
-    HuddleInviteResponseActions,
-} from "./ActionsBar";
+import ActionsBar from "./ActionsBarOpt";
 import FormDiv from "./switch-components/FormDiv";
 import EditableTitle from "./switch-components/EditableTitle";
 import TimePicker from "./switch-components/TimePicker";
 import InviteListSelector from "./switch-components/InviteListSelector";
 import UserAvatar from "./UserAvatar";
+import { useHuddles } from "@/hooks/useHuddles";
 
 interface DetailsModalProps {
-    huddle: HuddleTypeForTile | null;
-    isUpdatingInviteStatus: boolean;
+    huddle: HuddleTypeForTile;
     isInEditingMode: boolean;
     onClose?: any;
-    onRefresh?: any;
-    onDelete?: (data: any) => any | Promise<any>;
-    actionsBarActions: {
-        huddleEditActions?: HuddleEditActions;
-        huddleInviteResponseActions?: HuddleInviteResponseActions;
-    };
 }
 
 const DetailsModal: React.FC<DetailsModalProps> = ({
     huddle,
-    isUpdatingInviteStatus,
     isInEditingMode: isInEditingModeInitial,
     onClose,
-    onRefresh,
-    onDelete,
-    actionsBarActions,
 }) => {
     const { currentUser } = useUser();
+    const {
+        funcs: {
+            updateHuddleDetails,
+            respondToInvite,
+            deleteHuddle,
+            refreshHuddles,
+        },
+    } = useHuddles();
 
     const [huddleState, setHuddleState] = useState(huddle);
-    const container = document.getElementById("details-modal-root");
     const [isInEditingMode, setisInEditingMode] = useState(
         isInEditingModeInitial
     );
+    const [isUpdatingInviteStatus, setIsUpdatingInviteStatus] = useState(false);
     const [saveFeedback, setSaveFeedback] = useState<string | null>(null);
+
+    const container = document.getElementById("details-modal-root");
 
     useEffect(() => setHuddleState(huddle), [huddle]);
 
-    const openEditMode = useCallback(async () => {
+    const handleOpenEditMode = useCallback(async () => {
         setSaveFeedback(null);
         setisInEditingMode(true);
     }, []);
 
-    const closeEditMode = useCallback(async () => {
+    const handleCloseEditMode = useCallback(async () => {
         setSaveFeedback(null);
         setisInEditingMode(false);
     }, []);
@@ -66,6 +63,8 @@ const DetailsModal: React.FC<DetailsModalProps> = ({
         startTime: string;
         endTime: string;
     }) => boolean = ({ title, startTime, endTime }) => {
+        console.log(startTime, endTime);
+
         if (!title || title === "") {
             setSaveFeedback("Title cannot be blank");
             return false;
@@ -76,19 +75,66 @@ const DetailsModal: React.FC<DetailsModalProps> = ({
             return false;
         }
 
-        if (startTime && endTime && startTime > endTime) {
-            setSaveFeedback("End time cannot be before start time");
+        if (startTime && endTime && startTime >= endTime) {
+            setSaveFeedback("End time must be after start time");
             return false;
         }
 
         return true;
     };
 
+    const handleRespondInvite = async (event: any, respond: string) => {
+        event.stopPropagation();
+        setSaveFeedback(null);
+        setIsUpdatingInviteStatus(true);
+        setHuddleState((prev) => ({
+            ...prev,
+            invite_status: respond,
+        }));
+
+        await respondToInvite(
+            {
+                huddleId: huddle._id,
+                response: respond,
+            },
+            async (data: any) => {
+                if (data.updatedInvite) {
+                    setIsUpdatingInviteStatus(false);
+                    await refreshHuddles();
+                } else {
+                    setTimeout(() => {
+                        setSaveFeedback("Could not send response. Try again.");
+                        setHuddleState((prev) => ({
+                            ...prev,
+                            invite_status: huddle.invite_status,
+                        }));
+                        setIsUpdatingInviteStatus(false);
+                    }, 500);
+                }
+            }
+        );
+    };
+
+    const handleToggleAcceptInvite = (event: any) =>
+        handleRespondInvite(
+            event,
+            huddleState.invite_status !== "GOING" ? "GOING" : "PENDING"
+        );
+
+    const handleToggleDeclineInvite = (event: any) =>
+        handleRespondInvite(
+            event,
+            huddleState.invite_status !== "NOT_GOING" ? "NOT_GOING" : "PENDING"
+        );
+
     const handleSaveDetails = async (event: any) => {
         event.preventDefault();
         console.log("saving");
 
-        const formData = new FormData(event.target);
+        const form = document.getElementById("huddle-form") as HTMLFormElement;
+        if (!form) return;
+
+        const formData = new FormData(form);
         const newTitle = formData.get("title");
         const startTime = formData.get("start-time-hidden");
         const endTime = formData.get("end-time-hidden");
@@ -111,44 +157,37 @@ const DetailsModal: React.FC<DetailsModalProps> = ({
             } as HuddleTypeForTile;
         });
         setSaveFeedback(null);
-
-        if (actionsBarActions.huddleEditActions?.onSaveChanges) {
-            actionsBarActions.huddleEditActions
-                ?.onSaveChanges({
+        updateHuddleDetails(
+            {
+                huddleId: huddle?._id,
+                changes: {
                     ...huddleState,
-                    title: newTitle,
-                    start_time: new Date(Number(startTime)),
-                    end_time:
+                    title: newTitle as string,
+                    startTime: new Date(Number(startTime)),
+                    endTime:
                         endTime !== "?" ? new Date(Number(endTime)) : undefined,
-                })
-                .then((res) => res.json())
-                .then(async (data) => {
-                    if (!data.error) {
-                        setisInEditingMode(false);
-                        if (onRefresh) await onRefresh();
-                    } else {
-                        setTimeout(() => {
-                            setHuddleState(huddle);
-                            setSaveFeedback(
-                                "Could not save changes. Try again."
-                            );
-                        }, 500);
-                    }
-                });
-        }
+                },
+            },
+            (data: any) => {
+                if (!data.error) {
+                    setisInEditingMode(false);
+                    refreshHuddles();
+                } else {
+                    setTimeout(() => {
+                        setHuddleState(huddle);
+                        setSaveFeedback("Could not save changes. Try again.");
+                    }, 500);
+                }
+            }
+        );
     };
 
     const handleDelete = () => {
         setSaveFeedback(null);
-
-        if (onDelete)
-            onDelete((data: any) => {
-                if (!data.error) {
-                    if (onRefresh) onRefresh();
-                } else {
-                    setSaveFeedback("Could not delete. Try again.");
-                }
-            });
+        deleteHuddle({ huddleId: huddle._id }, (data: any) => {
+            if (!data.error) refreshHuddles();
+            else setSaveFeedback("Could not delete. Try again.");
+        });
     };
 
     return container && huddleState
@@ -179,8 +218,8 @@ const DetailsModal: React.FC<DetailsModalProps> = ({
                               strokeWidth={".5px"}
                               className={twMerge(
                                   "stroke-[var(--700)] fill-[var(--700)] hover:fill-white hover:stroke-white",
-                                  (!huddleState?.invite_status ||
-                                      huddleState?.invite_status === "GOING") &&
+                                  (!huddleState.invite_status ||
+                                      huddleState.invite_status === "GOING") &&
                                       "stroke-[var(--700)] fill-[var(--700)]"
                               )}
                           />
@@ -285,7 +324,7 @@ const DetailsModal: React.FC<DetailsModalProps> = ({
                   )}
 
                   <div className='section mt-auto'>
-                      {(huddleState?.invite_status === "PENDING" ||
+                      {(huddleState.invite_status === "PENDING" ||
                           isUpdatingInviteStatus ||
                           saveFeedback) && (
                           <div className='mt-auto p-2 bg-white/50 shadow-md'>
@@ -304,29 +343,34 @@ const DetailsModal: React.FC<DetailsModalProps> = ({
                           </div>
                       )}
 
-                      <ActionsBar
-                          className={"border-none"}
-                          inviteStatus={huddleState?.invite_status}
-                          huddleInviteResponseActions={
-                              actionsBarActions.huddleInviteResponseActions
-                          }
-                          huddleEditActions={
-                              actionsBarActions.huddleEditActions && {
-                                  onEditDetails: !isInEditingMode
-                                      ? openEditMode
-                                      : undefined,
-                                  onSaveChanges: isInEditingMode
-                                      ? handleSaveDetails
-                                      : undefined,
-                                  onDiscardChanges:
-                                      isInEditingMode &&
-                                      !actionsBarActions.huddleEditActions
-                                          .preventDiscard
-                                          ? closeEditMode
-                                          : undefined,
+                      {huddleState.invite_status && (
+                          <ActionsBar
+                              interactions='invite'
+                              onAccept={handleToggleAcceptInvite}
+                              isAccepted={huddleState.invite_status === "GOING"}
+                              onDecline={handleToggleDeclineInvite}
+                              isDeclined={
+                                  huddleState.invite_status === "NOT_GOING"
                               }
-                          }
-                      />
+                          />
+                      )}
+
+                      {!huddleState.invite_status && (
+                          <>
+                              {!isInEditingMode ? (
+                                  <ActionsBar
+                                      interactions='owner'
+                                      onEdit={handleOpenEditMode}
+                                  />
+                              ) : (
+                                  <ActionsBar
+                                      interactions='editor'
+                                      onSave={handleSaveDetails}
+                                      onCancel={handleCloseEditMode}
+                                  />
+                              )}
+                          </>
+                      )}
                   </div>
               </FormDiv>,
               container
