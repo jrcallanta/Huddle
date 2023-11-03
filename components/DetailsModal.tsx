@@ -8,7 +8,7 @@ import { GrLocation } from "react-icons/gr";
 import { BsX } from "react-icons/bs";
 import { FaTrashCan } from "react-icons/fa6";
 
-import ActionsBar from "./ActionsBarOpt";
+import ActionsBar from "./ActionsBar";
 import FormDiv from "./switch-components/FormDiv";
 import EditableTitle from "./switch-components/EditableTitle";
 import TimePicker from "./switch-components/TimePicker";

@@ -8,7 +8,7 @@ import { GrLocation } from "react-icons/gr";
 import { useHuddles } from "@/hooks/useHuddles";
 import { useUser } from "@/hooks/useUser";
 import DetailsModal from "./DetailsModal";
-import ActionsBar from "./ActionsBarOpt";
+import ActionsBar from "./ActionsBar";
 import UserAvatar from "./UserAvatar";
 import UserAvatarList from "./UserAvatarList";
 

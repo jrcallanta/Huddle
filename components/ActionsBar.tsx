@@ -1,6 +1,6 @@
 import React, { HTMLAttributes } from "react";
 import { twMerge } from "tailwind-merge";
-import ActionButton from "./ActionButtonOpt";
+import ActionButton from "./ActionButton";
 
 type DefaultInteractions = {
     onView?: ([...args]?: any) => any | Promise<any>;
