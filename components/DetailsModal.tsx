@@ -103,8 +103,8 @@ const DetailsModal: React.FC<DetailsModalProps> = ({
                 async (data: any) => {
                     if (data.updatedInvite) {
                         setIsUpdatingInviteStatus(false);
-                        if (data.updatedInvite.status === "NOT_GOING")
-                            setFocusedHuddle(null);
+                        // if (data.updatedInvite.status === "NOT_GOING")
+                        //     setFocusedHuddle(null);
                         await refreshHuddles();
                     } else {
                         setTimeout(() => {
