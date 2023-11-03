@@ -41,35 +41,32 @@ const HuddleTile: React.FC<HuddleTileProps> = ({
     const [isInEditingMode, setIsInEditingMode] = useState(false);
 
     const handleClick: MouseEventHandler = (event) => {
-        if (selectedHuddle?._id === huddle._id) {
-            setSelectedHuddle(null);
-        } else {
-            setSelectedHuddle(huddle);
-        }
+        setSelectedHuddle(selectedHuddle?._id === huddle._id ? null : huddle);
     };
 
     const handleRespondInvite = async (event: any, respond: string) => {
         event.stopPropagation();
-        setHuddleInviteStatusState(respond);
-        setIsUpdatingInviteStatus(true);
-
-        await respondToInvite(
-            {
-                huddleId: huddle._id,
-                response: respond,
-            },
-            async (data: any) => {
-                if (data.updatedInvite) {
-                    await refreshHuddles();
-                    setIsUpdatingInviteStatus(false);
-                } else {
-                    setTimeout(() => {
-                        setHuddleInviteStatusState(huddle.invite_status);
+        if (huddle._id) {
+            setHuddleInviteStatusState(respond);
+            setIsUpdatingInviteStatus(true);
+            await respondToInvite(
+                {
+                    huddleId: huddle._id,
+                    response: respond,
+                },
+                async (data: any) => {
+                    if (data.updatedInvite) {
+                        await refreshHuddles();
                         setIsUpdatingInviteStatus(false);
-                    }, 500);
+                    } else {
+                        setTimeout(() => {
+                            setHuddleInviteStatusState(huddle.invite_status);
+                            setIsUpdatingInviteStatus(false);
+                        }, 500);
+                    }
                 }
-            }
-        );
+            );
+        }
     };
 
     const handleToggleAcceptInvite = (event: any) =>
@@ -95,34 +92,6 @@ const HuddleTile: React.FC<HuddleTileProps> = ({
             setFocusedHuddle(selectedHuddle);
             setIsInEditingMode(true);
         }
-    };
-
-    const handleSaveChanges = async (changes: {
-        title: string;
-        start_time: Date;
-        end_time: Date | undefined;
-    }) => {
-        return fetch("/api/huddle/edit", {
-            method: "PATCH",
-            body: JSON.stringify({
-                userId: currentUser?._id,
-                huddleId: huddle?._id,
-                changes: changes,
-            }),
-        });
-    };
-
-    const handleDeleteHuddle = async (
-        callback?: (data: any) => any | Promise<any>
-    ) => {
-        return fetch(`/api/huddle/delete/${huddle._id}`, {
-            method: "DELETE",
-        })
-            .then((res) => res.json())
-            .then((data) => {
-                setFocusedHuddle(null);
-                if (callback) callback(data);
-            });
     };
 
     const handleCloseDetailsModal = (event: any) => {
