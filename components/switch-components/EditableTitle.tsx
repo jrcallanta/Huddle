@@ -16,6 +16,10 @@ const EditableTitle: React.FC<EditableTitleProps> = ({
     isEditing,
     className,
 }) => {
+    const handleKeyDown = (e: any) => {
+        if (e.key.toLowerCase() === "enter") e.target.blur();
+    };
+
     return (
         <div className={twMerge("w-full flex", isEditing && "before-bg")}>
             {!isEditing ? (
@@ -28,6 +32,7 @@ const EditableTitle: React.FC<EditableTitleProps> = ({
                     type='text'
                     placeholder={text}
                     defaultValue={text}
+                    onKeyDown={handleKeyDown}
                 />
             )}
         </div>

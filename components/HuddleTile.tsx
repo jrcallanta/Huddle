@@ -1,7 +1,7 @@
 "use client";
 
 import dateFormat from "dateformat";
-import { HuddleTypeForTile } from "@/types";
+import { HuddleType, HuddleTypeForTile } from "@/types";
 import { CSSProperties, MouseEventHandler, useState } from "react";
 import { twMerge } from "tailwind-merge";
 import { GrLocation } from "react-icons/gr";
@@ -26,7 +26,12 @@ const HuddleTile: React.FC<HuddleTileProps> = ({
     const { currentUser } = useUser();
     const {
         states: { selectedHuddle, focusedHuddle },
-        funcs: { setSelectedHuddle, setFocusedHuddle, refreshHuddles },
+        funcs: {
+            setSelectedHuddle,
+            setFocusedHuddle,
+            refreshHuddles,
+            respondToInvite,
+        },
     } = useHuddles();
 
     const [huddleInviteStatusState, setHuddleInviteStatusState] = useState(
@@ -36,38 +41,32 @@ const HuddleTile: React.FC<HuddleTileProps> = ({
     const [isInEditingMode, setIsInEditingMode] = useState(false);
 
     const handleClick: MouseEventHandler = (event) => {
-        if (selectedHuddle?._id === huddle._id) {
-            setSelectedHuddle(null);
-        } else {
-            setSelectedHuddle(huddle);
-        }
+        setSelectedHuddle(selectedHuddle?._id === huddle._id ? null : huddle);
     };
 
     const handleRespondInvite = async (event: any, respond: string) => {
         event.stopPropagation();
-        setHuddleInviteStatusState(respond);
-        setIsUpdatingInviteStatus(true);
-
-        await fetch("/api/invite", {
-            method: "PATCH",
-            body: JSON.stringify({
-                userId: currentUser?._id,
-                huddleId: huddle._id,
-                status: respond,
-            }),
-        })
-            .then((res) => res.json())
-            .then(async (data) => {
-                if (data.updatedInvite) {
-                    await refreshHuddles();
-                    setIsUpdatingInviteStatus(false);
-                } else {
-                    setTimeout(() => {
-                        setHuddleInviteStatusState(huddle.invite_status);
+        if (huddle._id) {
+            setHuddleInviteStatusState(respond);
+            setIsUpdatingInviteStatus(true);
+            await respondToInvite(
+                {
+                    huddleId: huddle._id,
+                    response: respond,
+                },
+                async (data: any) => {
+                    if (data.updatedInvite) {
+                        await refreshHuddles();
                         setIsUpdatingInviteStatus(false);
-                    }, 500);
+                    } else {
+                        setTimeout(() => {
+                            setHuddleInviteStatusState(huddle.invite_status);
+                            setIsUpdatingInviteStatus(false);
+                        }, 500);
+                    }
                 }
-            });
+            );
+        }
     };
 
     const handleToggleAcceptInvite = (event: any) =>
@@ -87,20 +86,12 @@ const HuddleTile: React.FC<HuddleTileProps> = ({
         if (selectedHuddle) setFocusedHuddle(selectedHuddle);
     };
 
-    const handleEditDetails = (event: any) => {
+    const handleEditDetails = async (event: any) => {
         event.stopPropagation();
-        console.log("editing");
         if (selectedHuddle) {
-            setIsInEditingMode(true);
             setFocusedHuddle(selectedHuddle);
+            setIsInEditingMode(true);
         }
-    };
-
-    const handleSaveDetails = (event: any) => {
-        event.preventDefault();
-        console.log("saving");
-
-        console.log(new FormData(event.target).get("title"));
     };
 
     const handleCloseDetailsModal = (event: any) => {
@@ -131,7 +122,7 @@ const HuddleTile: React.FC<HuddleTileProps> = ({
                     content absolute peer group h-full  w-full flex flex-col gap-4 -top-2 left-2
                     transition-all duration-250
                     overflow-hidden border-4 rounded-xl
-                    hover:-top-3 hover:left-3 [&:active:not(:has(.options_button:active))]:top-0 [&:active:not(:has(.options_button:active))]:left-0
+                    hover:-top-3 hover:left-3 [&:active:not(:has(button:active))]:top-0 [&:active:not(:has(button:active))]:left-0
                     `
                 )}
             >
@@ -190,73 +181,54 @@ const HuddleTile: React.FC<HuddleTileProps> = ({
                             )}
                         ></div> */}
 
-                        <ActionsBar
-                            inviteStatus={huddleInviteStatusState}
-                            onViewDetails={handleViewDetailsModal}
-                            huddleInviteResponseActions={
-                                huddleInviteStatusState
-                                    ? {
-                                          onToggleAccept:
-                                              handleToggleAcceptInvite,
-                                          onToggleDecline:
-                                              handleToggleDeclineInvite,
-                                      }
-                                    : undefined
-                            }
-                            huddleEditActions={
-                                !huddleInviteStatusState
-                                    ? { onEditDetails: handleEditDetails }
-                                    : undefined
-                            }
-                        />
+                        {huddleInviteStatusState && (
+                            <ActionsBar
+                                interactions={"invite"}
+                                onView={handleViewDetailsModal}
+                                onAccept={handleToggleAcceptInvite}
+                                isAccepted={huddleInviteStatusState === "GOING"}
+                                onDecline={handleToggleDeclineInvite}
+                                isDeclined={
+                                    huddleInviteStatusState === "NOT_GOING"
+                                }
+                            />
+                        )}
+
+                        {!huddleInviteStatusState && !isInEditingMode && (
+                            <ActionsBar
+                                interactions='owner'
+                                onView={handleViewDetailsModal}
+                                onEdit={handleEditDetails}
+                            />
+                        )}
                     </div>
                 )}
             </div>
 
             {(huddle.invite_status === "PENDING" || isUpdatingInviteStatus) && (
                 <p
-                    className='
-                    status
-                    absolute
-                    py-1
-                    px-2
-                    rounded-lg
-                    bg-[var(--500)]
-                    text-white/75
-                    text-xs
-                    font-semibold
-                    z-10
-                    -top-4
-                    left-5
-                    peer-hover:-top-5
-                    peer-hover:left-6
-                    peer-[:active:not(:has(button:active))]:-top-2
-                    peer-[:active:not(:has(button:active))]:left-3
-                    transition-all
-                    '
+                    className={twMerge(
+                        "status",
+                        "absolute py-1 px-2",
+                        "rounded-lg bg-[var(--500)]",
+                        "text-white/75 text-xs font-semibold",
+                        "-top-4 left-5",
+                        "peer-hover:-top-5",
+                        "peer-hover:left-6",
+                        "peer-[:active:not(:has(button:active))]:-top-2",
+                        "peer-[:active:not(:has(button:active))]:left-3",
+                        "transition-all"
+                    )}
                 >
                     {isUpdatingInviteStatus ? "UPDATING..." : "PENDING"}
                 </p>
             )}
 
-            {focusedHuddle?._id === huddle._id && (
+            {(focusedHuddle as HuddleType)?._id === huddle._id && (
                 <DetailsModal
                     huddle={huddle}
-                    isUpdatingInviteStatus={isUpdatingInviteStatus}
                     isInEditingMode={isInEditingMode}
                     onClose={handleCloseDetailsModal}
-                    onRefresh={refreshHuddles}
-                    actionsBarActions={{
-                        huddleInviteResponseActions: huddleInviteStatusState
-                            ? {
-                                  onToggleAccept: handleToggleAcceptInvite,
-                                  onToggleDecline: handleToggleDeclineInvite,
-                              }
-                            : undefined,
-                        huddleEditActions: !huddleInviteStatusState
-                            ? { onEditDetails: handleEditDetails }
-                            : undefined,
-                    }}
                 />
             )}
         </div>

@@ -5,6 +5,7 @@ import UserAvatar from "./UserAvatar";
 
 interface UserAvatarListProps {
     inviteList?: InviteType[];
+    showAll?: boolean;
     displayLimit?: number;
     avatarSize?: "sm" | "md";
     className?: String;
@@ -13,13 +14,14 @@ interface UserAvatarListProps {
 const UserAvatarList: React.FC<UserAvatarListProps> = ({
     inviteList,
     displayLimit,
+    showAll = false,
     avatarSize = "sm",
     className,
 }) => {
-    return inviteList ? (
+    return inviteList && (!displayLimit || displayLimit > 0) ? (
         <div className={twMerge("flex items-center gap-1", String(className))}>
             {inviteList
-                .filter((invite) => invite.status !== "NOT_GOING")
+                .filter((invite) => invite.status !== "NOT_GOING" || showAll)
                 .slice(0, Math.min(displayLimit ?? inviteList.length))
                 .map(({ user, status }) =>
                     user ? (
@@ -29,7 +31,7 @@ const UserAvatarList: React.FC<UserAvatarListProps> = ({
                             imgUrl={user.imgUrl}
                             size={avatarSize}
                             className={twMerge(
-                                status === "PENDING" && "opacity-25"
+                                !showAll && status !== "GOING" && "opacity-25"
                             )}
                         />
                     ) : null

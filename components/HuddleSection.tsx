@@ -33,15 +33,21 @@ const HuddleSection: React.FC<HuddleSectionProps> = ({
     return (
         // <div className={twMerge("relative flex flex-col", String(className))}>
         <>
-            <div className='flex items-center'>
-                <p className='flex gap-2 text text-sm uppercase font-extrabold whitespace-nowrap py-1 px-4 border-[3px] border-black rounded-full'>
+            <div
+                className={twMerge(
+                    "flex items-center"
+                    // "[&:has(button:hover)_button]:bg-black [&:has(button:hover)_button]:text-[var(--background-color)] [&:has(button:hover)_svg]:fill-[var(--background-color)] [&:has(button:hover)_svg]:stroke-[var(--background-color)]"
+                )}
+            >
+                <button
+                    className={twMerge(
+                        "flex gap-2 text text-sm uppercase font-extrabold whitespace-nowrap py-1 px-4 border-[3px] border-black rounded-full"
+                    )}
+                    onClick={toggleExpanded}
+                >
                     <span>{title}</span>/<span>{huddles.length}</span>
-                </p>
+                </button>
                 <hr className='flex-grow h-[4px] bg-black' />
-                {/* <p className='text text-sm uppercase font-extrabold whitespace-nowrap h-8 w-8 border-[3px] border-black rounded-full flex justify-center items-center'>
-                    {huddles.length}
-                </p>
-                <hr className='w-2 h-[4px] bg-black' /> */}
                 <button
                     className={twMerge(
                         "h-8 w-8 border-[3px] border-black rounded-full flex justify-center items-center",
@@ -54,7 +60,7 @@ const HuddleSection: React.FC<HuddleSectionProps> = ({
             </div>
 
             {isExpanded && (
-                <div className={twMerge("flex flex-col gap-8 pr-2 pt-6 pb-5")}>
+                <div className={twMerge("flex flex-col gap-8 pr-2 pt-6 pb-7")}>
                     {!huddles.length && (
                         <div className='w-full'>
                             <p className='text text-sm text-center font-medium'>
@@ -65,9 +71,7 @@ const HuddleSection: React.FC<HuddleSectionProps> = ({
                     {huddles.map((huddle, j) => (
                         <HuddleTile
                             key={huddle._id}
-                            huddle={{
-                                ...huddle,
-                            }}
+                            huddle={huddle}
                             // className={"animate-fade-in"}
                             // style={{ animationDelay: `${j * 0.05}s` }}
                         />

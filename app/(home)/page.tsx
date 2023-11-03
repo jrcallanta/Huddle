@@ -22,10 +22,6 @@ export default function Home() {
     >(null);
 
     useEffect(() => {
-        console.log(focusedHuddle);
-    }, [focusedHuddle]);
-
-    useEffect(() => {
         if (huddleList) {
             setHuddleSections(
                 huddleSorter(huddleList, activeTab ? "timeline" : "plan")
@@ -47,8 +43,8 @@ export default function Home() {
         >
             <div
                 className={twMerge(
-                    "absolute w-full h-full md:h-full top-0 md:static",
-                    "p-0 md:p-8 md:pr-4"
+                    "absolute w-full h-full md:h-auto top-0 md:static",
+                    "p-0 md:p-4 md:pr-4"
                 )}
             >
                 <Map>
@@ -86,23 +82,26 @@ export default function Home() {
 
             <div
                 className={twMerge(
-                    "w-full h-full relative overflow-y-auto pointer-events-none z-20",
-                    "pb-0 md:pt-4 md:pb-0"
+                    "relative w-full md:max-w-[28rem] h-full overflow-hidden overflow-y-auto pointer-events-none z-[10]"
                 )}
             >
-                <div className='md:hidden w-full h-[calc(100%_-_3.5rem)] pointer-events-none bg-transparent'></div>
+                <div
+                    id='spacer'
+                    className='md:hidden w-full h-[calc(100%_-_3.5rem)] pointer-events-none bg-transparent'
+                ></div>
+
                 <div
                     className={twMerge(
-                        "p-4 pb-0 md:pr-0 w-full md:max-w-[36rem] mx-auto overflow-hidden top-0 flex flex-col justify-center align-stretch gap-4",
-                        "z-20 rounded-t-3xl bg-[var(--background-color)] shadow md:shadow-none",
-                        "md:rounded-none md:bg-transparent",
-                        "h-full sticky top-48 md:relative pointer-events-auto md:top-0"
+                        "pointer-events-auto",
+                        "h-full w-full sticky top-0 p-4 pb-0 mx-auto z-[2] overflow-hidden",
+                        "bg-[var(--background-color)] rounded-t-3xl",
+                        "md:pr-0 md:relative"
                     )}
                 >
                     <div
                         className={twMerge(
-                            "h-full flex flex-col transition-all",
-                            focusedHuddle && "opacity-60"
+                            "h-full flex flex-col transition-[opacity]",
+                            focusedHuddle && "opacity-60 pointer-events-none"
                         )}
                     >
                         <FeedTabs
@@ -116,9 +115,9 @@ export default function Home() {
                     <div
                         id='details-modal-root'
                         className={twMerge(
-                            "translate-y-0 transition-all duration-300 ease-in-out empty:translate-y-[calc(100%_+_2rem)]",
-                            "absolute z-20 top-0 md:bottom-4 bottom-0 min-h-[calc(100%-4rem)] left-0 right-0 m-0 md:m-4 md:mr-0 rounded-t-[3rem] flex flex-col",
-                            !focusedHuddle && "translate-y-[calc(100%_+_2rem)]"
+                            "translate-y-0 transition-all duration-300 ease-in-out empty:pointer-events-none empty:translate-y-[100%]",
+                            "absolute top-0 bottom-0 left-0 right-0 m-0 rounded-t-3xl flex flex-col",
+                            "md:m-4 md:mr-0"
                         )}
                     ></div>
                 </div>

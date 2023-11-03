@@ -6,7 +6,7 @@ export interface LocationType {
     };
 }
 export interface HuddleType {
-    _id: string;
+    _id: string | undefined;
     author_id: string;
     author: UserType;
     title: string;
@@ -21,6 +21,12 @@ export interface HuddleType {
 export interface HuddleTypeForTile extends HuddleType {
     invite_list?: InviteType[]; // joined on retrieval
     invite_status?: string;
+}
+
+export interface HuddleTemplateType {
+    author: UserType;
+    title: string;
+    start_time: Date;
 }
 
 export interface InviteType {

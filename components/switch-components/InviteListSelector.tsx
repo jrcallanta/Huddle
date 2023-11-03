@@ -1,209 +1,120 @@
 "use client";
 
-import { InviteType, UserType, UserTypeForTile } from "@/types";
-import React, { useCallback, useState } from "react";
-import UserAvatar from "../UserAvatar";
+import { HuddleTypeForTile, UserType } from "@/types";
+import React, { useState } from "react";
 import UserAvatarList from "../UserAvatarList";
 import { twMerge } from "tailwind-merge";
-import { useUser } from "@/hooks/useUser";
-import UserInviteTile from "../UserInviteTile";
+import { createPortal } from "react-dom";
+import UserInviteModal from "../UserInviteModal";
 
 interface InviteListSelectorProps {
     currentUser?: UserType;
-    owner: UserTypeForTile;
-    inviteList: InviteType[];
-    isEditing?: boolean;
+    huddle: HuddleTypeForTile;
     className?: string;
 }
 
 const InviteListSelector: React.FC<InviteListSelectorProps> = ({
     currentUser,
-    owner,
-    inviteList,
-    isEditing,
+    huddle,
     className,
 }) => {
-    // const { currentUser } = useUser();
+    const { invite_list: inviteList } = huddle;
 
-    const [isExpanded, setIsExpanded] = useState(false);
-    const [inviteListState, setInviteListState] =
-        useState<InviteType[]>(inviteList);
-    const [newInviteList, setNewInviteList] = useState<UserTypeForTile[]>([]);
-    const [friendsList, setFriendsList] = useState<UserTypeForTile[] | null>(
-        null
-    );
+    const [isModalDisplayed, setIsModalDisplayed] = useState(false);
+    let inviteListModal = document.getElementById("invite-list-modal");
 
-    // FRIENDSLIST BEING FETCHED ON EVERY MODAL VIEW
-    // FIX TO ONLY RETRIEVE ON CURRENT USER OWNED
-    const getFriends = useCallback(async () => {
-        if (currentUser)
-            fetch(`/api/friendships/${currentUser._id}`)
-                .then((res) => res.json())
-                .then((data) => setFriendsList(data.friendships));
-    }, [currentUser]);
+    let going = inviteList?.filter(({ status }) => status === "GOING");
 
-    const handleClick = useCallback(async () => {
-        if (!friendsList) {
-            await getFriends();
-            setIsExpanded((prev) => !prev);
-        } else setIsExpanded((prev) => !prev);
-    }, [friendsList, getFriends]);
-
-    const handleToggleUserSelect = (user: UserTypeForTile) => {
-        setNewInviteList((prev) => {
-            let newList = [...prev];
-            let index = newList.map((user) => user._id).indexOf(user._id);
-            if (index < 0) newList.push(user);
-            else newList.splice(index, 1);
-            console.log(newList);
-            return newList;
-        });
-    };
-
-    return (
+    return !(inviteList && going) ? null : (
         <div
             className={twMerge(
-                "relative w-full p-4 flex items-center gap-1 [&_.userAvatar]:bg-[var(--500)]",
-                isExpanded &&
-                    "h-full p-0 gap-0 flex-col overflow-hidden overflow-y-auto",
-                // isExpanded &&
-                //     isEditing &&
-                //     "bg-[var(--500)] [&_.userAvatar]:bg-[var(--900)]",
+                "w-full flex justify-between gap-1 [&_.userAvatar]:bg-[var(--500)]",
                 String(className)
             )}
-            onClick={!isExpanded ? handleClick : () => {}}
+            onClick={
+                !isModalDisplayed ? () => setIsModalDisplayed(true) : undefined
+            }
         >
-            {!isExpanded ? (
-                <>
-                    <UserAvatar
-                        username={owner.username}
-                        imgUrl={owner.imgUrl}
-                        size='sm'
-                        className='border-2 border-white'
-                    />
-                    <UserAvatarList
-                        inviteList={inviteListState}
-                        avatarSize='sm'
-                        displayLimit={5}
-                    />
-                </>
-            ) : (
-                (() => {
-                    let usertile_cn =
-                        "px-4 py-2 animate-none [&_p]:text-white/75 hover:bg-white/10";
-                    let label_cn =
-                        "pt-2 text-sm text-white/80 font-medium uppercase";
-                    let options = {
-                        hideUsername: true,
-                        avatarSize: "sm" as any,
-                    };
-                    return (
-                        <>
-                            {isEditing && (
-                                <div className='w-full px-4 py-2'>
-                                    <p className={label_cn}>Hosts</p>
-                                </div>
-                            )}
-                            <UserInviteTile
-                                user={{
-                                    _id: owner._id,
-                                    name: owner.name,
-                                    username: owner.username,
-                                    imgUrl: owner.imgUrl,
-                                }}
-                                options={{
-                                    ...options,
-                                    hideInteractions: true,
-                                    appendName: !isEditing ? "host" : undefined,
-                                }}
-                                className={twMerge(
-                                    usertile_cn,
-                                    "[&_>_.userAvatar]:border-2 [&_>_.userAvatar]:border-white "
-                                )}
-                            />
+            <div className='flex flex-[4] gap-1 p-4'>
+                <UserAvatarList
+                    inviteList={going.length > 0 ? going : inviteList}
+                    avatarSize='sm'
+                    displayLimit={6}
+                    // showAll
+                />
+                <div className='flex-1 h-full flex items-center px-2'>
+                    <p className='ml-auto text-xs text-white/50 truncate'>
+                        {(() => {
+                            let list = going.map((invite) => invite.user?.name);
+                            switch (list.length) {
+                                case 0:
+                                    return inviteList.length > 0 ? (
+                                        <>
+                                            <span className='font-semibold text-white'>
+                                                {inviteList.length}
+                                            </span>
+                                            {" invited"}
+                                        </>
+                                    ) : (
+                                        <button className='font-semibold hover:text-white'>
+                                            {"Invite"}
+                                        </button>
+                                    );
+                                case 1:
+                                    return (
+                                        <>
+                                            <span className='font-semibold text-white'>
+                                                {list[0]}
+                                            </span>
+                                            {" is going"}
+                                        </>
+                                    );
+                                case 2:
+                                    return (
+                                        <>
+                                            <span className='font-semibold text-white'>
+                                                {list[0]}
+                                            </span>
+                                            {" and "}
+                                            <span className='font-semibold text-white'>
+                                                {list[1]}
+                                            </span>
+                                            {" are going"}
+                                        </>
+                                    );
+                                default:
+                                    return (
+                                        <>
+                                            <span className='font-semibold text-white'>
+                                                {list[0]}
+                                            </span>
+                                            {", "}
+                                            <span className='font-semibold text-white'>
+                                                {list[1]}
+                                            </span>
+                                            {", and "}
+                                            <span className='font-semibold text-white'>
+                                                {`${list.length - 2} more`}
+                                            </span>
+                                            {" are going."}
+                                        </>
+                                    );
+                            }
+                        })()}
+                    </p>
+                </div>
+            </div>
 
-                            {isEditing && inviteListState.length > 0 && (
-                                <>
-                                    <div className='w-full px-4 py-2'>
-                                        <p className={label_cn}>
-                                            Already Invited
-                                        </p>
-                                    </div>
-                                    {inviteListState
-                                        .filter(
-                                            ({ status }) =>
-                                                isEditing ||
-                                                status !== "NOT_GOING"
-                                        )
-                                        .map(({ user, status }, i) =>
-                                            user ? (
-                                                <UserInviteTile
-                                                    key={i}
-                                                    user={{
-                                                        ...user,
-                                                        inviteStatus: status,
-                                                    }}
-                                                    options={options}
-                                                    className={twMerge(
-                                                        usertile_cn,
-                                                        "[&_button]:bg-[var(--500)] [&_button]:text-white",
-                                                        status !== "GOING" &&
-                                                            "[&_>_*]:opacity-50 [&:hover_>_*]:opacity-100"
-                                                    )}
-                                                />
-                                            ) : null
-                                        )}
-                                </>
-                            )}
-
-                            {isEditing && friendsList && (
-                                <>
-                                    <div className='w-full px-4 py-2'>
-                                        <p className={label_cn}>
-                                            Invite Others
-                                        </p>
-                                    </div>
-                                    {friendsList
-                                        .filter(
-                                            ({ _id }) =>
-                                                !inviteListState
-                                                    .map(
-                                                        (invite) =>
-                                                            invite.user?._id
-                                                    )
-                                                    .includes(_id.toString())
-                                        )
-                                        .map((user, i) => (
-                                            <UserInviteTile
-                                                key={i}
-                                                user={user}
-                                                options={options}
-                                                onToggleInvite={() =>
-                                                    handleToggleUserSelect(user)
-                                                }
-                                                className={twMerge(
-                                                    usertile_cn,
-                                                    "[&_button]:bg-[var(--500)] [&_button]:text-white"
-                                                )}
-                                            />
-                                        ))}
-                                </>
-                            )}
-
-                            <div className='sticky z-[2] bottom-0 w-full group/hidebutton bg-[var(--400)] border-t-2 border-[var(--500)]'>
-                                <button
-                                    className={
-                                        "w-full px-4 py-3 text-xs text-[var(--600)] group-hover/hidebutton:text-white group-hover/hidebutton:bg-white/20"
-                                    }
-                                    onClick={() => setIsExpanded(false)}
-                                >
-                                    show less
-                                </button>
-                            </div>
-                        </>
-                    );
-                })()
-            )}
+            {isModalDisplayed &&
+                inviteListModal &&
+                createPortal(
+                    <UserInviteModal
+                        currentUser={currentUser}
+                        huddle={huddle}
+                        onCloseModal={() => setIsModalDisplayed(false)}
+                    />,
+                    inviteListModal
+                )}
         </div>
     );
 };
