@@ -35,6 +35,9 @@ body {
     .animate-250 {
         animation-duration: 250ms;
     }
+    .animate-500 {
+        animation-duration: 500ms;
+    }
     .animate-reverse {
         animation-direction: reverse;
         animation-fill-mode: forwards;

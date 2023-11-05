@@ -9,12 +9,15 @@ import { useHuddles } from "@/hooks/useHuddles";
 import { twMerge } from "tailwind-merge";
 import Map from "@/components/Map";
 import Marker from "@/components/Marker";
+import { useCurrentPosition } from "@/hooks/useCurrentPosition";
+import MarkerCurrent from "@/components/MarkerCurrent";
 
 export default function Home() {
     const {
         states: { huddleList, selectedHuddle, focusedHuddle },
         funcs: { setSelectedHuddle, setFocusedHuddle, refreshHuddles },
     } = useHuddles();
+    const currentPosition = useCurrentPosition();
 
     const [activeTab, setActiveTab] = useState<number>(0);
     const [huddleSections, setHuddleSections] = useState<
@@ -77,6 +80,13 @@ export default function Home() {
                                     }}
                                 />
                             ))}
+
+                    {currentPosition && (
+                        <MarkerCurrent
+                            lat={currentPosition.lat}
+                            lng={currentPosition.lng}
+                        />
+                    )}
                 </Map>
             </div>
 
