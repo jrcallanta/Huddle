@@ -270,6 +270,12 @@ export const HuddleProvider = (props: { [propName: string]: any }) => {
         refreshHuddles();
     }, [refreshHuddles]);
 
+    useEffect(() => {
+        if (selectedHuddle) {
+            if (focusedHuddle) setFocusedHuddle(selectedHuddle);
+        } else setFocusedHuddle(null);
+    }, [selectedHuddle, focusedHuddle]);
+
     const value = {
         states: {
             selectedHuddle,

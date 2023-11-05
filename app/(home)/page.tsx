@@ -75,8 +75,6 @@ export default function Home() {
                                                 ? null
                                                 : huddle
                                         );
-                                        if (focusedHuddle)
-                                            setFocusedHuddle(huddle);
                                     }}
                                 />
                             ))}
