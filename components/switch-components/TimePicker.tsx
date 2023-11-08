@@ -125,7 +125,9 @@ const TimePicker: React.FC<TimePickerProps> = ({
                             </button>
                         ))}
                 </div>
-                <div className='absolute top-0 w-full h-full bg-[var(--500)] opacity-50 pointer-events-none'></div>
+
+                {/* BG-COLOR */}
+                <div className='z-[-1] absolute top-0 w-full h-full bg-[var(--500)] opacity-50 pointer-events-none'></div>
             </div>
         </div>
     );
