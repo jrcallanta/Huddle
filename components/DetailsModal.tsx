@@ -15,6 +15,7 @@ import TimePicker from "./switch-components/TimePicker";
 import InviteListSelector from "./switch-components/InviteListSelector";
 import UserAvatar from "./UserAvatar";
 import { useHuddles } from "@/hooks/useHuddles";
+import LocationSelector from "./switch-components/LocationSelector";
 
 interface DetailsModalProps {
     huddle: HuddleTypeForTile;
@@ -263,7 +264,7 @@ const DetailsModal: React.FC<DetailsModalProps> = ({
                               )}
                           />
                       </button>
-                      <p className='text text-xs text-center text-white/75 hover:text-white font-medium cursor-pointer'>{`${huddleState.author.name}`}</p>
+                      <p className='text-xs text-center text-white/75 hover:text-white font-medium cursor-pointer'>{`${huddleState.author.name}`}</p>
                       <UserAvatar
                           username={huddleState.author.username}
                           imgUrl={huddleState.author.imgUrl}
@@ -291,7 +292,7 @@ const DetailsModal: React.FC<DetailsModalProps> = ({
                           name={"title"}
                           isEditing={isInEditingMode}
                           className={twMerge(
-                              "w-full bg-inherit text text-2xl font-bold outline-none placeholder:text-white/50 focus:text-white truncate",
+                              "w-full bg-inherit text-2xl font-bold outline-none placeholder:text-white/50 focus:text-white truncate",
                               !isInEditingMode ? "text-white" : "text-white/50"
                           )}
                       />
@@ -303,11 +304,11 @@ const DetailsModal: React.FC<DetailsModalProps> = ({
                               <TimePicker
                                   label='from'
                                   initialTime={huddleState.start_time}
-                                  isEditing={isInEditingMode}
                                   inputId={"start-time-input"}
                                   name={"start-time"}
+                                  isEditing={isInEditingMode}
                                   className={twMerge(
-                                      "w-full bg-inherit text text-xl text-white font-bold outline-none placeholder:text-white/50 focus:text-white",
+                                      "w-full bg-inherit text-xl text-white font-bold outline-none placeholder:text-white/50 focus:text-white",
                                       !isInEditingMode
                                           ? "text-white"
                                           : "text-white/50"
@@ -317,11 +318,11 @@ const DetailsModal: React.FC<DetailsModalProps> = ({
                                   optional
                                   label='to'
                                   initialTime={huddleState.end_time}
-                                  isEditing={isInEditingMode}
                                   inputId={"end-time-input"}
                                   name={"end-time"}
+                                  isEditing={isInEditingMode}
                                   className={twMerge(
-                                      "w-full bg-inherit text text-xl text-white font-bold outline-none placeholder:text-white/50 focus:text-white",
+                                      "w-full bg-inherit text-xl text-white font-bold outline-none placeholder:text-white/50 focus:text-white",
                                       !isInEditingMode
                                           ? "text-white"
                                           : "text-white/50"
@@ -332,18 +333,44 @@ const DetailsModal: React.FC<DetailsModalProps> = ({
                   </div>
 
                   {huddleState.location && (
-                      <div className='section flex flex-col p-4 cursor-pointer transition-all'>
-                          <a
-                              href=''
-                              target={"_blank"}
-                              onClick={(e) => e.stopPropagation()}
-                              className='location w-fit flex gap-1 items-center [&_>_svg_path]:stroke-white/80 [&:hover_>_svg_path]:stroke-white [&:hover_>_p]:text-white'
-                          >
-                              <GrLocation size={24} />
-                              <p className='text-white/80 text-sm font-medium'>
-                                  {huddleState.location.display}
-                              </p>
-                          </a>
+                      //   <div
+                      //       className={twMerge(
+                      //           "section flex flex-col p-4 cursor-pointer transition-all"
+                      //       )}
+                      //   >
+                      //       <div
+                      //           className={
+                      //               "location w-full flex before-bg before:rounded"
+                      //           }
+                      //       >
+                      //           <a
+                      //               href=''
+                      //               target={"_blank"}
+                      //               onClick={(e) => e.stopPropagation()}
+                      //               className={twMerge(
+                      //                   "location w-fit flex gap-1 items-center [&_>_svg_path]:stroke-white/80 [&:hover_>_svg_path]:stroke-white [&:hover_>_p]:text-white"
+                      //               )}
+                      //           >
+                      //               <GrLocation size={24} />
+                      //               <p className='text-white/80 text-sm font-medium'>
+                      //                   {huddleState.location.display}
+                      //               </p>
+                      //           </a>
+                      //       </div>
+                      //   </div>
+                      <div className='section flex p-4 w-full'>
+                          <LocationSelector
+                              text={huddleState.location.display || ""}
+                              inputId='location-input'
+                              name='location'
+                              isEditing={isInEditingMode}
+                              className={twMerge(
+                                  "w-full bg-inherit text-sm font-medium outline-none placeholder:text-white/50 focus:text-white truncate",
+                                  !isInEditingMode
+                                      ? "text-white"
+                                      : "text-white/50"
+                              )}
+                          />
                       </div>
                   )}
 
