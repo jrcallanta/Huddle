@@ -1,3 +1,4 @@
+import { useLocations } from "@/hooks/useLocations";
 import React, { useState } from "react";
 import { GrLocation } from "react-icons/gr";
 import { twMerge } from "tailwind-merge";
@@ -17,12 +18,22 @@ const LocationSelector: React.FC<LocationSelectorProps> = ({
     isEditing,
     className,
 }) => {
-    const [queryResults, setQueryResults] = useState<string | null>(null);
+    const {
+        states: { queryResults, yqueryHistory },
+        funcs: { searchLocation },
+    } = useLocations();
     let debounce: NodeJS.Timeout;
 
     const handleChange = (e: any) => {
         clearTimeout(debounce);
-        debounce = setTimeout(() => console.log(e.target.value), 1500);
+        debounce = setTimeout(
+            () =>
+                searchLocation(e.target.value, (data: any) => {
+                    if (data.error) console.log(data.error);
+                    else console.log(data);
+                }),
+            750
+        );
     };
 
     const handleKeyDown = (e: any) => {
@@ -100,22 +111,26 @@ const LocationSelector: React.FC<LocationSelectorProps> = ({
                         Current Location
                     </button>
 
-                    {Array(5)
-                        .fill("")
-                        .map((_, i) => `location ${i + 1}`)
-                        .map((location, i) => (
-                            <button
-                                key={i}
-                                type='button'
-                                value={location}
-                                onClick={(e) =>
-                                    handleLocationSelect(e, location)
-                                }
-                                className=' w-full py-2 px-3 bg-inherit hover:bg-white/10 text text-sm text-right text-white/50 hover:text-white font-medium'
-                            >
-                                {location}
-                            </button>
-                        ))}
+                    {queryResults &&
+                        queryResults
+                            .map(
+                                (query, i) =>
+                                    query.display ||
+                                    `${query.coordinates.lat} ${query.coordinates.lng}`
+                            )
+                            .map((location, i) => (
+                                <button
+                                    key={i}
+                                    type='button'
+                                    value={location}
+                                    onClick={(e) =>
+                                        handleLocationSelect(e, location)
+                                    }
+                                    className=' w-full py-2 px-3 bg-inherit hover:bg-white/10 text text-sm text-right text-white/50 hover:text-white font-medium'
+                                >
+                                    {location}
+                                </button>
+                            ))}
                 </div>
 
                 {/* BG-COLOR */}

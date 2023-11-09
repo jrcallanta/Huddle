@@ -1,7 +1,7 @@
 import { useHuddles } from "@/hooks/useHuddles";
 import { twMerge } from "tailwind-merge";
 import GoogleMapReact, { Coords } from "google-map-react";
-import { useCurrentPosition } from "@/hooks/useCurrentPosition";
+import { useLocations } from "@/hooks/useLocations";
 import dateFormat from "dateformat";
 
 const DEFAULT = {
@@ -24,7 +24,10 @@ const Map: React.FC<MapProps> = ({
     className,
     ...props
 }) => {
-    const currentPosition = useCurrentPosition();
+    const {
+        states: { currentPosition },
+    } = useLocations();
+
     const {
         states: { selectedHuddle, focusedHuddle },
         funcs: { setFocusedHuddle },
@@ -94,7 +97,8 @@ const Map: React.FC<MapProps> = ({
                 defaultCenter={DEFAULT.center}
                 defaultZoom={DEFAULT.zoom}
                 center={
-                    selectedHuddle?.location?.coordinates || currentPosition
+                    selectedHuddle?.location?.coordinates ||
+                    (currentPosition as Coords)
                 }
                 zoom={selectedHuddle?.location?.coordinates ? 12 : DEFAULT.zoom}
                 yesIWantToUseGoogleMapApiInternals

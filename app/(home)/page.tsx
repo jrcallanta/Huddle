@@ -9,7 +9,7 @@ import { useHuddles } from "@/hooks/useHuddles";
 import { twMerge } from "tailwind-merge";
 import Map from "@/components/Map";
 import Marker from "@/components/Marker";
-import { useCurrentPosition } from "@/hooks/useCurrentPosition";
+import { useLocations } from "@/hooks/useLocations";
 import MarkerCurrent from "@/components/MarkerCurrent";
 
 export default function Home() {
@@ -17,7 +17,9 @@ export default function Home() {
         states: { huddleList, selectedHuddle, focusedHuddle },
         funcs: { setSelectedHuddle, setFocusedHuddle, refreshHuddles },
     } = useHuddles();
-    const currentPosition = useCurrentPosition();
+    const {
+        states: { currentPosition },
+    } = useLocations();
 
     const [activeTab, setActiveTab] = useState<number>(0);
     const [huddleSections, setHuddleSections] = useState<
