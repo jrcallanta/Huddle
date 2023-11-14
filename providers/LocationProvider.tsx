@@ -23,7 +23,7 @@ type LocationProviderContextType = {
     states: {
         currentPosition: CurrentPosition | null;
         queryResults: LocationType[] | null;
-        queryHistory: LocationType[] | null;
+        queryHistory: PrevQueries | null;
     };
     funcs: {
         searchLocation: (query: string, callback?: any) => Promise<any> | any;
