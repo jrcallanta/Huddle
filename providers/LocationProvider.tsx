@@ -68,7 +68,7 @@ const LocationProvider = (props: { [propName: string]: any }) => {
         if (
             queryHistory[query.trim()] &&
             (queryHistory[query.trim()].exp === undefined ||
-                Date.now() - Number(queryHistory[query.trim()].exp) < 10000)
+                Date.now() - Number(queryHistory[query.trim()].exp) < 15000)
         ) {
             setQueryResults(queryHistory[query.trim()].results);
             callback({
@@ -80,40 +80,40 @@ const LocationProvider = (props: { [propName: string]: any }) => {
 
         // Send New Reques
         else {
-            if ([0, 1][Math.floor(Math.random() * 2)]) {
-                // SIMULATING RESULTS
-                let results = [
-                    {
-                        coordinates: { lat: Math.random(), lng: Math.random() },
-                        display: Math.random().toString(),
-                    },
-                    {
-                        coordinates: { lat: Math.random(), lng: Math.random() },
-                        display: Math.random().toString(),
-                    },
-                    {
-                        coordinates: { lat: Math.random(), lng: Math.random() },
-                        display: Math.random().toString(),
-                    },
-                    {
-                        coordinates: { lat: Math.random(), lng: Math.random() },
-                        display: Math.random().toString(),
-                    },
-                ];
+            // if ([0, 1][Math.floor(Math.random() * 2)]) {
+            // SIMULATING RESULTS
+            let results = [
+                {
+                    coordinates: { lat: Math.random(), lng: Math.random() },
+                    display: Math.random().toString(),
+                },
+                {
+                    coordinates: { lat: Math.random(), lng: Math.random() },
+                    display: Math.random().toString(),
+                },
+                {
+                    coordinates: { lat: Math.random(), lng: Math.random() },
+                    display: Math.random().toString(),
+                },
+                {
+                    coordinates: { lat: Math.random(), lng: Math.random() },
+                    display: Math.random().toString(),
+                },
+            ];
 
-                setQueryResults(results);
-                setQueryHistory((prev) => {
-                    let newMap = { ...prev };
-                    newMap[query.trim()] = { results, exp: Date.now() };
-                    return newMap;
-                });
+            setQueryResults(results);
+            setQueryHistory((prev) => {
+                let newMap = { ...prev };
+                newMap[query.trim()] = { results, exp: Date.now() };
+                return newMap;
+            });
 
-                callback({
-                    message: "success",
-                    query: query.trim(),
-                    results: results,
-                });
-            } else callback({ error: "some error. try again" });
+            callback({
+                message: "success",
+                query: query.trim(),
+                results: results,
+            });
+            // } else callback({ error: "some error. try again" });
         }
     };
 
