@@ -9,7 +9,6 @@ type CurrentPosition =
           lat: number;
           lng: number;
       }
-    | Coords
     | undefined;
 
 type PrevQueries = {

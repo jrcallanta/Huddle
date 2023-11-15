@@ -7,7 +7,8 @@ import { HuddleSection } from "@/components/HuddleFeed";
 import { huddleSorter } from "@/tools/huddleSorter";
 import { useHuddles } from "@/hooks/useHuddles";
 import { twMerge } from "tailwind-merge";
-import Map from "@/components/Map";
+// import Map from "@/components/Map";
+import Map from "@/components/Map_v2";
 import Marker from "@/components/Marker";
 import { useLocations } from "@/hooks/useLocations";
 import MarkerCurrent from "@/components/MarkerCurrent";
@@ -63,6 +64,13 @@ export default function Home() {
                                     key={huddle._id}
                                     lat={huddle.location?.coordinates.lat}
                                     lng={huddle.location?.coordinates.lng}
+                                    onClick={() => {
+                                        setSelectedHuddle((prev) =>
+                                            prev && prev._id === huddle._id
+                                                ? null
+                                                : huddle
+                                        );
+                                    }}
                                     selected={
                                         selectedHuddle?._id === huddle._id
                                     }
@@ -71,13 +79,6 @@ export default function Home() {
                                         0,
                                         2
                                     )}
-                                    onClick={() => {
-                                        setSelectedHuddle((prev) =>
-                                            prev && prev._id === huddle._id
-                                                ? null
-                                                : huddle
-                                        );
-                                    }}
                                 />
                             ))}
 
