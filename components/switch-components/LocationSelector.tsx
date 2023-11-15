@@ -19,7 +19,7 @@ const LocationSelector: React.FC<LocationSelectorProps> = ({
     className,
 }) => {
     const {
-        states: { queryResults, yqueryHistory },
+        states: { queryResults, queryHistory },
         funcs: { searchLocation },
     } = useLocations();
     let debounce: NodeJS.Timeout;
