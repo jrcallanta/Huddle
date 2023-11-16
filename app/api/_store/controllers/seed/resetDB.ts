@@ -90,9 +90,9 @@ export const _generateTime = (
 };
 
 export const _randomCoordinateInCA = () => {
-    let [lat, lng, display] = _chooseRandom(HUDDLE_LOCATIONS);
+    let [lat, lng, primary] = _chooseRandom(HUDDLE_LOCATIONS);
     return {
-        display,
+        display: { primary },
         coordinates: { lat, lng },
     };
 };

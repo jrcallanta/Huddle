@@ -168,7 +168,7 @@ const HuddleTile: React.FC<HuddleTileProps> = ({
                             >
                                 <GrLocation size={24} />
                                 <p className='text-white/80 text-sm font-medium'>
-                                    {huddle.location.display}
+                                    {huddle.location.display.primary}
                                 </p>
                             </a>
                         )}

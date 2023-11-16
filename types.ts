@@ -1,5 +1,9 @@
 export interface LocationType {
-    display?: string;
+    display: {
+        primary: string;
+        secondary?: string;
+        desc?: string;
+    };
     coordinates: {
         lat: number;
         lng: number;

@@ -5,6 +5,7 @@ import {
     HuddleType,
     HuddleTypeForTile,
     InviteType,
+    LocationType,
 } from "@/types";
 import { useUser } from "@/hooks/useUser";
 import {
@@ -47,6 +48,7 @@ type HuddleContextType = {
                     title: string;
                     startTime: Date;
                     endTime: Date | undefined;
+                    location: LocationType;
                 };
             },
             callback?: any
@@ -196,12 +198,13 @@ export const HuddleProvider = (props: { [propName: string]: any }) => {
                 title: string;
                 startTime: Date;
                 endTime: Date | undefined;
+                location: LocationType;
             };
         },
         callback?: any
     ) => Promise<HuddleTypeForTile | null> = useCallback(
         async (
-            { huddleId, changes: { title, startTime, endTime } },
+            { huddleId, changes: { title, startTime, endTime, location } },
             callback
         ) => {
             if (currentUser) {
@@ -214,6 +217,7 @@ export const HuddleProvider = (props: { [propName: string]: any }) => {
                             title: title,
                             start_time: startTime,
                             end_time: endTime,
+                            location: location,
                         },
                     }),
                 })

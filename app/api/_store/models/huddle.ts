@@ -7,7 +7,14 @@ const huddleSchema = new mongoose.Schema(
         description: { type: String },
         location: {
             type: {
-                display: { type: String, required: true },
+                display: {
+                    type: {
+                        primary: { type: String, required: true },
+                        secondary: { type: String },
+                        description: { type: String },
+                    },
+                    required: true,
+                },
                 coordinates: {
                     type: {
                         lat: { type: Number, required: true },
