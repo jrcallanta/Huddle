@@ -2,7 +2,7 @@
 
 import dateFormat from "dateformat";
 import { HuddleType, HuddleTypeForTile } from "@/types";
-import { CSSProperties, MouseEventHandler, useState } from "react";
+import { CSSProperties, MouseEventHandler, useEffect, useState } from "react";
 import { twMerge } from "tailwind-merge";
 import { GrLocation } from "react-icons/gr";
 import { useHuddles } from "@/hooks/useHuddles";
@@ -39,6 +39,8 @@ const HuddleTile: React.FC<HuddleTileProps> = ({
     );
     const [isUpdatingInviteStatus, setIsUpdatingInviteStatus] = useState(false);
     const [isInEditingMode, setIsInEditingMode] = useState(false);
+
+    useEffect(() => setIsInEditingMode(false), [focusedHuddle]);
 
     const handleClick: MouseEventHandler = (event) => {
         setSelectedHuddle(selectedHuddle?._id === huddle._id ? null : huddle);

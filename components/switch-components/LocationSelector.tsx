@@ -10,7 +10,7 @@ import usePlacesAutocomplete, {
 } from "use-places-autocomplete";
 
 interface LocationSelectorProps {
-    location: LocationType;
+    location: LocationType | null;
     inputId: string;
     name: string;
     isEditing: boolean;
@@ -36,14 +36,25 @@ const LocationSelector: React.FC<LocationSelectorProps> = ({
         clearSuggestions,
     } = usePlacesAutocomplete({
         callbackName: "__googleMapsCallback__",
-        defaultValue:
-            location.display.primary ||
-            `${location.coordinates.lat} ${location.coordinates.lng}`,
+        defaultValue: !location
+            ? ""
+            : location.display.primary ||
+              `${location.coordinates.lat} ${location.coordinates.lng}`,
         debounce: 750,
     });
 
     const handleChange = (e: any) => {
-        searchLocation(e.target.value);
+        if (e.target.value === "") {
+            searchLocation("", false);
+            const inputLatHidden = document.getElementById(
+                `${inputId}-lat-hidden`
+            ) as HTMLInputElement;
+            const inputLngHidden = document.getElementById(
+                `${inputId}-lng-hidden`
+            ) as HTMLInputElement;
+            inputLatHidden.value = "";
+            inputLngHidden.value = "";
+        } else searchLocation(e.target.value);
     };
 
     const handleKeyDown = (e: any) => {
@@ -93,7 +104,7 @@ const LocationSelector: React.FC<LocationSelectorProps> = ({
             />
 
             {!isEditing ? (
-                <p className={className}>{location.display.primary}</p>
+                <p className={className}>{location?.display.primary}</p>
             ) : (
                 <>
                     <input
@@ -102,7 +113,7 @@ const LocationSelector: React.FC<LocationSelectorProps> = ({
                         className={className}
                         type='text'
                         value={value}
-                        placeholder={value}
+                        placeholder={location ? value : "Add location"}
                         onKeyDown={handleKeyDown}
                         onChange={handleChange}
                     />
@@ -110,13 +121,17 @@ const LocationSelector: React.FC<LocationSelectorProps> = ({
                         id={`${inputId}-lat-hidden`}
                         name={`${name}-lat-hidden`}
                         type='hidden'
-                        defaultValue={location.coordinates.lat}
+                        defaultValue={
+                            location ? location.coordinates.lat : undefined
+                        }
                     />
                     <input
                         id={`${inputId}-lng-hidden`}
                         name={`${name}-lng-hidden`}
                         type='hidden'
-                        defaultValue={location.coordinates.lng}
+                        defaultValue={
+                            location ? location.coordinates.lng : undefined
+                        }
                     />
                 </>
             )}

@@ -55,6 +55,10 @@ const DetailsModal: React.FC<DetailsModalProps> = ({
 
     const container = document.getElementById("details-modal-root");
 
+    useEffect(() => {
+        return () => setisInEditingMode(false);
+    }, []);
+
     useEffect(() => setHuddleState(huddle), [huddle]);
 
     const handleOpenEditMode = useCallback(async () => {
@@ -152,15 +156,16 @@ const DetailsModal: React.FC<DetailsModalProps> = ({
         const newTitle = formData.get(INPUT_NAMES.TITLE);
         const newStartTime = formData.get(`${INPUT_NAMES.START_TIME}-hidden`);
         const newEndTime = formData.get(`${INPUT_NAMES.END_TIME}-hidden`);
-        const newLocation = {
-            display: {
-                primary: formData.get(INPUT_NAMES.LOCATION),
-            },
-            coordinates: {
-                lat: Number(formData.get(`${INPUT_NAMES.LOCATION}-lat-hidden`)),
-                lng: Number(formData.get(`${INPUT_NAMES.LOCATION}-lng-hidden`)),
-            },
-        };
+        const display = formData.get(INPUT_NAMES.LOCATION);
+        const lat = Number(formData.get(`${INPUT_NAMES.LOCATION}-lat-hidden`));
+        const lng = Number(formData.get(`${INPUT_NAMES.LOCATION}-lng-hidden`));
+        const newLocation =
+            display !== "" && lat && lng
+                ? {
+                      display: { primary: display },
+                      coordinates: { lat, lng },
+                  }
+                : null;
 
         const valid = _validateInputs({
             title: newTitle as string,
@@ -352,35 +357,10 @@ const DetailsModal: React.FC<DetailsModalProps> = ({
                       </div>
                   </div>
 
-                  {huddleState.location && (
-                      //   <div
-                      //       className={twMerge(
-                      //           "section flex flex-col p-4 cursor-pointer transition-all"
-                      //       )}
-                      //   >
-                      //       <div
-                      //           className={
-                      //               "location w-full flex before-bg before:rounded"
-                      //           }
-                      //       >
-                      //           <a
-                      //               href=''
-                      //               target={"_blank"}
-                      //               onClick={(e) => e.stopPropagation()}
-                      //               className={twMerge(
-                      //                   "location w-fit flex gap-1 items-center [&_>_svg_path]:stroke-white/80 [&:hover_>_svg_path]:stroke-white [&:hover_>_p]:text-white"
-                      //               )}
-                      //           >
-                      //               <GrLocation size={24} />
-                      //               <p className='text-white/80 text-sm font-medium'>
-                      //                   {huddleState.location.display}
-                      //               </p>
-                      //           </a>
-                      //       </div>
-                      //   </div>
+                  {(huddleState.location || isInEditingMode) && (
                       <div className='section flex p-4 w-full'>
                           <LocationSelector
-                              location={huddleState.location}
+                              location={huddleState.location || null}
                               inputId={`${INPUT_NAMES.LOCATION}-input`}
                               name={INPUT_NAMES.LOCATION}
                               isEditing={isInEditingMode}
