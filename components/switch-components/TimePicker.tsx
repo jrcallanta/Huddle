@@ -21,6 +21,11 @@ const TimePicker: React.FC<TimePickerProps> = ({
     name,
     className,
 }) => {
+    const handleKeyDown = (e: any) => {
+        if (e.key.toLowerCase() === "enter") e.target.blur();
+        e.preventDefault();
+    };
+
     const handleTimeSelect = (event: any, time: string) => {
         const input = document.getElementById(inputId) as HTMLInputElement;
         input.value = event.target.value;
@@ -61,6 +66,7 @@ const TimePicker: React.FC<TimePickerProps> = ({
                                 ? dateFormat(initialTime, "h:MMtt")
                                 : "?"
                         }
+                        onKeyDown={handleKeyDown}
                     />
                     <input
                         id={`${inputId}-hidden`}

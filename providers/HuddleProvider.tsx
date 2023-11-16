@@ -47,7 +47,7 @@ type HuddleContextType = {
                 changes: {
                     title: string;
                     startTime: Date;
-                    endTime: Date | undefined;
+                    endTime: Date | null | undefined;
                     location: LocationType;
                 };
             },
@@ -197,7 +197,7 @@ export const HuddleProvider = (props: { [propName: string]: any }) => {
             changes: {
                 title: string;
                 startTime: Date;
-                endTime: Date | undefined;
+                endTime: Date | null | undefined;
                 location: LocationType;
             };
         },

@@ -177,9 +177,7 @@ const DetailsModal: React.FC<DetailsModalProps> = ({
                 title: newTitle as string,
                 start_time: new Date(Number(newStartTime)),
                 end_time:
-                    newEndTime !== "?"
-                        ? new Date(Number(newEndTime))
-                        : undefined,
+                    newEndTime !== "?" ? new Date(Number(newEndTime)) : null,
                 location: newLocation as LocationType,
             } as HuddleTypeForTile;
         });
@@ -196,7 +194,7 @@ const DetailsModal: React.FC<DetailsModalProps> = ({
                         endTime:
                             newEndTime !== "?"
                                 ? new Date(Number(newEndTime))
-                                : undefined,
+                                : null,
                         location: newLocation as LocationType,
                     },
                 },
