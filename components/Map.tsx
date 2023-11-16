@@ -24,7 +24,10 @@ const Map: React.FC<MapProps> = ({ children, className }) => {
     } = useHuddles();
 
     return (
-        <APIProvider apiKey={process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}>
+        <APIProvider
+            apiKey={process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}
+            libraries={["maps", "places"]}
+        >
             <div
                 className={twMerge(
                     "themed h-full w-full bg-[var(--100)] border-black overflow-clip",
@@ -73,9 +76,7 @@ const Map: React.FC<MapProps> = ({ children, className }) => {
                         selectedHuddle?.location?.coordinates || currentPosition
                     }
                     mapId={process.env.NEXT_PUBLIC_GOOGLE_MAPS_MAP_ID}
-                    options={{
-                        disableDefaultUI: true,
-                    }}
+                    disableDefaultUI
                 >
                     {children}
                 </GoogleMap>
