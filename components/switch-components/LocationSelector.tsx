@@ -1,10 +1,16 @@
 import { useLocations } from "@/hooks/useLocations";
-import React, { useState } from "react";
+import { LocationType } from "@/types";
+import React from "react";
 import { GrLocation } from "react-icons/gr";
 import { twMerge } from "tailwind-merge";
 
+import usePlacesAutocomplete, {
+    getGeocode,
+    getLatLng,
+} from "use-places-autocomplete";
+
 interface LocationSelectorProps {
-    text: string;
+    location: LocationType;
     inputId: string;
     name: string;
     isEditing: boolean;
@@ -12,44 +18,61 @@ interface LocationSelectorProps {
 }
 
 const LocationSelector: React.FC<LocationSelectorProps> = ({
-    text,
+    location,
     inputId,
     name,
     isEditing,
     className,
 }) => {
     const {
-        states: { queryResults, queryHistory },
-        funcs: { searchLocation },
+        states: { currentPosition },
     } = useLocations();
-    let debounce: NodeJS.Timeout;
+
+    const {
+        ready: isReady,
+        suggestions: { status, data: queryResults },
+        value,
+        setValue: searchLocation,
+        clearSuggestions,
+    } = usePlacesAutocomplete({
+        callbackName: "__googleMapsCallback__",
+        defaultValue:
+            location.display.primary ||
+            `${location.coordinates.lat} ${location.coordinates.lng}`,
+        debounce: 750,
+    });
 
     const handleChange = (e: any) => {
-        clearTimeout(debounce);
-        debounce = setTimeout(
-            () =>
-                searchLocation(e.target.value, (data: any) => {
-                    if (data.error) console.log(data.error);
-                    else console.log(data);
-                }),
-            750
-        );
+        searchLocation(e.target.value);
     };
 
     const handleKeyDown = (e: any) => {
         if (e.key.toLowerCase() === "enter") e.target.blur();
     };
 
-    const handleLocationSelect = (event: any, location: string) => {
-        console.log(event.target);
-        const input = document.getElementById(inputId) as HTMLInputElement;
-        input.value = event.target.value;
-        event.target.blur();
-
-        const inputHidden = document.getElementById(
-            `${inputId}-hidden`
+    const handleSuggestionSelect = (
+        e: any,
+        suggestion: google.maps.places.AutocompletePrediction
+    ) => {
+        const inputDisplay = document.getElementById(
+            `${inputId}`
         ) as HTMLInputElement;
-        inputHidden.value = location;
+        const inputLatHidden = document.getElementById(
+            `${inputId}-lat-hidden`
+        ) as HTMLInputElement;
+        const inputLngHidden = document.getElementById(
+            `${inputId}-lng-hidden`
+        ) as HTMLInputElement;
+
+        getGeocode({ address: suggestion.description }).then((results) => {
+            const { lat, lng } = getLatLng(results[0]);
+
+            searchLocation(suggestion.structured_formatting.main_text, false);
+            clearSuggestions();
+            inputDisplay.value = suggestion.structured_formatting.main_text;
+            inputLatHidden.value = String(lat);
+            inputLngHidden.value = String(lng);
+        });
     };
 
     return (
@@ -70,7 +93,7 @@ const LocationSelector: React.FC<LocationSelectorProps> = ({
             />
 
             {!isEditing ? (
-                <p className={className}>{text}</p>
+                <p className={className}>{location.display.primary}</p>
             ) : (
                 <>
                     <input
@@ -78,16 +101,22 @@ const LocationSelector: React.FC<LocationSelectorProps> = ({
                         name={name}
                         className={className}
                         type='text'
-                        placeholder={text}
-                        defaultValue={text}
+                        value={value}
+                        placeholder={value}
                         onKeyDown={handleKeyDown}
                         onChange={handleChange}
                     />
                     <input
-                        id={`${inputId}-hidden`}
-                        name={`${name}-hidden`}
+                        id={`${inputId}-lat-hidden`}
+                        name={`${name}-lat-hidden`}
                         type='hidden'
-                        defaultValue={text}
+                        defaultValue={location.coordinates.lat}
+                    />
+                    <input
+                        id={`${inputId}-lng-hidden`}
+                        name={`${name}-lng-hidden`}
+                        type='hidden'
+                        defaultValue={location.coordinates.lng}
                     />
                 </>
             )}
@@ -105,32 +134,36 @@ const LocationSelector: React.FC<LocationSelectorProps> = ({
                     <button
                         type='button'
                         value={"Current Location"}
-                        onClick={(e) => handleLocationSelect(e, "here")}
+                        onClick={(e) => {}}
                         className=' w-full py-2 px-3 bg-inherit hover:bg-white/10 text text-sm text-right text-white/50 hover:text-white font-medium'
                     >
                         Current Location
                     </button>
 
-                    {queryResults &&
-                        queryResults
-                            .map(
-                                (query, i) =>
-                                    query.display ||
-                                    `${query.coordinates.lat} ${query.coordinates.lng}`
-                            )
-                            .map((location, i) => (
-                                <button
-                                    key={i}
-                                    type='button'
-                                    value={location}
-                                    onClick={(e) =>
-                                        handleLocationSelect(e, location)
+                    {status === "OK" &&
+                        queryResults.map((suggestion) => (
+                            <button
+                                key={suggestion.place_id}
+                                type='button'
+                                value={
+                                    suggestion.structured_formatting.main_text
+                                }
+                                onClick={(e) =>
+                                    handleSuggestionSelect(e, suggestion)
+                                }
+                                className='flex flex-col items-stretch w-full py-2 px-3 bg-inherit hover:bg-white/10 text text-sm text-right text-white/50 hover:text-white font-medium'
+                            >
+                                <p className='font-semibold'>
+                                    {suggestion.structured_formatting.main_text}
+                                </p>
+                                <p className='text-xs'>
+                                    {
+                                        suggestion.structured_formatting
+                                            .secondary_text
                                     }
-                                    className=' w-full py-2 px-3 bg-inherit hover:bg-white/10 text text-sm text-right text-white/50 hover:text-white font-medium'
-                                >
-                                    {location}
-                                </button>
-                            ))}
+                                </p>
+                            </button>
+                        ))}
                 </div>
 
                 {/* BG-COLOR */}

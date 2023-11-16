@@ -2,9 +2,8 @@ import React, { useCallback, useEffect, useState } from "react";
 import { useUser } from "@/hooks/useUser";
 import { createPortal } from "react-dom";
 import { twMerge } from "tailwind-merge";
-import { HuddleTypeForTile } from "@/types";
+import { HuddleTypeForTile, LocationType } from "@/types";
 
-import { GrLocation } from "react-icons/gr";
 import { BsX } from "react-icons/bs";
 import { FaTrashCan } from "react-icons/fa6";
 
@@ -16,6 +15,13 @@ import InviteListSelector from "./switch-components/InviteListSelector";
 import UserAvatar from "./UserAvatar";
 import { useHuddles } from "@/hooks/useHuddles";
 import LocationSelector from "./switch-components/LocationSelector";
+
+export const INPUT_NAMES = {
+    TITLE: "title",
+    START_TIME: "start-time",
+    END_TIME: "end-time",
+    LOCATION: "location",
+};
 
 interface DetailsModalProps {
     huddle: HuddleTypeForTile;
@@ -143,25 +149,38 @@ const DetailsModal: React.FC<DetailsModalProps> = ({
         if (!form) return;
 
         const formData = new FormData(form);
-        const newTitle = formData.get("title");
-        const startTime = formData.get("start-time-hidden");
-        const endTime = formData.get("end-time-hidden");
+        const newTitle = formData.get(INPUT_NAMES.TITLE);
+        const newStartTime = formData.get(`${INPUT_NAMES.START_TIME}-hidden`);
+        const newEndTime = formData.get(`${INPUT_NAMES.END_TIME}-hidden`);
+        const newLocation = {
+            display: {
+                primary: formData.get(INPUT_NAMES.LOCATION),
+            },
+            coordinates: {
+                lat: Number(formData.get(`${INPUT_NAMES.LOCATION}-lat-hidden`)),
+                lng: Number(formData.get(`${INPUT_NAMES.LOCATION}-lng-hidden`)),
+            },
+        };
 
         const valid = _validateInputs({
             title: newTitle as string,
-            startTime: startTime as string,
-            endTime: endTime as string,
+            startTime: newStartTime as string,
+            endTime: newEndTime as string,
         });
 
         if (!valid) return;
 
+        // Update Optimistic UI
         setHuddleState((prev) => {
             return {
                 ...prev,
-                title: newTitle,
-                start_time: new Date(Number(startTime)),
+                title: newTitle as string,
+                start_time: new Date(Number(newStartTime)),
                 end_time:
-                    endTime !== "?" ? new Date(Number(endTime)) : undefined,
+                    newEndTime !== "?"
+                        ? new Date(Number(newEndTime))
+                        : undefined,
+                location: newLocation as LocationType,
             } as HuddleTypeForTile;
         });
         setSaveFeedback("Saving...");
@@ -173,11 +192,12 @@ const DetailsModal: React.FC<DetailsModalProps> = ({
                     changes: {
                         ...huddleState,
                         title: newTitle as string,
-                        startTime: new Date(Number(startTime)),
+                        startTime: new Date(Number(newStartTime)),
                         endTime:
-                            endTime !== "?"
-                                ? new Date(Number(endTime))
+                            newEndTime !== "?"
+                                ? new Date(Number(newEndTime))
                                 : undefined,
+                        location: newLocation as LocationType,
                     },
                 },
                 (data: any) => {
@@ -199,9 +219,11 @@ const DetailsModal: React.FC<DetailsModalProps> = ({
                 {
                     ...huddleState,
                     title: newTitle as string,
-                    start_time: new Date(Number(startTime)),
+                    start_time: new Date(Number(newStartTime)),
                     end_time:
-                        endTime !== "?" ? new Date(Number(endTime)) : undefined,
+                        newEndTime !== "?"
+                            ? new Date(Number(newEndTime))
+                            : undefined,
                 },
                 async (data: any) => {
                     if (data.newHuddle) {
@@ -288,8 +310,8 @@ const DetailsModal: React.FC<DetailsModalProps> = ({
                   <div id='header' className='section flex flex-col gap-5 p-4'>
                       <EditableTitle
                           text={huddleState.title}
-                          inputId={"title-input"}
-                          name={"title"}
+                          inputId={`${INPUT_NAMES.TITLE}-input`}
+                          name={INPUT_NAMES.TITLE}
                           isEditing={isInEditingMode}
                           className={twMerge(
                               "w-full bg-inherit text-2xl font-bold outline-none placeholder:text-white/50 focus:text-white truncate",
@@ -304,8 +326,8 @@ const DetailsModal: React.FC<DetailsModalProps> = ({
                               <TimePicker
                                   label='from'
                                   initialTime={huddleState.start_time}
-                                  inputId={"start-time-input"}
-                                  name={"start-time"}
+                                  inputId={`${INPUT_NAMES.START_TIME}-input`}
+                                  name={INPUT_NAMES.START_TIME}
                                   isEditing={isInEditingMode}
                                   className={twMerge(
                                       "w-full bg-inherit text-xl text-white font-bold outline-none placeholder:text-white/50 focus:text-white",
@@ -318,8 +340,8 @@ const DetailsModal: React.FC<DetailsModalProps> = ({
                                   optional
                                   label='to'
                                   initialTime={huddleState.end_time}
-                                  inputId={"end-time-input"}
-                                  name={"end-time"}
+                                  inputId={`${INPUT_NAMES.END_TIME}-input`}
+                                  name={INPUT_NAMES.END_TIME}
                                   isEditing={isInEditingMode}
                                   className={twMerge(
                                       "w-full bg-inherit text-xl text-white font-bold outline-none placeholder:text-white/50 focus:text-white",
@@ -360,9 +382,9 @@ const DetailsModal: React.FC<DetailsModalProps> = ({
                       //   </div>
                       <div className='section flex p-4 w-full'>
                           <LocationSelector
-                              text={huddleState.location.display || ""}
-                              inputId='location-input'
-                              name='location'
+                              location={huddleState.location}
+                              inputId={`${INPUT_NAMES.LOCATION}-input`}
+                              name={INPUT_NAMES.LOCATION}
                               isEditing={isInEditingMode}
                               className={twMerge(
                                   "w-full bg-inherit text-sm font-medium outline-none placeholder:text-white/50 focus:text-white truncate",
