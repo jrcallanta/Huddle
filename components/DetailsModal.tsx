@@ -38,6 +38,7 @@ const DetailsModal: React.FC<DetailsModalProps> = ({
     const {
         funcs: {
             setFocusedHuddle,
+            setSelectedHuddle,
             updateHuddleDetails,
             createNewHuddle,
             respondToInvite,
@@ -227,11 +228,16 @@ const DetailsModal: React.FC<DetailsModalProps> = ({
                         newEndTime !== "?"
                             ? new Date(Number(newEndTime))
                             : undefined,
+                    location: newLocation as LocationType,
                 },
                 async (data: any) => {
                     if (data.newHuddle) {
+                        console.log(data.newHuddle);
+                        setisInEditingMode(false);
                         await refreshHuddles();
-                        setFocusedHuddle(data.newHuddle as HuddleTypeForTile);
+                        setSelectedHuddle(data.newHuddle);
+                        setFocusedHuddle(data.newHuddle);
+                        setSaveFeedback(null);
                     } else {
                         setTimeout(() => {
                             setSaveFeedback(

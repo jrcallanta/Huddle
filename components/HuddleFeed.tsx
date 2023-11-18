@@ -4,7 +4,7 @@ import { twMerge } from "tailwind-merge";
 import HuddleSection from "./HuddleSection";
 import { BsPlus } from "react-icons/bs";
 import { useHuddles } from "@/hooks/useHuddles";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import DetailsModal from "./DetailsModal";
 
 export interface HuddleSection {
@@ -20,14 +20,19 @@ interface HuddleFeedProps {
 const HuddleFeed: React.FC<HuddleFeedProps> = ({ huddleSections }) => {
     const {
         states: { focusedHuddle },
-        funcs: { getHuddleTemplate },
+        funcs: { getHuddleTemplate, setFocusedHuddle },
     } = useHuddles();
 
-    const [isCreatingNewHuddle, setIsCreatingNewHuddle] = useState(false);
+    const [newHuddleTemplate, setNewHuddleTemplate] =
+        useState<HuddleType | null>(null);
 
     useEffect(() => {
-        if (focusedHuddle) setTimeout(() => setIsCreatingNewHuddle(false), 0);
+        if (focusedHuddle) setTimeout(() => setNewHuddleTemplate(null));
     }, [focusedHuddle]);
+
+    const setUpNewHuddle = useCallback(() => {
+        setNewHuddleTemplate(getHuddleTemplate());
+    }, [getHuddleTemplate]);
 
     return (
         <div
@@ -46,7 +51,8 @@ const HuddleFeed: React.FC<HuddleFeedProps> = ({ huddleSections }) => {
                                     "flex gap-2 text text-sm uppercase font-extrabold whitespace-nowrap py-1 px-4 pr-2 border-[3px] border-black rounded-full",
                                     "border-[3px] border-black rounded-full flex justify-center items-center"
                                 )}
-                                onClick={() => setIsCreatingNewHuddle(true)}
+                                // onClick={() => setIsCreatingNewHuddle(true)}
+                                onClick={() => setUpNewHuddle()}
                             >
                                 <span>create new huddle</span>
                                 <BsPlus
@@ -56,19 +62,14 @@ const HuddleFeed: React.FC<HuddleFeedProps> = ({ huddleSections }) => {
                                 />
                             </button>
 
-                            {isCreatingNewHuddle &&
-                                (() => {
-                                    let template = getHuddleTemplate();
-                                    return !template ? null : (
-                                        <DetailsModal
-                                            huddle={template}
-                                            isInEditingMode={true}
-                                            onClose={() =>
-                                                setIsCreatingNewHuddle(false)
-                                            }
-                                        />
-                                    );
-                                })()}
+                            {newHuddleTemplate && (
+                                <DetailsModal
+                                    huddle={newHuddleTemplate}
+                                    isInEditingMode={true}
+                                    // onClose={() => setIsCreatingNewHuddle(false)}
+                                    onClose={() => setNewHuddleTemplate(null)}
+                                />
+                            )}
                         </div>
 
                         {huddleSections
