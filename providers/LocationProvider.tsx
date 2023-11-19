@@ -1,18 +1,12 @@
 "use client";
 
 import { LocationType } from "@/types";
+import { APIProvider } from "@vis.gl/react-google-maps";
 import { createContext, useCallback, useEffect, useState } from "react";
-
-type CurrentPosition =
-    | {
-          lat: number;
-          lng: number;
-      }
-    | undefined;
 
 type LocationProviderContextType = {
     states: {
-        currentPosition: CurrentPosition | null;
+        currentPosition: LocationType | undefined;
     };
 };
 
@@ -22,14 +16,19 @@ export const LocationProviderContext = createContext<
 
 const LocationProvider = (props: { [propName: string]: any }) => {
     const [currentPosition, setCurrentPosition] = useState<
-        CurrentPosition | undefined
+        LocationType | undefined
     >(undefined);
 
     useEffect(() => {
         navigator.geolocation.getCurrentPosition((position) => {
             setCurrentPosition({
-                lat: position.coords.latitude,
-                lng: position.coords.longitude,
+                display: {
+                    primary: "Current Location",
+                },
+                coordinates: {
+                    lat: position.coords.latitude,
+                    lng: position.coords.longitude,
+                },
             });
         });
     }, []);
@@ -41,7 +40,15 @@ const LocationProvider = (props: { [propName: string]: any }) => {
     };
 
     return (
-        <LocationProviderContext.Provider value={providerValues} {...props} />
+        <APIProvider
+            apiKey={process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}
+            libraries={["maps", "places"]}
+        >
+            <LocationProviderContext.Provider
+                value={providerValues}
+                {...props}
+            />
+        </APIProvider>
     );
 };
 

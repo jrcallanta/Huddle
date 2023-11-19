@@ -83,8 +83,8 @@ export default function Home() {
 
                     {currentPosition && (
                         <MarkerCurrent
-                            lat={currentPosition.lat}
-                            lng={currentPosition.lng}
+                            lat={currentPosition.coordinates.lat}
+                            lng={currentPosition.coordinates.lng}
                         />
                     )}
                 </Map>
