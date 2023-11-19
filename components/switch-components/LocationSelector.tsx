@@ -1,6 +1,6 @@
 import { useLocations } from "@/hooks/useLocations";
 import { LocationType } from "@/types";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { GrLocation } from "react-icons/gr";
 import { twMerge } from "tailwind-merge";
 
@@ -28,6 +28,10 @@ const LocationSelector: React.FC<LocationSelectorProps> = ({
         states: { currentPosition },
     } = useLocations();
 
+    const [currentLocationOption, setCurrentLocationOption] =
+        useState<LocationType | null>(null);
+    const [isSuggesting, setIsSuggesting] = useState(false);
+
     const {
         ready: isReady,
         suggestions: { status, data: queryResults },
@@ -42,6 +46,27 @@ const LocationSelector: React.FC<LocationSelectorProps> = ({
               `${location.coordinates.lat} ${location.coordinates.lng}`,
         debounce: 750,
     });
+
+    useEffect(() => {
+        if (currentPosition) {
+            const { lat, lng } = currentPosition.coordinates;
+            const geocoder = new google.maps.Geocoder();
+            geocoder
+                .geocode({ location: currentPosition.coordinates })
+                .then((res) => {
+                    if (res.results[0]) {
+                        console.log(res.results[0]);
+                        const placeStrings = res.results[0].address_components;
+                        setCurrentLocationOption({
+                            display: {
+                                primary: `${placeStrings[0].short_name} ${placeStrings[1].long_name}, ${placeStrings[2].long_name}`,
+                            },
+                            coordinates: { lat, lng },
+                        });
+                    }
+                });
+        }
+    }, [currentPosition]);
 
     const handleChange = (e: any) => {
         if (e.target.value === "") {
@@ -77,13 +102,42 @@ const LocationSelector: React.FC<LocationSelectorProps> = ({
 
         getGeocode({ address: suggestion.description }).then((results) => {
             const { lat, lng } = getLatLng(results[0]);
-
-            searchLocation(suggestion.structured_formatting.main_text, false);
-            clearSuggestions();
-            inputDisplay.value = suggestion.structured_formatting.main_text;
+            const {
+                structured_formatting: { main_text },
+            } = suggestion;
+            e.target.blur();
+            searchLocation(main_text, false);
+            setIsSuggesting(false);
+            inputDisplay.value = main_text;
             inputLatHidden.value = String(lat);
             inputLngHidden.value = String(lng);
         });
+    };
+
+    const handleSelectCurrentPosition = (e: any) => {
+        if (currentLocationOption) {
+            const inputDisplay = document.getElementById(
+                `${inputId}`
+            ) as HTMLInputElement;
+            const inputLatHidden = document.getElementById(
+                `${inputId}-lat-hidden`
+            ) as HTMLInputElement;
+            const inputLngHidden = document.getElementById(
+                `${inputId}-lng-hidden`
+            ) as HTMLInputElement;
+
+            const {
+                display: { primary },
+                coordinates: { lat, lng },
+            } = currentLocationOption;
+
+            e.target.blur();
+            searchLocation(primary, false);
+            setIsSuggesting(false);
+            inputDisplay.value = primary;
+            inputLatHidden.value = String(lat);
+            inputLngHidden.value = String(lng);
+        }
     };
 
     return (
@@ -116,6 +170,7 @@ const LocationSelector: React.FC<LocationSelectorProps> = ({
                         placeholder={location ? value : "Add location"}
                         onKeyDown={handleKeyDown}
                         onChange={handleChange}
+                        onFocus={() => setIsSuggesting(true)}
                     />
                     <input
                         id={`${inputId}-lat-hidden`}
@@ -138,21 +193,34 @@ const LocationSelector: React.FC<LocationSelectorProps> = ({
 
             <div
                 className={twMerge(
-                    // "absolute top-[calc(100%_+_2rem)] left-0 right-0 h-32 bg-[var(--400)]",
                     "z-[1] flex-col absolute -right-2 top-[calc(100%_+_.5rem)] overflow-clip h-fit w-[calc(100%_+_1rem)] bg-[var(--400)]",
-                    "hidden bg-[var(--400)] rounded-b-md ",
+                    "hidden bg-[var(--400)] rounded-b-md",
+                    // isEditing &&
+                    // "dropdown group-[:has(:focus,:active)]/lpicker:flex"
                     isEditing &&
-                        "dropdown group-[:has(:focus,:active)]/lpicker:flex"
+                        isSuggesting &&
+                        "group-[&:has(:focus,:active)]/lpicker:flex"
                 )}
             >
                 <div className='z-[1] flex flex-col'>
                     <button
                         type='button'
                         value={"Current Location"}
-                        onClick={(e) => {}}
-                        className=' w-full py-2 px-3 bg-inherit hover:bg-white/10 text text-sm text-right text-white/50 hover:text-white font-medium'
+                        onClick={handleSelectCurrentPosition}
+                        className='flex flex-col items-end w-full py-2 px-3 bg-inherit hover:bg-white/10 text text-sm text-right text-white/50 hover:text-white font-medium'
                     >
-                        Current Location
+                        {currentLocationOption ? (
+                            <>
+                                <span className='font-semibold'>
+                                    (Current Location)
+                                </span>
+                                <span className='text-xs'>
+                                    {currentLocationOption?.display.primary}
+                                </span>
+                            </>
+                        ) : (
+                            "Current Location"
+                        )}
                     </button>
 
                     {status === "OK" &&
