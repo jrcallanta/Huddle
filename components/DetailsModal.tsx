@@ -439,7 +439,7 @@ const DetailsModal: React.FC<DetailsModalProps> = ({
                                   <ActionsBar
                                       interactions='editor'
                                       onSave={handleSaveDetails}
-                                      onCancel={handleCloseEditMode}
+                                      onCancel={onClose}
                                   />
                               )}
                           </>
