@@ -68,8 +68,12 @@ const DetailsModal: React.FC<DetailsModalProps> = ({
     }, []);
 
     const handleCloseEditMode = useCallback(async () => {
-        setSaveFeedback(null);
-        setisInEditingMode(false);
+        if (huddle._id) {
+            setSaveFeedback(null);
+            setisInEditingMode(false);
+        } else {
+            onClose();
+        }
     }, []);
 
     const _validateInputs: (props: {
@@ -439,7 +443,7 @@ const DetailsModal: React.FC<DetailsModalProps> = ({
                                   <ActionsBar
                                       interactions='editor'
                                       onSave={handleSaveDetails}
-                                      onCancel={onClose}
+                                      onCancel={handleCloseEditMode}
                                   />
                               )}
                           </>
