@@ -37,14 +37,14 @@ const AccountButton: React.FC<AccountButtonProps> = ({ className }) => {
 
     return (
         <>
-            {sessionStatus !== "loading" && !currentUser && (
+            {/* {sessionStatus !== "loading" && !currentUser && (
                 <OptionButton
                     className='order-2 w-fit text-black text-sm font-semibold bg-white rounded-full py-2 px-4'
                     onClick={() => signIn()}
                 >
                     login
                 </OptionButton>
-            )}
+            )} */}
 
             {sessionStatus !== "loading" && currentUser && (
                 <div
