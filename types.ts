@@ -2,7 +2,8 @@ export interface LocationType {
     display: {
         primary: string;
         secondary?: string;
-        desc?: string;
+        description?: string;
+        address?: string[];
     };
     coordinates: {
         lat: number;

@@ -24,6 +24,7 @@ const LocationProvider = (props: { [propName: string]: any }) => {
             setCurrentPosition({
                 display: {
                     primary: "Current Location",
+                    description: "",
                 },
                 coordinates: {
                     lat: position.coords.latitude,

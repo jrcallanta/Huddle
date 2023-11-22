@@ -162,16 +162,16 @@ const DetailsModal: React.FC<DetailsModalProps> = ({
         const newStartTime = formData.get(`${INPUT_NAMES.START_TIME}-hidden`);
         const newEndTime = formData.get(`${INPUT_NAMES.END_TIME}-hidden`);
         const display = formData.get(INPUT_NAMES.LOCATION);
+        const description = formData.get(`${INPUT_NAMES.LOCATION}-desc-hidden`);
         const lat = Number(formData.get(`${INPUT_NAMES.LOCATION}-lat-hidden`));
         const lng = Number(formData.get(`${INPUT_NAMES.LOCATION}-lng-hidden`));
         const newLocation =
-            display !== "" && lat && lng
+            display !== "" && description !== "" && lat && lng
                 ? {
-                      display: { primary: display },
+                      display: { primary: display, description },
                       coordinates: { lat, lng },
                   }
                 : null;
-
         const valid = _validateInputs({
             title: newTitle as string,
             startTime: newStartTime as string,
@@ -368,7 +368,7 @@ const DetailsModal: React.FC<DetailsModalProps> = ({
                   </div>
 
                   {(huddleState.location || isInEditingMode) && (
-                      <div className='section flex p-4 w-full'>
+                      <div className='section flex w-full [&:hover_>_*]:!bg-white/20'>
                           <LocationSelector
                               location={huddleState.location || null}
                               inputId={`${INPUT_NAMES.LOCATION}-input`}
