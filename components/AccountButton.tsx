@@ -1,18 +1,20 @@
 import OptionButton from "./OptionButton";
 import { signIn, signOut, useSession } from "next-auth/react";
-import Image from "next/image";
 import { IoMdLogOut } from "react-icons/io";
 import { VscAccount } from "react-icons/vsc";
 import { IoSettingsOutline } from "react-icons/io5";
 import React, { useState } from "react";
 import { twMerge } from "tailwind-merge";
+import UserAvatar from "./UserAvatar";
+import { useUser } from "@/hooks/useUser";
 
 interface AccountButtonProps {
     className?: string;
 }
 
 const AccountButton: React.FC<AccountButtonProps> = ({ className }) => {
-    const { data: session, status: sessionStatus } = useSession();
+    const { status: sessionStatus } = useSession();
+    const { currentUser } = useUser();
     const [isMenuDisplayed, setIsMenuDisplayed] = useState(false);
 
     const menuItems = [
@@ -35,7 +37,7 @@ const AccountButton: React.FC<AccountButtonProps> = ({ className }) => {
 
     return (
         <>
-            {sessionStatus !== "loading" && !session && (
+            {sessionStatus !== "loading" && !currentUser && (
                 <OptionButton
                     className='order-2 w-fit text-black text-sm font-semibold bg-white rounded-full py-2 px-4'
                     onClick={() => signIn()}
@@ -44,7 +46,7 @@ const AccountButton: React.FC<AccountButtonProps> = ({ className }) => {
                 </OptionButton>
             )}
 
-            {sessionStatus !== "loading" && session && (
+            {sessionStatus !== "loading" && currentUser && (
                 <div
                     className={twMerge(
                         "md:relative order-2",
@@ -57,12 +59,9 @@ const AccountButton: React.FC<AccountButtonProps> = ({ className }) => {
                             "rounded-full flex-shrink-0 flex justify-center items-center border-white border-[2px]"
                         )}
                     >
-                        <Image
-                            className='rounded-full'
-                            src={session.user?.image ?? ""}
-                            alt={"user_avatar"}
-                            width={40}
-                            height={40}
+                        <UserAvatar
+                            username={currentUser.username}
+                            imgUrl={currentUser.imgUrl}
                         />
                     </button>
 
@@ -70,9 +69,9 @@ const AccountButton: React.FC<AccountButtonProps> = ({ className }) => {
                         <div
                             onMouseLeave={() => setIsMenuDisplayed(false)}
                             className={twMerge(
-                                "absolute  flex flex-col items-stretch",
-                                "mt-2 top-full left-2 right-2 md:-left-3 md:right-auto h-fit md:w-56",
-                                "shadow-lg rounded-[1.8rem] overflow-clip bg-neutral-800 border-[4px] border-neutral-900"
+                                "absolute flex flex-col items-stretch",
+                                "mt-2 top-full md:top-[calc(100%_+_1rem)] left-2 right-2 md:-left-3 h-fit md:w-64",
+                                "shadow-lg rounded-[1.8rem] overflow-clip bg-[var(--600)] border-[4px] border-[var(--700)]"
                             )}
                         >
                             {menuItems.map((item, i) => (
@@ -83,7 +82,7 @@ const AccountButton: React.FC<AccountButtonProps> = ({ className }) => {
                                     <div className='bg-white/20 p-1 rounded-full flex justify-center items-center'>
                                         <item.icon size={26} color='white' />
                                     </div>
-                                    <p className='text text-md text-white/80 group-hover:text-white font-medium'>
+                                    <p className='text text-md text-white/80 group-hover:text-white font-medium whitespace-nowrap'>
                                         {item.text}
                                     </p>
                                 </button>
