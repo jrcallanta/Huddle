@@ -1,7 +1,7 @@
 import { signIn } from "next-auth/react";
 import React, { forwardRef } from "react";
 import { twMerge } from "tailwind-merge";
-import { FaGoogle } from "react-icons/fa";
+import { FaGoogle, FaFacebook } from "react-icons/fa";
 
 interface AuthenticationModalProps {
     className?: string;
@@ -26,6 +26,10 @@ const AuthenticationModal: React.FC<AuthenticationModalProps> = ({
             <UIButton onClick={() => signIn("google")}>
                 <FaGoogle size={22} className='flex-shrink-0' />
                 <span className='flex-grow pr-4'>Sign in with Google</span>
+            </UIButton>
+            <UIButton onClick={() => signIn("facebook")}>
+                <FaFacebook size={26} className='flex-shrink-0' />
+                <span className='flex-grow pr-4'>Sign in with Facebook</span>
             </UIButton>
         </div>
     );
