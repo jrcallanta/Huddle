@@ -5,7 +5,7 @@ import Friendship from "../../models/friendship";
 import { FRIENDSHIP_STATUS, FriendshipType } from "@/types";
 import mongoose from "mongoose";
 
-const HUDDLE_COUNT = 20;
+const HUDDLE_COUNT = 0;
 
 const USER_TO_EMAIL_DICT: { [key: string]: string } = {
     _jelito: "jrscallanta@gmail.com",

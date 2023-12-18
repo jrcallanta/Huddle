@@ -12,12 +12,12 @@ interface Args {
 
 export const editExistingInvite: ({}: Args) => Promise<PatchInviteResponse> =
     async ({ userId, inviteId, huddleId, status }) => {
-        if (_flipCoin())
-            return {
-                message: "Could not update invite.",
-                error: Error("InvalidInputError"),
-                errorStatus: 403,
-            };
+        // if (_flipCoin())
+        //     return {
+        //         message: "Could not update invite.",
+        //         error: Error("InvalidInputError"),
+        //         errorStatus: 403,
+        //     };
 
         if (!userId || !(huddleId || inviteId) || !status) {
             return {
