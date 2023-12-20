@@ -1,7 +1,7 @@
-import OptionButton from "./OptionButton";
-import { signIn, signOut, useSession } from "next-auth/react";
+import { signOut, useSession } from "next-auth/react";
 import { IoMdLogOut } from "react-icons/io";
 import { VscAccount } from "react-icons/vsc";
+import { HiUser, HiUsers } from "react-icons/hi2";
 import { IoSettingsOutline } from "react-icons/io5";
 import React, { useState } from "react";
 import { twMerge } from "tailwind-merge";
@@ -19,15 +19,20 @@ const AccountButton: React.FC<AccountButtonProps> = ({ className }) => {
 
     const menuItems = [
         {
-            icon: VscAccount,
+            icon: HiUser,
             text: "Profile",
             onclick: () => {},
         },
         {
-            icon: IoSettingsOutline,
-            text: "Settings",
+            icon: HiUsers,
+            text: "Friends",
             onclick: () => {},
         },
+        // {
+        //     icon: IoSettingsOutline,
+        //     text: "Settings",
+        //     onclick: () => {},
+        // },
         {
             icon: IoMdLogOut,
             text: "Sign Out",
@@ -76,6 +81,7 @@ const AccountButton: React.FC<AccountButtonProps> = ({ className }) => {
                         >
                             {menuItems.map((item, i) => (
                                 <button
+                                    key={item.text}
                                     onClick={() => item.onclick()}
                                     className='group w-full py-2 px-3 flex items-center gap-4 hover:bg-white/10'
                                 >
