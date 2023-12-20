@@ -38,7 +38,7 @@ const UserTileList: React.FC<UserTileListProps> = ({
             )}
         >
             {label && (
-                <p className='text text-sm font-medium text-black/75 px-4 py-2'>
+                <p className='text text-sm font-medium text-black/75 px-2 py-2'>
                     {label}
                 </p>
             )}
