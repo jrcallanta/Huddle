@@ -7,7 +7,7 @@ import { twMerge } from "tailwind-merge";
 import { GrLocation } from "react-icons/gr";
 import { useHuddles } from "@/hooks/useHuddles";
 import { useUser } from "@/hooks/useUser";
-import DetailsModal from "./DetailsModal";
+import DetailsModal from "./DetailsModal_v2";
 import ActionsBar from "./ActionsBar";
 import UserAvatar from "./UserAvatar";
 import UserAvatarList from "./UserAvatarList";
