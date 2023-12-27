@@ -1,8 +1,8 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useUser } from "@/hooks/useUser";
 import { createPortal } from "react-dom";
 import { twMerge } from "tailwind-merge";
-import { HuddleTypeForTile, LocationType } from "@/types";
+import { HuddleTypeForTile } from "@/types";
 
 import { BsX } from "react-icons/bs";
 import { FaTrashCan } from "react-icons/fa6";
@@ -13,9 +13,9 @@ import EditableTitle from "./switch-components/EditableTitle";
 import TimePicker from "./switch-components/TimePicker";
 import InviteListSelector from "./switch-components/InviteListSelector";
 import UserAvatar from "./UserAvatar";
-import { useHuddles } from "@/hooks/useHuddles";
 import LocationSelector from "./switch-components/LocationSelector";
 import { useHuddleOwnerEditor } from "@/hooks/useHuddleOwnerEditor";
+import { useHuddleInviteResponder } from "@/hooks/useHuddleInviteResponder";
 
 export const INPUT_NAMES = {
     TITLE: "title",
@@ -36,13 +36,12 @@ const DetailsModal: React.FC<DetailsModalProps> = ({
     onClose,
 }) => {
     const { currentUser } = useUser();
-    const {
-        funcs: { respondToInvite, refreshHuddles },
-    } = useHuddles();
+
     const container = document.getElementById("details-modal-root");
     const [huddleState, setHuddleState] = useState(huddle);
     const [feedback, setFeedback] = useState<string | null>(null);
 
+    // Logic for Editing
     const {
         states: { isInEditingMode },
         handlers: {
@@ -57,55 +56,15 @@ const DetailsModal: React.FC<DetailsModalProps> = ({
         funcs: { setHuddleState, setFeedback, onCloseEditor: onClose },
     });
 
-    const [isUpdatingInviteStatus, setIsUpdatingInviteStatus] = useState(false);
-
-    const handleRespondInvite = async (event: any, respond: string) => {
-        event.stopPropagation();
-        setFeedback(null);
-        setIsUpdatingInviteStatus(true);
-        setHuddleState((prev) => ({
-            ...prev,
-            invite_status: respond,
-        }));
-
-        if (huddle._id)
-            await respondToInvite(
-                {
-                    huddleId: huddle._id,
-                    response: respond,
-                },
-                async (data: any) => {
-                    if (data.updatedInvite) {
-                        setIsUpdatingInviteStatus(false);
-                        // if (data.updatedInvite.status === "NOT_GOING")
-                        //     setFocusedHuddle(null);
-                        await refreshHuddles();
-                    } else {
-                        setTimeout(() => {
-                            setFeedback("Could not send response. Try again.");
-                            setHuddleState((prev) => ({
-                                ...prev,
-                                invite_status: huddle.invite_status,
-                            }));
-                            setIsUpdatingInviteStatus(false);
-                        }, 500);
-                    }
-                }
-            );
-    };
-
-    const handleToggleAcceptInvite = (event: any) =>
-        handleRespondInvite(
-            event,
-            huddleState.invite_status !== "GOING" ? "GOING" : "PENDING"
-        );
-
-    const handleToggleDeclineInvite = (event: any) => {
-        handleRespondInvite(
-            event,
-            huddleState.invite_status !== "NOT_GOING" ? "NOT_GOING" : "PENDING"
-        );
-    };
+    // Logic for Responding
+    const {
+        states: { isUpdatingInviteStatus },
+        handlers: { handleToggleAcceptInvite, handleToggleDeclineInvite },
+    } = useHuddleInviteResponder({
+        deps: { originalHuddle: huddle },
+        states: { huddleState },
+        funcs: { setHuddleState, setFeedback },
+    });
 
     return container && huddleState
         ? createPortal(
