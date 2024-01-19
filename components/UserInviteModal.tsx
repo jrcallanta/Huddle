@@ -3,7 +3,12 @@ import { PiCaretLeftBold } from "react-icons/pi";
 import { twMerge } from "tailwind-merge";
 import UserInviteTile from "./UserInviteTile";
 import UserTileGeneric from "./UserTileGeneric";
-import { HuddleTypeForTile, UserType, UserTypeForTile } from "@/types";
+import {
+    FRIENDSHIP_STATUS,
+    HuddleTypeForTile,
+    UserType,
+    UserTypeForTile,
+} from "@/types";
 import { useHuddles } from "@/hooks/useHuddles";
 
 interface UserInviteModalProps {
@@ -33,7 +38,16 @@ const UserInviteModal: React.FC<UserInviteModalProps> = ({
             if (currentUser)
                 fetch(`/api/friendships/${currentUser._id}`)
                     .then((res) => res.json())
-                    .then((data) => setFriendsList(data.friendships));
+                    .then((data) => {
+                        setFriendsList(
+                            data.friendships.filter(
+                                (friendship: any) =>
+                                    friendship.friendStatus ==
+                                    FRIENDSHIP_STATUS.friends
+                            )
+                        );
+                        return;
+                    });
         };
 
         if (owner._id === currentUser?._id) getFriends();
