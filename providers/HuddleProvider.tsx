@@ -48,7 +48,7 @@ type HuddleContextType = {
                     title: string;
                     startTime: Date;
                     endTime: Date | null | undefined;
-                    location: LocationType;
+                    location: LocationType | null | undefined;
                 };
             },
             callback?: any
@@ -198,7 +198,7 @@ export const HuddleProvider = (props: { [propName: string]: any }) => {
                 title: string;
                 startTime: Date;
                 endTime: Date | null | undefined;
-                location: LocationType;
+                location: LocationType | null | undefined;
             };
         },
         callback?: any
