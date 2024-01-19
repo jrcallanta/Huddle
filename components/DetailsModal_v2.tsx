@@ -195,6 +195,12 @@ const DetailsModal: React.FC<DetailsModalProps> = ({
                               inputId={`${INPUT_NAMES.LOCATION}-input`}
                               name={INPUT_NAMES.LOCATION}
                               isEditing={isInEditingMode}
+                              onValueChange={(newValue) =>
+                                  dispatch({
+                                      type: "EDIT_LOCATION",
+                                      payload: newValue,
+                                  })
+                              }
                               className={twMerge(
                                   "w-full bg-inherit text-sm font-medium outline-none placeholder:text-white/50 focus:text-white truncate",
                                   !isInEditingMode

@@ -14,6 +14,7 @@ interface LocationSelectorProps {
     inputId: string;
     name: string;
     isEditing: boolean;
+    onValueChange?: (newValue: LocationType) => any;
     className?: string;
 }
 
@@ -22,6 +23,7 @@ const LocationSelector: React.FC<LocationSelectorProps> = ({
     inputId,
     name,
     isEditing,
+    onValueChange,
     className,
 }) => {
     const {
@@ -61,7 +63,6 @@ const LocationSelector: React.FC<LocationSelectorProps> = ({
                 .geocode({ location: currentPosition.coordinates })
                 .then((res) => {
                     if (res.results[0]) {
-                        console.log(res.results[0]);
                         const placeStrings = res.results[0].address_components;
                         setCurrentLocationOption({
                             display: {
@@ -97,22 +98,22 @@ const LocationSelector: React.FC<LocationSelectorProps> = ({
         if (e.key.toLowerCase() === "enter") e.target.blur();
     };
 
-    const handleSuggestionSelect = (
+    const handleSelectSuggestion = (
         e: any,
         suggestion: google.maps.places.AutocompletePrediction
     ) => {
-        const inputDisplay = document.getElementById(
-            `${inputId}`
-        ) as HTMLInputElement;
-        const inputDescHidden = document.getElementById(
-            `${inputId}-desc-hidden`
-        ) as HTMLInputElement;
-        const inputLatHidden = document.getElementById(
-            `${inputId}-lat-hidden`
-        ) as HTMLInputElement;
-        const inputLngHidden = document.getElementById(
-            `${inputId}-lng-hidden`
-        ) as HTMLInputElement;
+        // const inputDisplay = document.getElementById(
+        //     `${inputId}`
+        // ) as HTMLInputElement;
+        // const inputDescHidden = document.getElementById(
+        //     `${inputId}-desc-hidden`
+        // ) as HTMLInputElement;
+        // const inputLatHidden = document.getElementById(
+        //     `${inputId}-lat-hidden`
+        // ) as HTMLInputElement;
+        // const inputLngHidden = document.getElementById(
+        //     `${inputId}-lng-hidden`
+        // ) as HTMLInputElement;
 
         getGeocode({ address: suggestion.description }).then((results) => {
             const { lat, lng } = getLatLng(results[0]);
@@ -122,11 +123,42 @@ const LocationSelector: React.FC<LocationSelectorProps> = ({
             e.target.blur();
             searchLocation(main_text, false);
             setIsSuggesting(false);
-            inputDisplay.value = main_text;
-            inputDescHidden.value = suggestion.description;
+
+            // const display = formData.get(INPUT_NAMES.LOCATION);
+            // const description = formData.get(
+            //     `${INPUT_NAMES.LOCATION}-desc-hidden`
+            // );
+            // const lat = Number(
+            //     formData.get(`${INPUT_NAMES.LOCATION}-lat-hidden`)
+            // );
+            // const lng = Number(
+            //     formData.get(`${INPUT_NAMES.LOCATION}-lng-hidden`)
+            // );
+            // const newLocation =
+            //     display !== "" && description !== "" && lat && lng
+            //         ? {
+            //               display: { primary: display, description },
+            //               coordinates: { lat, lng },
+            //           }
+            //         : null;
+
+            // inputDisplay.value = main_text;
+            // inputDescHidden.value = suggestion.description;
+            // inputLatHidden.value = String(lat);
+            // inputLngHidden.value = String(lng);
             setAddress(suggestion.description);
-            inputLatHidden.value = String(lat);
-            inputLngHidden.value = String(lng);
+
+            if (onValueChange)
+                onValueChange({
+                    display: {
+                        primary: main_text,
+                        description: suggestion.description,
+                    },
+                    coordinates: {
+                        lat,
+                        lng,
+                    },
+                });
         });
     };
 
@@ -275,7 +307,7 @@ const LocationSelector: React.FC<LocationSelectorProps> = ({
                                             .main_text
                                     }
                                     onClick={(e) =>
-                                        handleSuggestionSelect(e, suggestion)
+                                        handleSelectSuggestion(e, suggestion)
                                     }
                                     className='flex flex-col items-stretch w-full py-2 px-3 bg-inherit hover:bg-white/10 text text-sm text-right text-white/50 hover:text-white font-medium'
                                 >
