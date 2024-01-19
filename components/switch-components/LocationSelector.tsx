@@ -102,50 +102,15 @@ const LocationSelector: React.FC<LocationSelectorProps> = ({
         e: any,
         suggestion: google.maps.places.AutocompletePrediction
     ) => {
-        // const inputDisplay = document.getElementById(
-        //     `${inputId}`
-        // ) as HTMLInputElement;
-        // const inputDescHidden = document.getElementById(
-        //     `${inputId}-desc-hidden`
-        // ) as HTMLInputElement;
-        // const inputLatHidden = document.getElementById(
-        //     `${inputId}-lat-hidden`
-        // ) as HTMLInputElement;
-        // const inputLngHidden = document.getElementById(
-        //     `${inputId}-lng-hidden`
-        // ) as HTMLInputElement;
-
         getGeocode({ address: suggestion.description }).then((results) => {
             const { lat, lng } = getLatLng(results[0]);
             const {
                 structured_formatting: { main_text },
             } = suggestion;
             e.target.blur();
+
             searchLocation(main_text, false);
             setIsSuggesting(false);
-
-            // const display = formData.get(INPUT_NAMES.LOCATION);
-            // const description = formData.get(
-            //     `${INPUT_NAMES.LOCATION}-desc-hidden`
-            // );
-            // const lat = Number(
-            //     formData.get(`${INPUT_NAMES.LOCATION}-lat-hidden`)
-            // );
-            // const lng = Number(
-            //     formData.get(`${INPUT_NAMES.LOCATION}-lng-hidden`)
-            // );
-            // const newLocation =
-            //     display !== "" && description !== "" && lat && lng
-            //         ? {
-            //               display: { primary: display, description },
-            //               coordinates: { lat, lng },
-            //           }
-            //         : null;
-
-            // inputDisplay.value = main_text;
-            // inputDescHidden.value = suggestion.description;
-            // inputLatHidden.value = String(lat);
-            // inputLngHidden.value = String(lng);
             setAddress(suggestion.description);
 
             if (onValueChange)
@@ -164,19 +129,6 @@ const LocationSelector: React.FC<LocationSelectorProps> = ({
 
     const handleSelectCurrentPosition = (e: any) => {
         if (currentLocationOption) {
-            const inputDisplay = document.getElementById(
-                `${inputId}`
-            ) as HTMLInputElement;
-            const inputDescHidden = document.getElementById(
-                `${inputId}-desc-hidden`
-            ) as HTMLInputElement;
-            const inputLatHidden = document.getElementById(
-                `${inputId}-lat-hidden`
-            ) as HTMLInputElement;
-            const inputLngHidden = document.getElementById(
-                `${inputId}-lng-hidden`
-            ) as HTMLInputElement;
-
             const {
                 display: { primary, description },
                 coordinates: { lat, lng },
@@ -185,11 +137,19 @@ const LocationSelector: React.FC<LocationSelectorProps> = ({
             e.target.blur();
             searchLocation(primary, false);
             setIsSuggesting(false);
-            inputDisplay.value = primary;
-            inputDescHidden.value = description || "";
             setAddress(description || undefined);
-            inputLatHidden.value = String(lat);
-            inputLngHidden.value = String(lng);
+
+            if (onValueChange)
+                onValueChange({
+                    display: {
+                        primary,
+                        description: description || "",
+                    },
+                    coordinates: {
+                        lat,
+                        lng,
+                    },
+                });
         }
     };
 
