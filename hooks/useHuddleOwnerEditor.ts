@@ -143,22 +143,6 @@ export const useHuddleOwnerEditor = ({
             });
 
             if (!valid) return;
-
-            console.log(huddleState);
-
-            // Update Optimistic UI
-            // setHuddleState((prev) => {
-            //     return {
-            //         ...prev,
-            //         title: newTitle as string,
-            //         start_time: new Date(Number(newStartTime)),
-            //         end_time:
-            //             newEndTime !== "?"
-            //                 ? new Date(Number(newEndTime))
-            //                 : null,
-            //         location: newLocation as LocationType,
-            //     } as HuddleTypeForTile;
-            // });
             dispatch({ type: "CHANGE_FEEDBACK", payload: "Saving..." });
 
             if (originalHuddle._id)
@@ -192,35 +176,37 @@ export const useHuddleOwnerEditor = ({
                         }
                     }
                 );
-            // else
-            //     createNewHuddle(
-            //         {
-            //             ...huddleState,
-            //             title: newTitle as string,
-            //             start_time: new Date(Number(newStartTime)),
-            //             end_time:
-            //                 newEndTime !== "?"
-            //                     ? new Date(Number(newEndTime))
-            //                     : undefined,
-            //             location: newLocation as LocationType,
-            //         },
-            //         async (data: any) => {
-            //             if (data.newHuddle) {
-            //                 console.log(data.newHuddle);
-            //                 setIsInEditingMode(false);
-            //                 await refreshHuddles();
-            //                 setSelectedHuddle(data.newHuddle);
-            //                 setFocusedHuddle(data.newHuddle);
-            //                 setFeedback(null);
-            //             } else {
-            //                 setTimeout(() => {
-            //                     setFeedback(
-            //                         "Could not save changes. Try again."
-            //                     );
-            //                 }, 500);
-            //             }
-            //         }
-            //     );
+            else
+                createNewHuddle(
+                    {
+                        ...huddleState,
+                        title: huddleState.title,
+                        start_time: huddleState.start_time,
+                        end_time: huddleState.end_time,
+                        location: huddleState.location,
+                    },
+                    async (data: any) => {
+                        if (data.newHuddle) {
+                            console.log(data.newHuddle);
+                            setIsInEditingMode(false);
+                            await refreshHuddles();
+                            setSelectedHuddle(data.newHuddle);
+                            setFocusedHuddle(data.newHuddle);
+                            dispatch({
+                                type: "CHANGE_FEEDBACK",
+                                payload: null,
+                            });
+                        } else {
+                            setTimeout(() => {
+                                dispatch({
+                                    type: "CHANGE_FEEDBACK",
+                                    payload:
+                                        "Could not save changes. Try again.",
+                                });
+                            }, 500);
+                        }
+                    }
+                );
         },
         [
             huddleState,
