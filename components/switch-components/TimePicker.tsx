@@ -28,15 +28,23 @@ const TimePicker: React.FC<TimePickerProps> = ({
     );
     const [isDropDownShown, setIsDropDownShown] = useState(false);
 
-    const handleTimeSelect = (event: any, time: Date | undefined) => {
-        setDisplayedTime(time ? dateFormat(time, "h:MMtt") : "?");
-        setIsDropDownShown(false);
+    useEffect(() => {
+        if (!isEditing) {
+            setIsDropDownShown(false);
+        }
+    }, [isEditing]);
 
-        if (onValueChange) onValueChange(time);
-    };
+    const handleTimeSelect = useCallback(
+        (event: any, time: Date | undefined) => {
+            setDisplayedTime(time ? dateFormat(time, "h:MMtt") : "?");
+            setIsDropDownShown(false);
+
+            if (onValueChange) onValueChange(time);
+        },
+        [onValueChange]
+    );
 
     const renderTimes = useCallback(() => {
-        console.log("lowerBournd: " + lowerBound);
         return Array(23 * 4 + 3)
             .fill(lowerBound ? new Date(lowerBound) : Date.now())
             .reduce(
@@ -77,7 +85,7 @@ const TimePicker: React.FC<TimePickerProps> = ({
         let topOfDay1 = new Date(dateFormat(day1, "mm/dd/yyyy"));
         let topOfDay2 = new Date(dateFormat(day2, "mm/dd/yyyy"));
 
-        return day1 > day2
+        return topOfDay1 > topOfDay2
             ? Math.floor(
                   (topOfDay1.getTime() - topOfDay2.getTime()) /
                       (1000 * 60 * 60 * 24)
@@ -102,28 +110,47 @@ const TimePicker: React.FC<TimePickerProps> = ({
                 </p>
             )}
 
-            <div className='w-full flex flex-col gap-1 justify-end items-end'>
-                {!isEditing ? (
-                    <p className={className}>{displayedTime}</p>
-                ) : (
-                    <button
-                        className={twMerge(className, "peer/timeButton")}
-                        onClick={() => setIsDropDownShown((prev) => !prev)}
-                        type='button'
-                    >
-                        {displayedTime}
-                    </button>
-                )}
-                {initialTime && displayedTime !== "?" && (
-                    <p
-                        className={twMerge(
-                            "text-xs text-white peer-first/timeButton:text-white/50 peer-focus/timeButton:text-white font-semibold"
-                        )}
-                    >
-                        {getDayLabel()}
-                    </p>
-                )}
-            </div>
+            {!isEditing ? (
+                <div
+                    className={twMerge(
+                        className,
+                        "w-full flex gap-3 justify-start items-baseline md:gap-0 md:flex-col "
+                    )}
+                >
+                    <p>{displayedTime}</p>
+                    {initialTime && displayedTime !== "?" && (
+                        <p
+                            className={twMerge(
+                                "text-right text-sm font-medium text-white/50 group/timeButton:text-white/50 group-focus/timeButton:text-white md:text-white md:text-xs md:font-semibold"
+                            )}
+                        >
+                            {getDayLabel()}
+                        </p>
+                    )}
+                </div>
+            ) : (
+                <button
+                    className={twMerge(
+                        className,
+                        "w-full flex gap-3 justify-start items-baseline md:gap-0 md:flex-col ",
+                        "group/timeButton"
+                    )}
+                    onClick={() => setIsDropDownShown((prev) => !prev)}
+                    type='button'
+                >
+                    {displayedTime}
+
+                    {initialTime && displayedTime !== "?" && (
+                        <p
+                            className={twMerge(
+                                "text-sm font-medium text-white/50 group/timeButton:text-white/50 group-focus/timeButton:text-white md:text-xs md:font-semibold"
+                            )}
+                        >
+                            {getDayLabel()}
+                        </p>
+                    )}
+                </button>
+            )}
 
             <div
                 className={twMerge(
@@ -160,7 +187,11 @@ const TimePicker: React.FC<TimePickerProps> = ({
                             className={twMerge(
                                 "w-full flex justify-between py-1 px-3 bg-inherit text-right text-sm text-white/50 font-medium",
                                 "hover:bg-white/10 hover:text-white group/time",
-                                time.getMinutes() == 0 && "bg-black/10"
+                                time.getMinutes() == 0 && "bg-black/10",
+                                initialTime &&
+                                    new Date(initialTime).getTime() ==
+                                        time.getTime() &&
+                                    "text-white bg-white/10"
                             )}
                         >
                             <span className='hidden group-hover/time:flex my-auto text-sm font-medium opacity-50'>
