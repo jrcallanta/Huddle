@@ -16,6 +16,7 @@ import UserAvatar from "./UserAvatar";
 import LocationSelector from "./switch-components/LocationSelector";
 import { useHuddleOwnerEditor } from "@/hooks/useHuddleOwnerEditor";
 import { useHuddleInviteResponder } from "@/hooks/useHuddleInviteResponder";
+import { useDetailsModalReducer } from "@/hooks/useDetailsModalReducer";
 
 export const INPUT_NAMES = {
     TITLE: "title",
@@ -38,8 +39,13 @@ const DetailsModal: React.FC<DetailsModalProps> = ({
     const { currentUser } = useUser();
 
     const container = document.getElementById("details-modal-root");
-    const [huddleState, setHuddleState] = useState(huddle);
-    const [feedback, setFeedback] = useState<string | null>(null);
+    // const [huddleState, setHuddleState] = useState(huddle);
+    // const [feedback, setFeedback] = useState<string | null>(null);
+
+    const {
+        state: { huddleState, feedback },
+        dispatch,
+    } = useDetailsModalReducer(huddle);
 
     // Logic for Editing
     const {
@@ -53,7 +59,7 @@ const DetailsModal: React.FC<DetailsModalProps> = ({
     } = useHuddleOwnerEditor({
         deps: { originalHuddle: huddle, isInEditingModeInitial },
         states: { huddleState },
-        funcs: { setHuddleState, setFeedback, onCloseEditor: onClose },
+        funcs: { dispatch, onCloseEditor: onClose },
     });
 
     // Logic for Responding
@@ -63,7 +69,7 @@ const DetailsModal: React.FC<DetailsModalProps> = ({
     } = useHuddleInviteResponder({
         deps: { originalHuddle: huddle },
         states: { huddleState },
-        funcs: { setHuddleState, setFeedback },
+        funcs: { dispatch },
     });
 
     return container && huddleState
@@ -127,7 +133,12 @@ const DetailsModal: React.FC<DetailsModalProps> = ({
                           inputId={`${INPUT_NAMES.TITLE}-input`}
                           name={INPUT_NAMES.TITLE}
                           isEditing={isInEditingMode}
-                          onValueChange={(newTitle) => console.log(newTitle)}
+                          onValueChange={(newTitle) =>
+                              dispatch({
+                                  type: "EDIT_TITLE",
+                                  payload: newTitle,
+                              })
+                          }
                           className={twMerge(
                               "w-full bg-inherit text-2xl font-bold outline-none placeholder:text-white/50 focus:text-white truncate",
                               !isInEditingMode ? "text-white" : "text-white/50"
@@ -141,14 +152,15 @@ const DetailsModal: React.FC<DetailsModalProps> = ({
                               <TimePicker
                                   label='from'
                                   initialTime={huddleState.start_time}
-                                  inputId={`${INPUT_NAMES.START_TIME}-input`}
-                                  name={INPUT_NAMES.START_TIME}
                                   isEditing={isInEditingMode}
                                   onValueChange={(newTime) =>
-                                      console.log(newTime)
+                                      dispatch({
+                                          type: "EDIT_START_TIME",
+                                          payload: newTime,
+                                      })
                                   }
                                   className={twMerge(
-                                      "w-full bg-inherit text-xl text-white font-bold outline-none placeholder:text-white/50 focus:text-white",
+                                      "w-full bg-inherit text-xl text-white text-right font-bold outline-none placeholder:text-white/50 focus:text-white",
                                       !isInEditingMode
                                           ? "text-white"
                                           : "text-white/50"
@@ -158,11 +170,16 @@ const DetailsModal: React.FC<DetailsModalProps> = ({
                                   optional
                                   label='to'
                                   initialTime={huddleState.end_time}
-                                  inputId={`${INPUT_NAMES.END_TIME}-input`}
-                                  name={INPUT_NAMES.END_TIME}
+                                  lowerBound={huddleState.start_time}
                                   isEditing={isInEditingMode}
+                                  onValueChange={(newTime) =>
+                                      dispatch({
+                                          type: "EDIT_END_TIME",
+                                          payload: newTime,
+                                      })
+                                  }
                                   className={twMerge(
-                                      "w-full bg-inherit text-xl text-white font-bold outline-none placeholder:text-white/50 focus:text-white",
+                                      "w-full bg-inherit text-xl text-white text-right font-bold outline-none placeholder:text-white/50 focus:text-white",
                                       !isInEditingMode
                                           ? "text-white"
                                           : "text-white/50"

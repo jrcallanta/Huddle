@@ -2,6 +2,7 @@ import { HuddleTypeForTile, LocationType } from "@/types";
 import { useCallback, useEffect, useState } from "react";
 import { INPUT_NAMES } from "@/components/DetailsModal_v2";
 import { useHuddles } from "./useHuddles";
+import { Action } from "./useDetailsModalReducer";
 
 interface Args {
     deps: {
@@ -10,8 +11,7 @@ interface Args {
     };
     states: { huddleState: HuddleTypeForTile };
     funcs: {
-        setHuddleState: React.Dispatch<React.SetStateAction<HuddleTypeForTile>>;
-        setFeedback: React.Dispatch<React.SetStateAction<string | null>>;
+        dispatch: React.Dispatch<Action>;
         onCloseEditor: any;
     };
 }
@@ -19,7 +19,7 @@ interface Args {
 export const useHuddleOwnerEditor = ({
     deps: { originalHuddle, isInEditingModeInitial },
     states: { huddleState },
-    funcs: { setHuddleState, setFeedback, onCloseEditor },
+    funcs: { dispatch, onCloseEditor },
 }: Args) => {
     const {
         funcs: {
@@ -31,9 +31,6 @@ export const useHuddleOwnerEditor = ({
             refreshHuddles,
         },
     } = useHuddles();
-
-    // Watch for changes
-    useEffect(() => setHuddleState(originalHuddle), [originalHuddle]);
 
     // Editing mode provided if owner
     const [isInEditingMode, setIsInEditingMode] = useState(
@@ -52,23 +49,36 @@ export const useHuddleOwnerEditor = ({
             endTime,
         }: {
             title: string;
-            startTime: string;
-            endTime: string;
+            startTime: Date;
+            endTime?: Date;
         }) => {
             console.log(startTime, endTime);
 
             if (!title || title === "") {
-                setFeedback("Title cannot be blank");
+                dispatch({
+                    type: "CHANGE_FEEDBACK",
+                    payload: "Title cannot be blank",
+                });
                 return false;
             }
 
             if (!startTime) {
-                setFeedback("Huddle needs a start time");
+                dispatch({
+                    type: "CHANGE_FEEDBACK",
+                    payload: "Huddle needs a start time",
+                });
                 return false;
             }
 
-            if (startTime && endTime && startTime >= endTime) {
-                setFeedback("End time must be after start time");
+            if (
+                startTime &&
+                endTime &&
+                new Date(startTime).getTime() >= new Date(endTime).getTime()
+            ) {
+                dispatch({
+                    type: "CHANGE_FEEDBACK",
+                    payload: "End time must be after start time",
+                });
                 return false;
             }
 
@@ -78,13 +88,15 @@ export const useHuddleOwnerEditor = ({
     );
 
     const handleOpenEditMode = useCallback(async () => {
-        setFeedback(null);
+        dispatch({ type: "CHANGE_FEEDBACK", payload: null });
         setIsInEditingMode(true);
     }, []);
 
     const handleCloseEditMode = useCallback(async () => {
+        console.log(originalHuddle);
         if (originalHuddle._id) {
-            setFeedback(null);
+            dispatch({ type: "CHANGE_FEEDBACK", payload: null });
+            dispatch({ type: "REFRESH_HUDDLE", payload: originalHuddle });
             setIsInEditingMode(false);
         } else {
             onCloseEditor();
@@ -94,62 +106,60 @@ export const useHuddleOwnerEditor = ({
     const handleSaveDetails = useCallback(
         async (event: any) => {
             event.preventDefault();
-            const formData = new FormData(event.target.form);
+            // const formData = new FormData(event.target.form);
 
-            const newTitle = formData.get(INPUT_NAMES.TITLE);
-            const newStartTime = formData.get(
-                `${INPUT_NAMES.START_TIME}-hidden`
-            );
-            const newEndTime = formData.get(`${INPUT_NAMES.END_TIME}-hidden`);
-            const display = formData.get(INPUT_NAMES.LOCATION);
-            const description = formData.get(
-                `${INPUT_NAMES.LOCATION}-desc-hidden`
-            );
-            const lat = Number(
-                formData.get(`${INPUT_NAMES.LOCATION}-lat-hidden`)
-            );
-            const lng = Number(
-                formData.get(`${INPUT_NAMES.LOCATION}-lng-hidden`)
-            );
-            const newLocation =
-                display !== "" && description !== "" && lat && lng
-                    ? {
-                          display: { primary: display, description },
-                          coordinates: { lat, lng },
-                      }
-                    : null;
+            // const newTitle = formData.get(INPUT_NAMES.TITLE);
+            // const newStartTime = formData.get(
+            //     `${INPUT_NAMES.START_TIME}-hidden`
+            // );
+            // const newEndTime = formData.get(`${INPUT_NAMES.END_TIME}-hidden`);
+            // const display = formData.get(INPUT_NAMES.LOCATION);
+            // const description = formData.get(
+            //     `${INPUT_NAMES.LOCATION}-desc-hidden`
+            // );
+            // const lat = Number(
+            //     formData.get(`${INPUT_NAMES.LOCATION}-lat-hidden`)
+            // );
+            // const lng = Number(
+            //     formData.get(`${INPUT_NAMES.LOCATION}-lng-hidden`)
+            // );
+            // const newLocation =
+            //     display !== "" && description !== "" && lat && lng
+            //         ? {
+            //               display: { primary: display, description },
+            //               coordinates: { lat, lng },
+            //           }
+            //         : null;
 
+            // const valid = _validateInputs({
+            //     title: newTitle as string,
+            //     startTime: newStartTime as string,
+            //     endTime: newEndTime as string,
+            // });
             const valid = _validateInputs({
-                title: newTitle as string,
-                startTime: newStartTime as string,
-                endTime: newEndTime as string,
+                title: huddleState.title,
+                startTime: huddleState.start_time,
+                endTime: huddleState.end_time,
             });
 
             if (!valid) return;
 
-            console.log({
-                newTitle,
-                newStartTime,
-                newEndTime,
-                display,
-                description,
-                newLocation,
-            });
+            console.log(huddleState);
 
             // Update Optimistic UI
-            setHuddleState((prev) => {
-                return {
-                    ...prev,
-                    title: newTitle as string,
-                    start_time: new Date(Number(newStartTime)),
-                    end_time:
-                        newEndTime !== "?"
-                            ? new Date(Number(newEndTime))
-                            : null,
-                    location: newLocation as LocationType,
-                } as HuddleTypeForTile;
-            });
-            setFeedback("Saving...");
+            // setHuddleState((prev) => {
+            //     return {
+            //         ...prev,
+            //         title: newTitle as string,
+            //         start_time: new Date(Number(newStartTime)),
+            //         end_time:
+            //             newEndTime !== "?"
+            //                 ? new Date(Number(newEndTime))
+            //                 : null,
+            //         location: newLocation as LocationType,
+            //     } as HuddleTypeForTile;
+            // });
+            dispatch({ type: "CHANGE_FEEDBACK", payload: "Saving..." });
 
             if (originalHuddle._id)
                 updateHuddleDetails(
@@ -157,70 +167,82 @@ export const useHuddleOwnerEditor = ({
                         huddleId: originalHuddle?._id,
                         changes: {
                             ...huddleState,
-                            title: newTitle as string,
-                            startTime: new Date(Number(newStartTime)),
-                            endTime:
-                                newEndTime !== "?"
-                                    ? new Date(Number(newEndTime))
-                                    : null,
-                            location: newLocation as LocationType,
+                            title: huddleState.title,
+                            startTime: huddleState.start_time,
+                            endTime: huddleState.end_time,
+                            location: huddleState.location,
                         },
                     },
                     (data: any) => {
                         if (!data.error) {
                             setIsInEditingMode(false);
                             refreshHuddles();
-                            setFeedback(null);
+                            dispatch({
+                                type: "CHANGE_FEEDBACK",
+                                payload: null,
+                            });
                         } else {
                             setTimeout(() => {
-                                setFeedback(
-                                    "Could not save changes. Try again."
-                                );
+                                dispatch({
+                                    type: "CHANGE_FEEDBACK",
+                                    payload:
+                                        "Could not save changes. Try again.",
+                                });
                             }, 500);
                         }
                     }
                 );
-            else
-                createNewHuddle(
-                    {
-                        ...huddleState,
-                        title: newTitle as string,
-                        start_time: new Date(Number(newStartTime)),
-                        end_time:
-                            newEndTime !== "?"
-                                ? new Date(Number(newEndTime))
-                                : undefined,
-                        location: newLocation as LocationType,
-                    },
-                    async (data: any) => {
-                        if (data.newHuddle) {
-                            console.log(data.newHuddle);
-                            setIsInEditingMode(false);
-                            await refreshHuddles();
-                            setSelectedHuddle(data.newHuddle);
-                            setFocusedHuddle(data.newHuddle);
-                            setFeedback(null);
-                        } else {
-                            setTimeout(() => {
-                                setFeedback(
-                                    "Could not save changes. Try again."
-                                );
-                            }, 500);
-                        }
-                    }
-                );
+            // else
+            //     createNewHuddle(
+            //         {
+            //             ...huddleState,
+            //             title: newTitle as string,
+            //             start_time: new Date(Number(newStartTime)),
+            //             end_time:
+            //                 newEndTime !== "?"
+            //                     ? new Date(Number(newEndTime))
+            //                     : undefined,
+            //             location: newLocation as LocationType,
+            //         },
+            //         async (data: any) => {
+            //             if (data.newHuddle) {
+            //                 console.log(data.newHuddle);
+            //                 setIsInEditingMode(false);
+            //                 await refreshHuddles();
+            //                 setSelectedHuddle(data.newHuddle);
+            //                 setFocusedHuddle(data.newHuddle);
+            //                 setFeedback(null);
+            //             } else {
+            //                 setTimeout(() => {
+            //                     setFeedback(
+            //                         "Could not save changes. Try again."
+            //                     );
+            //                 }, 500);
+            //             }
+            //         }
+            //     );
         },
-        [_validateInputs, updateHuddleDetails, createNewHuddle, refreshHuddles]
+        [
+            huddleState,
+            _validateInputs,
+            updateHuddleDetails,
+            createNewHuddle,
+            refreshHuddles,
+        ]
     );
 
     const handleDelete = useCallback(() => {
         if (originalHuddle._id) {
-            setFeedback("Deleting...");
+            dispatch({ type: "CHANGE_FEEDBACK", payload: "Deleting..." });
             deleteHuddle({ huddleId: originalHuddle._id }, (data: any) => {
                 if (!data.error) {
                     setFocusedHuddle(null);
                     refreshHuddles();
-                } else setFeedback("Could not delete. Try again.");
+                } else
+                    dispatch({
+                        type: "CHANGE_FEEDBACK",
+                        payload: "Could not delete. Try again.",
+                    });
             });
         }
     }, [deleteHuddle, refreshHuddles]);

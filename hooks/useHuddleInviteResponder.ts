@@ -1,37 +1,33 @@
 import { HuddleTypeForTile } from "@/types";
 import { useHuddles } from "./useHuddles";
 import { useCallback, useState } from "react";
+import { Action } from "./useDetailsModalReducer";
 
 interface Args {
     deps: { originalHuddle: HuddleTypeForTile };
     states: { huddleState: HuddleTypeForTile };
     funcs: {
-        setHuddleState: React.Dispatch<React.SetStateAction<HuddleTypeForTile>>;
-        setFeedback: React.Dispatch<React.SetStateAction<string | null>>;
+        dispatch: React.Dispatch<Action>;
     };
 }
 
 export const useHuddleInviteResponder = ({
     deps: { originalHuddle },
     states: { huddleState },
-    funcs: { setHuddleState, setFeedback },
+    funcs: { dispatch },
 }: Args) => {
     const {
         funcs: { respondToInvite, refreshHuddles },
     } = useHuddles();
 
     const [isUpdatingInviteStatus, setIsUpdatingInviteStatus] = useState(false);
-    const { invite_status } = huddleState;
 
     const _handleRespondInvite = useCallback(
         async (event: any, respond: string) => {
             event.stopPropagation();
-            setFeedback(null);
+            dispatch({ type: "CHANGE_FEEDBACK", payload: null });
             setIsUpdatingInviteStatus(true);
-            setHuddleState((prev) => ({
-                ...prev,
-                invite_status: respond,
-            }));
+            dispatch({ type: "EDIT_INVITE_STATUS", payload: respond });
 
             if (originalHuddle._id)
                 await respondToInvite(
@@ -45,13 +41,15 @@ export const useHuddleInviteResponder = ({
                             await refreshHuddles();
                         } else {
                             setTimeout(() => {
-                                setFeedback(
-                                    "Could not send response. Try again."
-                                );
-                                setHuddleState((prev) => ({
-                                    ...prev,
-                                    invite_status: originalHuddle.invite_status,
-                                }));
+                                dispatch({
+                                    type: "CHANGE_FEEDBACK",
+                                    payload:
+                                        "Could not send response. Try again.",
+                                });
+                                dispatch({
+                                    type: "EDIT_INVITE_STATUS",
+                                    payload: originalHuddle.invite_status,
+                                });
                                 setIsUpdatingInviteStatus(false);
                             }, 500);
                         }
@@ -65,19 +63,21 @@ export const useHuddleInviteResponder = ({
         (event: any) =>
             _handleRespondInvite(
                 event,
-                invite_status !== "GOING" ? "GOING" : "PENDING"
+                huddleState.invite_status !== "GOING" ? "GOING" : "PENDING"
             ),
-        [_handleRespondInvite, invite_status]
+        [_handleRespondInvite, huddleState]
     );
 
     const handleToggleDeclineInvite = useCallback(
         (event: any) => {
             _handleRespondInvite(
                 event,
-                invite_status !== "NOT_GOING" ? "NOT_GOING" : "PENDING"
+                huddleState.invite_status !== "NOT_GOING"
+                    ? "NOT_GOING"
+                    : "PENDING"
             );
         },
-        [_handleRespondInvite, invite_status]
+        [_handleRespondInvite, huddleState]
     );
 
     return {

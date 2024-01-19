@@ -37,11 +37,12 @@ export const useDetailsModalReducer = (originalHuddle: HuddleTypeForTile) => {
                 };
             }
             case "EDIT_START_TIME": {
+                console.log(action.payload);
                 return {
                     ...state,
                     huddleState: {
                         ...state.huddleState,
-                        start_time: action.payload,
+                        start_time: new Date(action.payload),
                     },
                 };
             }
@@ -51,7 +52,9 @@ export const useDetailsModalReducer = (originalHuddle: HuddleTypeForTile) => {
                     ...state,
                     huddleState: {
                         ...state.huddleState,
-                        end_time: action.payload,
+                        end_time: action.payload
+                            ? new Date(action.payload)
+                            : undefined,
                     },
                 };
             }

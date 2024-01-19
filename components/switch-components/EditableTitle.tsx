@@ -7,6 +7,7 @@ interface EditableTitleProps
     inputId: string;
     name: string;
     isEditing: boolean;
+    onValueChange?: (newValue: any) => any;
 }
 
 const EditableTitle: React.FC<EditableTitleProps> = ({
@@ -14,6 +15,7 @@ const EditableTitle: React.FC<EditableTitleProps> = ({
     inputId,
     name,
     isEditing,
+    onValueChange,
     className,
 }) => {
     const handleKeyDown = (e: any) => {
@@ -33,6 +35,11 @@ const EditableTitle: React.FC<EditableTitleProps> = ({
                     placeholder={text}
                     defaultValue={text}
                     onKeyDown={handleKeyDown}
+                    onChange={
+                        onValueChange
+                            ? (event) => onValueChange(event.target.value)
+                            : undefined
+                    }
                 />
             )}
         </div>
