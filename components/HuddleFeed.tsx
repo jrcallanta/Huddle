@@ -5,7 +5,7 @@ import HuddleSection from "./HuddleSection";
 import { BsPlus } from "react-icons/bs";
 import { useHuddles } from "@/hooks/useHuddles";
 import { useCallback, useEffect, useState } from "react";
-import DetailsModal from "./DetailsModal";
+import DetailsModal from "./DetailsModal_v2";
 
 export interface HuddleSection {
     title: string;
