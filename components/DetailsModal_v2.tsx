@@ -74,9 +74,8 @@ const DetailsModal: React.FC<DetailsModalProps> = ({
 
     return container && huddleState
         ? createPortal(
-              <FormDiv
-                  type={isInEditingMode ? "form" : "div"}
-                  formId='huddle-form'
+              <div
+                  onClick={(e) => e.stopPropagation()}
                   className={twMerge(
                       !huddleState.invite_status ||
                           huddleState.invite_status === "GOING"
@@ -160,7 +159,7 @@ const DetailsModal: React.FC<DetailsModalProps> = ({
                                       })
                                   }
                                   className={twMerge(
-                                      "w-full bg-inherit text-xl text-white text-right font-bold outline-none placeholder:text-white/50 focus:text-white",
+                                      "w-full bg-inherit text-xl text-white text-right font-bold focus:text-white",
                                       !isInEditingMode
                                           ? "text-white"
                                           : "text-white/50"
@@ -179,7 +178,7 @@ const DetailsModal: React.FC<DetailsModalProps> = ({
                                       })
                                   }
                                   className={twMerge(
-                                      "w-full bg-inherit text-xl text-white text-right font-bold outline-none placeholder:text-white/50 focus:text-white",
+                                      "w-full bg-inherit text-xl text-white text-right font-bold focus:text-white",
                                       !isInEditingMode
                                           ? "text-white"
                                           : "text-white/50"
@@ -271,7 +270,7 @@ const DetailsModal: React.FC<DetailsModalProps> = ({
                           </>
                       )}
                   </div>
-              </FormDiv>,
+              </div>,
               container
           )
         : null;
