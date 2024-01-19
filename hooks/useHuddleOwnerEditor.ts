@@ -106,36 +106,7 @@ export const useHuddleOwnerEditor = ({
     const handleSaveDetails = useCallback(
         async (event: any) => {
             event.preventDefault();
-            // const formData = new FormData(event.target.form);
 
-            // const newTitle = formData.get(INPUT_NAMES.TITLE);
-            // const newStartTime = formData.get(
-            //     `${INPUT_NAMES.START_TIME}-hidden`
-            // );
-            // const newEndTime = formData.get(`${INPUT_NAMES.END_TIME}-hidden`);
-            // const display = formData.get(INPUT_NAMES.LOCATION);
-            // const description = formData.get(
-            //     `${INPUT_NAMES.LOCATION}-desc-hidden`
-            // );
-            // const lat = Number(
-            //     formData.get(`${INPUT_NAMES.LOCATION}-lat-hidden`)
-            // );
-            // const lng = Number(
-            //     formData.get(`${INPUT_NAMES.LOCATION}-lng-hidden`)
-            // );
-            // const newLocation =
-            //     display !== "" && description !== "" && lat && lng
-            //         ? {
-            //               display: { primary: display, description },
-            //               coordinates: { lat, lng },
-            //           }
-            //         : null;
-
-            // const valid = _validateInputs({
-            //     title: newTitle as string,
-            //     startTime: newStartTime as string,
-            //     endTime: newEndTime as string,
-            // });
             const valid = _validateInputs({
                 title: huddleState.title,
                 startTime: huddleState.start_time,
