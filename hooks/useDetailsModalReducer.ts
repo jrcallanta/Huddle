@@ -22,12 +22,10 @@ export const useDetailsModalReducer = (originalHuddle: HuddleTypeForTile) => {
     const reducer = (state: DetailState, action: Action): DetailState => {
         switch (action.type) {
             case "REFRESH_HUDDLE": {
-                console.log(action.payload);
                 return { ...state, huddleState: action.payload };
             }
 
             case "EDIT_TITLE": {
-                console.log(action.payload);
                 return {
                     ...state,
                     huddleState: {
@@ -37,7 +35,6 @@ export const useDetailsModalReducer = (originalHuddle: HuddleTypeForTile) => {
                 };
             }
             case "EDIT_START_TIME": {
-                console.log(action.payload);
                 return {
                     ...state,
                     huddleState: {
@@ -47,7 +44,6 @@ export const useDetailsModalReducer = (originalHuddle: HuddleTypeForTile) => {
                 };
             }
             case "EDIT_END_TIME": {
-                console.log(action.payload);
                 return {
                     ...state,
                     huddleState: {
