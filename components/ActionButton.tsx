@@ -25,7 +25,7 @@ const ActionButton = forwardRef<HTMLButtonElement, ActionButtonProps>(
                 return (
                     <ActionButtonGeneric
                         icon={
-                            <div className='w-7 h-7 md:w-6 md:h-6 flex justify-center items-center'>
+                            <div className='w-5 h-5 sm:w-6 sm:h-6 flex justify-center items-center'>
                                 <CgNotes
                                     size={18}
                                     strokeWidth={".5px"}
@@ -44,7 +44,7 @@ const ActionButton = forwardRef<HTMLButtonElement, ActionButtonProps>(
                 return (
                     <ActionButtonGeneric
                         icon={
-                            <div className='w-7 h-7 md:w-6 md:h-6 flex justify-center items-center'>
+                            <div className='w-5 h-5 sm:w-6 sm:h-6 flex justify-center items-center'>
                                 <BsPencilFill
                                     size={16}
                                     className='fill-[var(--500)] group-hover/button:fill-white'
@@ -87,7 +87,7 @@ const ActionButton = forwardRef<HTMLButtonElement, ActionButtonProps>(
                         icon={
                             <div
                                 className={twMerge(
-                                    "w-7 h-7 md:w-6 md:h-6 rounded-full flex justify-center items-center border-[var(--500)] group-hover/button:border-white ",
+                                    "w-5 h-5 sm:w-6 sm:h-6 rounded-full flex justify-center items-center border-[var(--500)] group-hover/button:border-white ",
                                     props.isActive && "bg-white border-white"
                                 )}
                             >
@@ -119,7 +119,7 @@ const ActionButton = forwardRef<HTMLButtonElement, ActionButtonProps>(
                         icon={
                             <div
                                 className={twMerge(
-                                    "w-7 h-7 md:w-6 md:h-6 rounded-full flex justify-center items-center border-[var(--500)] group-hover/button:border-white ",
+                                    "w-5 h-5 sm:w-6 sm:h-6 rounded-full flex justify-center items-center border-[var(--500)] group-hover/button:border-white ",
                                     props.isActive && "bg-white border-white"
                                 )}
                             >

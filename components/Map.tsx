@@ -45,14 +45,8 @@ const Map: React.FC<MapProps> = ({ children, className }) => {
                         @{selectedHuddle.author?.username}
                     </p>
 
-                    <div className='flex justify-between gap-4'>
-                        {/* <UserAvatar
-                                username={selectedHuddle.author.username}
-                                imgUrl={selectedHuddle.author.imgUrl}
-                                // size={"sm"}
-                                className={"border-2 border-white self-center"}
-                            /> */}
-                        <div className='flex flex-col gap-1 flex-1'>
+                    <div className='flex flex-wrap justify-between gap-4'>
+                        <div className='flex flex-col gap-1'>
                             <p
                                 className='text text-xl inline font-semibold cursor-pointer hover:underline'
                                 onClick={() => setFocusedHuddle(selectedHuddle)}
