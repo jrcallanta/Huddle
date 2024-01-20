@@ -13,7 +13,8 @@ const AuthenticationModal: React.FC<AuthenticationModalProps> = ({
     return (
         <div
             className={twMerge(
-                "themed flex flex-col gap-6 w-3/5 h-fit items-stretch",
+                "themed flex flex-col gap-6 w-full pl-4 pr-6 h-fit items-center",
+                "min-w-max max-w-lg",
                 String(className)
             )}
         >
