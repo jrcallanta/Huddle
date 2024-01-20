@@ -3,6 +3,11 @@ import React, { forwardRef } from "react";
 import { twMerge } from "tailwind-merge";
 import { FaGoogle, FaFacebook } from "react-icons/fa";
 
+const AUTH_OPTIONS = {
+    GOOGLE: true,
+    FACEBOOK: false,
+};
+
 interface AuthenticationModalProps {
     className?: string;
 }
@@ -24,14 +29,22 @@ const AuthenticationModal: React.FC<AuthenticationModalProps> = ({
                     {"Huddle"}
                 </span>
             </p>
-            <UIButton onClick={() => signIn("google")}>
-                <FaGoogle size={22} className='flex-shrink-0' />
-                <span className='flex-grow pr-4'>Sign in with Google</span>
-            </UIButton>
-            <UIButton onClick={() => signIn("facebook")}>
-                <FaFacebook size={26} className='flex-shrink-0' />
-                <span className='flex-grow pr-4'>Sign in with Facebook</span>
-            </UIButton>
+
+            {AUTH_OPTIONS.GOOGLE && (
+                <UIButton onClick={() => signIn("google")}>
+                    <FaGoogle size={22} className='flex-shrink-0' />
+                    <span className='flex-grow pr-4'>Sign in with Google</span>
+                </UIButton>
+            )}
+
+            {AUTH_OPTIONS.FACEBOOK && (
+                <UIButton onClick={() => signIn("facebook")}>
+                    <FaFacebook size={26} className='flex-shrink-0' />
+                    <span className='flex-grow pr-4'>
+                        Sign in with Facebook
+                    </span>
+                </UIButton>
+            )}
         </div>
     );
 };
