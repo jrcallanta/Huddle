@@ -46,7 +46,7 @@ const SearchPage = ({ params: { query } }: { params: { query: string } }) => {
     return (
         <main
             className={twMerge(
-                "themed h-screen w-full overflow-hidden overflow-y-auto p-4 pr-6 bg-white flex flex-col gap-4 mr-auto relative",
+                "max-w-screen-lg mx-auto themed h-screen w-full overflow-hidden overflow-y-auto p-4 pr-6 bg-white flex flex-col gap-4 mr-auto relative",
                 "[&_>_*:not(.loader)]:animate-fade-in"
             )}
         >
