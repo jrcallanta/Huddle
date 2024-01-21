@@ -194,6 +194,7 @@ export const useHuddleOwnerEditor = ({
             deleteHuddle({ huddleId: originalHuddle._id }, (data: any) => {
                 if (!data.error) {
                     setFocusedHuddle(null);
+                    setSelectedHuddle(null);
                     refreshHuddles();
                 } else
                     dispatch({
